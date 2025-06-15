@@ -1,6 +1,6 @@
 <div align="center">
   
-![StudyMate AI Banner](![image1](image10))
+![StudyMate AI Banner]((image10))
 
 # ✨ StudyMate AI - Nền Tảng Học Tập Thông Minh ✨
 
@@ -20,7 +20,7 @@
 
 <div align="center">
 
-![Rising Dragon Tech Logo](![image5](image5))
+![Rising Dragon Tech Logo]((image5))
 
 </div>
 
