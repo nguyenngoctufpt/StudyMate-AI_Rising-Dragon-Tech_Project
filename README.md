@@ -1,4 +1,4 @@
-<!-- HEADER DỰ ÁN -->
+<!-- PROJECT HEADER -->
 <br />
 <div align="center">
   <img src="img10.png" alt="StudyMate AI Logo" width="280" style="filter: drop-shadow(0 0 20px rgba(0,118,255,0.45));">
@@ -9,6 +9,17 @@
   </p>
   
   <img src="im5.png" alt="StudyMate AI Banner" width="100%" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,118,255,0.3); margin-top: 1em;">
+</div>
+
+<!-- COPYRIGHT NOTICE -->
+<div align="center">
+  <div style="background: linear-gradient(135deg, #FF416C, #FF4B2B); border-radius: 10px; padding: 1em; margin: 1.5em auto; max-width: 90%; box-shadow: 0 5px 15px rgba(255,75,43,0.2);">
+    <p style="color: white; font-weight: bold; font-size: 1.1em; margin: 0;">
+      ⚠️ CẢNH BÁO BẢN QUYỀN ⚠️<br>
+      NGHIÊM CẤM SAO CHÉP DƯỚI MỌI HÌNH THỨC.<br>
+      BẢN QUYỀN THUỘC VỀ GROUP PHÁT TRIỂN RISING DRAGON TECH.
+    </p>
+  </div>
 </div>
 
 <!-- BADGES -->
@@ -280,12 +291,13 @@ npm run start
 
 <!-- LỘ TRÌNH -->
 ## 🛣 LỘ TRÌNH
+
 <!-- ĐÓNG GÓP -->
 ## 🤝 ĐÓNG GÓP
 
+
 <!-- LIÊN HỆ & HỖ TRỢ -->
 ## 📞 LIÊN HỆ & HỖ TRỢ
-
 <!-- GIẤY PHÉP -->
 ## 📜 GIẤY PHÉP
 
@@ -302,11 +314,18 @@ npm run start
 <div align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" width="100%">
   
-  <p>
+  <div style="background: linear-gradient(135deg, #000, #333); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.2); color: white; max-width: 90%; margin: 0 auto;">
+    <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 0.5em;">⚠️ CẢNH BÁO BẢN QUYỀN ⚠️</p>
+    <p>MỌI NỘI DUNG TRONG DỰ ÁN NÀY THUỘC BẢN QUYỀN CỦA RISING DRAGON TECH.</p>
+    <p>NGHIÊM CẤM SAO CHÉP, PHÂN PHỐI HOẶC SỬ DỤNG DƯỚI BẤT KỲ HÌNH THỨC NÀO MÀ KHÔNG CÓ SỰ CHO PHÉP BẰNG VĂN BẢN.</p>
+    <p>VI PHẠM CÓ THỂ DẪN ĐẾN HÀNH ĐỘNG PHÁP LÝ.</p>
+  </div>
+  
+  <p style="margin-top: 2em;">
     <img src="https://img.shields.io/badge/Được%20tạo%20với-%E2%9D%A4%EF%B8%8F-red?style=for-the-badge"/>
     bởi <strong>Rising Dragon Tech</strong>
   </p>
   
   <p>© 2025 StudyMate AI. Bảo lưu mọi quyền.</p>
-  <p><i>Cập nhật lần cuối: 2025-06-15 09:51:25 UTC bởi nguyenngoctufpt</i></p>
+  <p><i>Cập nhật lần cuối: 2025-06-15 09:56:58 UTC bởi nguyenngoctufpt</i></p>
 </div>
