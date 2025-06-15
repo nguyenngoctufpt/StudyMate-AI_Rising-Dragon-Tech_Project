@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMate AI - Cộng Đồng AI & Kết Nối</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for body and app container to handle dark mode transitions */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better scrolling */
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease; /* Smooth transition for background */
+        }
+        /* Dark mode body background */
+        html.dark body {
+            background-color: #1a202c; /* Dark gray background */
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 480px; /* Default max width for mobile-first design */
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem; /* More rounded corners */
+            overflow: hidden; /* Ensures rounded corners apply to children */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Full height on mobile */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        }
+        /* Dark mode app container */
+        html.dark #app-container {
+            background-color: #2d3748; /* Darker background for app container */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (min-width: 640px) { /* Small screens (sm) and up */
+            #app-container {
+                max-width: 768px; /* Medium width for tablets */
+                min-height: auto; /* Allow height to adjust on larger screens */
+                margin: 2rem; /* Add some margin on larger screens */
+            }
+        }
+        @media (min-width: 1024px) { /* Large screens (lg) and up */
+            #app-container {
+                max-width: 960px; /* Wider for desktops */
+            }
+        }
+
+        /* Custom scrollbar for main content */
+        .detail-main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .detail-main-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        html.dark .detail-main-content::-webkit-scrollbar-track {
+            background: #4a5568; /* Dark mode scrollbar track */
+        }
+        .detail-main-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        html.dark .detail-main-content::-webkit-scrollbar-thumb {
+            background: #cbd5e0; /* Dark mode scrollbar thumb */
+        }
+        .detail-main-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Marquee animation */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        .marquee-content {
+            display: inline-block;
+            padding-left: 100%; /* Start off-screen */
+            animation: marquee 15s linear infinite; /* Adjust duration for speed */
+            will-change: transform; /* Optimize for smooth animation */
+        }
+
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); } /* Move to the left by 100% of its own width */
+        }
+
+        /* Modal specific styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0; /* Remove padding here, handled by internal divs */
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Ensure rounded corners on children */
+        }
+        html.dark .modal-content {
+            background-color: #36393F; /* Discord dark theme main background */
+            color: #DCDDDE; /* Discord dark theme text */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+        }
+        html.dark .modal-content input,
+        html.dark .modal-content select {
+            background-color: #2F3136; /* Discord dark theme lighter elements */
+            border-color: #4F545C;
+            color: #DCDDDE;
+        }
+        html.dark .modal-content input::placeholder {
+            color: #72767D;
+        }
+        html.dark .modal-content label {
+            color: #DCDDDE;
+        }
+        html.dark .chat-messages-container {
+            background-color: #36393F; /* Discord dark theme main background for chat */
+        }
+        /* Discord-like message bubbles */
+        html.dark .message-bubble {
+            background-color: #4F545C; /* A neutral gray for messages */
+            color: #DCDDDE;
+        }
+        /* Light mode chat bubbles */
+        .message-bubble.bg-green-200 { /* Your messages in light mode */
+            background-color: #DCF8C6; /* Light green */
+            color: #202225;
+        }
+        .message-bubble.bg-blue-200 { /* Others' messages in light mode */
+            background-color: #E0E0E0; /* Light gray */
+            color: #202225;
+        }
+        
+        /* Chat Modal Header (Sticky) */
+        .chat-modal-header {
+            padding: 1rem;
+            background-color: #fefefe; /* Light mode header background */
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        html.dark .chat-modal-header {
+            background-color: #36393F; /* Discord dark theme header background */
+            border-color: #202225;
+            color: #DCDDDE;
+        }
+
+        /* Chat messages container with flex-grow */
+        .chat-messages-container {
+            flex-grow: 1; /* Allows it to take up remaining space */
+            min-height: 100px; /* Minimum height to ensure it's visible */
+            padding: 1rem;
+        }
+        
+        /* Chat input area fixed at bottom */
+        .chat-input-area {
+            padding: 1rem;
+            background-color: #fefefe; /* Light mode input background */
+            border-top: 1px solid #e2e8f0;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        html.dark .chat-input-area {
+            background-color: #36393F; /* Discord dark theme input background */
+            border-color: #202225;
+        }
+        html.dark .chat-input-area input {
+            background-color: #40444B; /* Discord dark theme input field background */
+            color: #DCDDDE;
+            border-color: #4F545C;
+        }
+        html.dark .chat-input-area input::placeholder {
+            color: #72767D;
+        }
+
+
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        html.dark .close-button {
+            color: #e2e8f0;
+        }
+        html.dark .close-button:hover,
+        html.dark .close-button:focus {
+            color: #ffffff;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        html.dark .loading-spinner {
+            border-color: #4a5568;
+            border-top-color: #63b3ed;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Card styles for light/dark mode */
+        .card {
+            background-color: #ffffff;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        html.dark .card {
+            background-color: #2d3748;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        .card-title, .card-description {
+            color: #374151; /* Default text color */
+            transition: color 0.3s ease;
+        }
+        html.dark .card-title, html.dark .card-description {
+            color: #e2e8f0; /* Light text for dark mode */
+        }
+        html.dark .text-gray-500 {
+            color: #a0aec0;
+        }
+        html.dark .text-gray-400 {
+            color: #718096;
+        }
+        html.dark .text-gray-700 {
+            color: #e2e8f0;
+        }
+        html.dark .bg-gray-50 {
+            background-color: #4a5568;
+        }
+        html.dark .bg-blue-50 {
+            background-color: #3182ce; /* A slightly lighter blue for AI suggestions */
+            color: #e2e8f0;
+        }
+        html.dark .border-gray-300 {
+            border-color: #4a5568;
+        }
+        html.dark .placeholder-gray-400::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Channel tabs styling */
+        .channel-tabs-container {
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            white-space: nowrap; /* Ensures tabs stay in one line */
+        }
+        html.dark .channel-tabs-container {
+            background-color: #2F3136; /* Discord dark theme secondary background */
+            border-color: #202225;
+        }
+        .channel-tab {
+            padding: 0.5rem 0.75rem;
+            border-radius: 9999px; /* Full rounded */
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            margin-right: 0.5rem; /* Space between tabs */
+        }
+        .channel-tab.active {
+            background-color: #3182ce; /* Blue for active tab in light mode */
+            color: #ffffff;
+        }
+        html.dark .channel-tab.active {
+            background-color: #5865F2; /* Discord accent color for active tab */
+            color: #ffffff;
+        }
+        .channel-tab:hover:not(.active) {
+            background-color: #e2e8f0; /* Light gray on hover in light mode */
+            color: #2d3748;
+        }
+        html.dark .channel-tab:hover:not(.active) {
+            background-color: #40444B; /* Darker gray on hover in dark mode */
+            color: #DCDDDE;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app-container" class="relative">
+        <!-- Header Section -->
+        <header class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex items-center justify-between shadow-md rounded-t-2xl">
+    <button onclick="window.location.href = 'index.html'" class="back-icon p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+    </button>
+    <span class="detail-title text-xl font-semibold flex-grow text-center">Cộng Đồng AI & Kết Nối</span>
+    <div class="flex items-center space-x-2">
+        <button id="themeToggleButton" class="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+            <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.325 6.775l-.707-.707M6.707 6.707l-.707-.707m10.606 0l-.707.707M7.414 17.293l-.707.707M12 18a6 6 0 100-12 6 6 0 000 12z" />
+            </svg>
+            <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+        </button>
+        <div id="userIdDisplay" class="text-base sm:text-lg bg-white bg-opacity-30 px-3 py-1 rounded-full ml-4 hidden sm:block"></div>
+    </div>
+</header>
+
+        <!-- Announcement Section -->
+        <div class="bg-yellow-100 text-yellow-800 p-2 text-sm font-medium marquee-container dark:bg-yellow-700 dark:text-yellow-100">
+            <div class="marquee-content">
+                📢 Chào mừng bạn đến với StudyMate AI! Hãy kết nối, học hỏi và phát triển cùng cộng đồng AI năng động của chúng ta. 🚀
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="detail-main-content flex-grow p-6 space-y-6 overflow-y-auto">
+            <!-- Tìm Bạn Học & Lập Nhóm Card -->
+            <div class="card bg-white p-6 rounded-xl shadow-md space-y-4">
+                <h3 class="card-title text-3xl font-extrabold text-blue-700 dark:text-blue-300">Tìm Bạn Học & Lập Nhóm</h3>
+                <p class="card-description text-gray-600 dark:text-gray-300">AI giúp bạn dễ dàng tìm kiếm và kết nối với những người bạn phù hợp cho học tập và dự án.</p>
+
+                <div class="search-input-group flex items-center border border-gray-300 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-blue-400 dark:border-gray-600 dark:focus-within:ring-blue-300">
+                    <input type="text" id="communitySearchInput" placeholder="Tìm bạn theo kỹ năng, môn học, sở thích..." class="search-input flex-grow p-3 pl-5 bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 dark:text-gray-100 dark:placeholder-gray-400">
+                    <button id="searchCommunityButton" class="search-button bg-blue-600 text-white p-3 px-5 rounded-r-full hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-blue-700 dark:hover:bg-blue-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="filter-options grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <select id="communityFilterMajor" class="filter-select p-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-300">
+                        <option value="">-- Ngành học --</option>
+                        <option value="cntt">CNTT</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="kinhte">Kinh tế</option>
+                        <option value="khoa_hoc_du_lieu">Khoa học Dữ liệu</option>
+                        <option value="ky_thuat_phan_mem">Kỹ thuật phần mềm</option>
+                        <option value="thiet_ke_do_hoa">Thiết kế đồ họa</option>
+                        <option value="kinh_doanh_quoc_te">Kinh doanh quốc tế</option>
+                    </select>
+                    <select id="communityFilterSkill" class="filter-select p-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-300">
+                        <option value="">-- Kỹ năng --</option>
+                        <option value="python">Python</option>
+                        <option value="web_dev">Web Dev</option>
+                        <option value="data_an">Phân tích dữ liệu</option>
+                        <option value="machine_learning">Machine Learning</option>
+                        <option value="java">Java</option>
+                        <option value="cloud_computing">Cloud Computing</option>
+                        <option value="ui_ux">UI/UX</option>
+                        <option value="figma">Figma</option>
+                        <option value="thuong_mai_dien_tu">Thương mại điện tử</option>
+                    </select>
+                    <select id="communityFilterSubject" class="filter-select p-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-300">
+                        <option value="">-- Môn học --</option>
+                        <option value="toan_cao_cap">Toán cao cấp</option>
+                        <option value="vat_ly_dai_cuong">Vật lý đại cương</option>
+                        <option value="lap_trinh_huong_doi_tuong">Lập trình hướng đối tượng</option>
+                        <option value="kinh_te_vi_mo">Kinh tế vi mô</option>
+                    </select>
+                    <select id="communityFilterHobby" class="filter-select p-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 appearance-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-300">
+                        <option value="">-- Sở thích --</option>
+                        <option value="doc_sach">Đọc sách</option>
+                        <option value="choi_game">Chơi game</option>
+                        <option value="the_thao">Thể thao</option>
+                        <option value="am_nhac">Âm nhạc</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Gợi Ý Kết Nối Từ AI Card -->
+            <div class="card bg-white p-6 rounded-xl shadow-md space-y-4">
+                <h3 class="card-title text-2xl font-bold text-gray-800 dark:text-gray-100">Gợi Ý Kết Nối Từ AI</h3>
+                <button id="requestAISuggestionsButton" class="primary-button w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 dark:bg-indigo-700 dark:hover:bg-indigo-800">
+                    Yêu cầu gợi ý AI mới
+                </button>
+                <div id="aiSuggestionsLoading" class="hidden text-center py-4">
+                    <div class="loading-spinner"></div>
+                    <p class="text-gray-500 mt-2 dark:text-gray-300">Đang tải gợi ý từ AI...</p>
+                </div>
+                <div id="aiSuggestions" class="user-list space-y-3">
+                    <!-- User suggestions will be rendered here by JavaScript -->
+                </div>
+                <button id="loadMoreSuggestions" class="primary-button w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 dark:bg-blue-700 dark:hover:bg-blue-800">
+                    Xem thêm gợi ý
+                </button>
+            </div>
+
+            <!-- Nhóm Học Tập & CLB Card -->
+            <div class="card bg-white p-6 rounded-xl shadow-md space-y-4">
+                <h3 class="card-title text-3xl font-extrabold text-blue-700 dark:text-blue-300">Nhóm Học Tập & CLB</h3>
+                <button id="requestAIGroupSuggestionsButton" class="primary-button w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 dark:bg-indigo-700 dark:hover:bg-indigo-800">
+                    Yêu cầu gợi ý nhóm từ AI
+                </button>
+                <div id="aiGroupSuggestionsLoading" class="hidden text-center py-4">
+                    <div class="loading-spinner"></div>
+                    <p class="text-gray-500 mt-2 dark:text-gray-300">Đang tải gợi ý nhóm từ AI...</p>
+                </div>
+                <div id="aiGroupSuggestions" class="group-list space-y-3">
+                    <!-- AI group suggestions will be rendered here -->
+                </div>
+                <div id="groupList" class="user-list space-y-3">
+                    <!-- Group list will be rendered here by JavaScript -->
+                </div>
+                <button id="createGroupButton" class="primary-button w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 dark:bg-green-700 dark:hover:bg-green-800">
+                    Tạo Nhóm/CLB Mới
+                </button>
+            </div>
+        </main>
+
+        <!-- Chat Modal -->
+        <div id="chatModal" class="modal">
+            <div class="modal-content">
+                <!-- Chat Modal Header -->
+                <div class="chat-modal-header flex flex-col p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 id="chatModalTitle" class="text-2xl font-bold flex-grow mr-4">Trò chuyện</h3>
+                        <div class="flex items-center space-x-3">
+                            <button class="text-gray-600 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" title="Gọi điện" onclick="showCustomMessage('Chức năng gọi điện đang được phát triển!', 'info')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            </button>
+                            <button class="text-gray-600 hover:text-green-500 dark:text-gray-300 dark:hover:text-green-400 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" title="Gửi tin nhắn">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </button>
+                            <span class="close-button" onclick="closeChatModal()">&times;</span>
+                        </div>
+                    </div>
+                    <!-- Participants Display (for group chats) -->
+                    <div id="groupParticipants" class="text-sm text-gray-600 dark:text-gray-300 hidden">
+                        <!-- Participant list will be rendered here -->
+                    </div>
+                    <!-- Channel Tabs for Group Chats -->
+                    <div id="channelTabsContainer" class="flex overflow-x-auto p-2 space-x-2 bg-gray-100 border-b border-gray-200 dark:bg-gray-800 dark:border-gray-600 rounded-md mt-2 hidden">
+                        <!-- Channel buttons will be rendered here -->
+                    </div>
+                    <!-- Search Message Input -->
+                    <div class="search-message-input-group flex items-center border border-gray-300 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-purple-400 mt-2 dark:border-gray-600 dark:focus-within:ring-purple-300">
+                        <input type="text" id="chatSearchInput" placeholder="Tìm tin nhắn..." class="flex-grow p-2 pl-4 bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 dark:text-gray-100 dark:placeholder-gray-400">
+                        <button id="searchChatButton" class="bg-purple-600 text-white p-2 px-4 rounded-r-full hover:bg-purple-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:bg-purple-700 dark:hover:bg-purple-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Container -->
+                <div id="chatMessages" class="chat-messages-container space-y-2">
+                    <!-- Chat messages will appear here -->
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area flex items-center space-x-2">
+                    <button id="emojiButton" class="p-2 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors" title="Chèn Emoji">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                    <input type="text" id="chatInput" placeholder="Nhập tin nhắn của bạn..." class="flex-grow p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-gray-600 dark:focus:ring-blue-300">
+                    <button onclick="sendChatMessage()" class="bg-blue-600 text-white p-3 px-5 rounded-full hover:bg-blue-700 transition duration-200 dark:bg-blue-700 dark:hover:bg-blue-800">Gửi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Group Modal -->
+        <div id="createGroupModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeCreateGroupModal()">&times;</span>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4 dark:text-gray-100">Tạo Nhóm/CLB Mới</h3>
+                <form id="createGroupForm" class="space-y-4">
+                    <div>
+                        <label for="newGroupName" class="block text-gray-700 font-semibold mb-2 dark:text-gray-200">Tên nhóm/CLB:</label>
+                        <input type="text" id="newGroupName" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-300" placeholder="Ví dụ: Nhóm học Lập trình Python hoặc CLB Đọc sách" required>
+                    </div>
+                    <div>
+                        <label for="newGroupTopic" class="block text-gray-700 font-semibold mb-2 dark:text-gray-200">Chủ đề:</label>
+                        <input type="text" id="newGroupTopic" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-300" placeholder="Ví dụ: Python, AI, Machine Learning" required>
+                    </div>
+                    
+                    <div class="search-members-group space-y-2">
+                        <label class="block text-gray-700 font-semibold mb-2 dark:text-gray-200">Tìm kiếm và mời thành viên:</label>
+                        <div class="flex items-center border border-gray-300 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-blue-400 dark:border-gray-600 dark:focus-within:ring-blue-300">
+                            <input type="text" id="memberSearchInput" placeholder="Tìm thành viên theo tên hoặc ID..." class="flex-grow p-3 pl-5 bg-transparent focus:outline-none text-gray-700 placeholder-gray-400 dark:text-gray-100 dark:placeholder-gray-400">
+                            <button type="button" id="searchMembersButton" class="bg-blue-600 text-white p-3 px-5 rounded-r-full hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-blue-700 dark:hover:bg-blue-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="memberSearchResults" class="bg-gray-50 rounded-lg shadow-sm max-h-40 overflow-y-auto dark:bg-gray-800">
+                            <!-- Search results will appear here -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="newGroupMembers" class="block text-gray-700 font-semibold mb-2 dark:text-gray-200">Danh sách thành viên được mời (IDs, cách nhau bởi dấu phẩy):</label>
+                        <input type="text" id="newGroupMembers" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600" placeholder="Các ID thành viên sẽ tự động thêm vào đây" readonly>
+                    </div>
+                    <button type="submit" class="primary-button w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 dark:bg-green-700 dark:hover:bg-green-800">
+                        Tạo Nhóm/CLB
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global variables for Firebase (will be provided by Canvas runtime)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null; 
+
+        // Mock Firebase functions for demonstration without actual Firebase setup
+        // In a real application, you would import these from 'firebase/app', 'firebase/auth', 'firebase/firestore'
+        const mockFirebase = (() => {
+            // This is the core mock database storage. It will hold all collections and documents.
+            // Using a plain object to simulate Firestore structure, including nested collections.
+            let _db = {
+                // Initial mock data for demonstration
+                [`artifacts/${appId}/public/data/users`]: {
+                    'user3': { id: 'user3', name: "Lê Văn C", major: "Khoa học Dữ liệu", skills: ["R", "SQL", "Thống kê"], subjects: ["Xác suất thống kê"], hobbies: ["Thể thao"], status: "online", avatar: "https://placehold.co/48x48/87CEEB/FFFFFF?text=AVT" },
+                    'user4': { id: 'user4', name: "Phạm Thị D", major: "Kỹ thuật phần mềm", skills: ["Java", "Cloud Computing", "Web Dev"], subjects: ["Lập trình hướng đối tượng"], hobbies: ["Âm nhạc"], status: "online", avatar: "https://placehold.co/48x48/FFB6C1/FFFFFF?text=AVT" },
+                    'user1': { id: 'user1', name: "Nguyễn Văn A", major: "CNTT", skills: ["Python", "Machine Learning"], subjects: ["Toán cao cấp"], hobbies: ["Đọc sách"], status: "online", avatar: "https://placehold.co/48x48/AEC6CF/FFFFFF?text=AVT" },
+                    'user2': { id: 'user2', name: "Trần Thị B", major: "Marketing", skills: ["Content Creation", "SEO"], subjects: ["Kinh tế vi mô"], hobbies: ["Chơi game"], status: "offline", avatar: "https://placehold.co/48x48/FFD700/FFFFFF?text=AVT" },
+                    'user5': { id: 'user5', name: "Hoàng Minh E", major: "Thiết kế đồ họa", skills: ["UI/UX", "Figma"], subjects: ["Thiết kế web"], hobbies: ["Du lịch"], status: "offline", avatar: "https://placehold.co/48x48/B0E0E6/FFFFFF?text=AVT" },
+                    'user6': { id: 'user6', name: "Đỗ Thị F", major: "Kinh doanh quốc tế", skills: ["Thương mại điện tử", "Quản lý dự án"], subjects: ["Kinh doanh quốc tế"], hobbies: ["Nấu ăn"], status: "online", avatar: "https://placehold.co/48x48/DDA0DD/FFFFFF?text=AVT" }
+                },
+                [`artifacts/${appId}/public/data/groups`]: {
+                    'group3': { id: 'group3', name: "Nhóm Nghiên Cứu NLP", members: 10, topic: "Xử lý ngôn ngữ tự nhiên", icon: "https://placehold.co/48x48/F08080/FFFFFF?text=NLP", memberIds: ['user1', 'user3', 'user5', 'ai_bot_1'],
+                        channels: { // Nested collection for channels
+                            'general': { id: 'general', name: 'chung' },
+                            'nlp_research': { id: 'nlp_research', name: 'nghiên-cứu-nlp' }
+                        }
+                    },
+                    'group4': { id: 'group4', name: "CLB Lập Trình Thi Đấu", members: 25, topic: "Thuật toán, C++", icon: "https://placehold.co/48x48/90EE90/FFFFFF?text=Code", memberIds: ['user1', 'user2', 'user4', 'user6'],
+                        channels: {
+                            'general': { id: 'general', name: 'chung' },
+                            'cpp_algo': { id: 'cpp_algo', name: 'cpp-thuật-toán' },
+                            'contest_prep': { id: 'contest_prep', name: 'luyện-thi' }
+                        }
+                    },
+                    'group1': { id: 'group1', name: "Nhóm Học Python Nâng Cao", members: 15, topic: "Python, AI", icon: "https://placehold.co/48x48/87CEEB/FFFFFF?text=Nhóm", memberIds: ['user1', 'user2', 'user3'],
+                        channels: {
+                            'general': { id: 'general', name: 'chung' },
+                            'python_advanced': { id: 'python_advanced', name: 'python-nâng-cao' }
+                        }
+                    },
+                    'group2': { id: 'group2', name: "CLB AI & Robotics", members: 30, topic: "Robotics, Computer Vision", icon: "https://placehold.co/48x48/FFB6C1/FFFFFF?text=CLB", memberIds: ['user4', 'user5', 'user6', 'ai_bot_1'],
+                        channels: {
+                            'general': { id: 'general', name: 'chung' },
+                            'robotics_vision': { id: 'robotics_vision', name: 'robotics-vision' },
+                            'ai_discussion': { id: 'ai_discussion', name: 'thảo-luận-ai' }
+                        }
+                    }
+                },
+            };
+            let _auth = {
+                currentUser: { uid: 'mock_user_id_123', email: 'mock@example.com' },
+                onAuthStateChanged: (callback) => {
+                    setTimeout(() => callback(_auth.currentUser), 100);
+                },
+                signInAnonymously: async () => {
+                    console.log("Signed in anonymously (mock)");
+                    return { user: _auth.currentUser };
+                },
+                signInWithCustomToken: async (auth, token) => {
+                    console.log("Signed in with custom token (mock)");
+                    return { user: _auth.currentUser };
+                }
+            };
+
+            const getFirestore = (app) => _db;
+            const getAuth = (app) => _auth;
+            const initializeApp = (config) => ({ name: 'mockApp' });
+
+            // Helper to get or create a nested object/collection within the mock database
+            const getNestedContainer = (baseObj, pathSegments) => {
+                let current = baseObj;
+                for (const segment of pathSegments) {
+                    if (!current[segment]) {
+                        current[segment] = {};
+                    }
+                    current = current[segment];
+                }
+                return current;
+            };
+
+            // Firestore-like collection reference creator
+            const collection = (dbInstance, ...pathSegments) => {
+                const fullPath = pathSegments.join('/');
+                return { db: dbInstance, path: fullPath, _pathSegments: pathSegments };
+            };
+
+            // Firestore-like document reference creator
+            const doc = (dbInstance, ...pathSegments) => {
+                const docId = pathSegments[pathSegments.length - 1];
+                const collectionPathSegments = pathSegments.slice(0, -1);
+                const fullPath = collectionPathSegments.join('/');
+                return { db: dbInstance, path: fullPath, id: docId, _pathSegments: pathSegments };
+            };
+
+            // Mock getDoc function
+            const getDoc = async (docRef) => {
+                console.log(`Mock: Getting doc from path: ${docRef.path}, id: ${docRef.id}`);
+                const collectionContainer = getNestedContainer(_db, docRef._pathSegments.slice(0, -1));
+                const data = collectionContainer[docRef.id] || null;
+                return {
+                    exists: () => data !== null,
+                    data: () => {
+                        if (data) {
+                            const clonedData = JSON.parse(JSON.stringify(data));
+                            // Convert ISO string back to Date object for consistency
+                            if (clonedData.timestamp && typeof clonedData.timestamp === 'string') {
+                                clonedData.timestamp = new Date(clonedData.timestamp);
+                            }
+                            return clonedData;
+                        }
+                        return undefined;
+                    }
+                };
+            };
+
+            // Mock getDocs function (for collections)
+            const getDocs = async (collectionRef) => {
+                console.log(`Mock: Getting docs from collection: ${collectionRef.path}`);
+                const collectionData = getNestedContainer(_db, collectionRef._pathSegments);
+                const docsArray = Object.values(collectionData || {});
+                return {
+                    forEach: (callback) => {
+                        docsArray.forEach(d => {
+                            const clonedData = JSON.parse(JSON.stringify(d));
+                            if (clonedData.timestamp && typeof clonedData.timestamp === 'string') {
+                                clonedData.timestamp = new Date(clonedData.timestamp);
+                            }
+                            callback({ id: d.id, data: () => clonedData });
+                        });
+                    }
+                };
+            };
+
+            // Mock addDoc function
+            const addDoc = async (collectionRef, data) => {
+                console.log(`Mock: Adding doc to collection: ${collectionRef.path}`, data);
+                const collectionContainer = getNestedContainer(_db, collectionRef._pathSegments);
+                const newId = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+                const docData = { ...data, id: newId, timestamp: data.timestamp || new Date() };
+                if (!docData.reactions) docData.reactions = {}; // Ensure reactions field exists
+
+                collectionContainer[newId] = docData;
+
+                // Store timestamp as ISO string to simulate Firebase Timestamp object if needed
+                if (docData.timestamp instanceof Date) {
+                    collectionContainer[newId].timestamp = docData.timestamp.toISOString();
+                }
+
+                return { id: newId };
+            };
+
+            // Mock setDoc function
+            const setDoc = async (docRef, data) => {
+                console.log(`Mock: Setting doc at path: ${docRef.path}, id: ${docRef.id}`, data);
+                const collectionContainer = getNestedContainer(_db, docRef._pathSegments.slice(0, -1));
+                const docData = { ...data, id: docRef.id, timestamp: data.timestamp || new Date() };
+                if (!docData.reactions) docData.reactions = {}; // Ensure reactions field exists
+
+                collectionContainer[docRef.id] = docData;
+                
+                if (docData.timestamp instanceof Date) {
+                    collectionContainer[docRef.id].timestamp = docData.timestamp.toISOString();
+                }
+            };
+
+            // Mock updateDoc function
+            const updateDoc = async (docRef, data) => {
+                console.log(`Mock: Updating doc at path: ${docRef.path}, id: ${docRef.id}`, data);
+                const collectionContainer = getNestedContainer(_db, docRef._pathSegments.slice(0, -1));
+                if (collectionContainer[docRef.id]) {
+                    const existingData = collectionContainer[docRef.id];
+                    collectionContainer[docRef.id] = { ...existingData, ...data };
+                    // Handle reactions merge specifically
+                    if (data.reactions) {
+                        collectionContainer[docRef.id].reactions = { ...existingData.reactions, ...data.reactions };
+                    }
+                    if (collectionContainer[docRef.id].timestamp instanceof Date) {
+                        collectionContainer[docRef.id].timestamp = collectionContainer[docRef.id].timestamp.toISOString();
+                    }
+                }
+            };
+
+            // Mock deleteDoc function
+            const deleteDoc = async (docRef) => {
+                console.log(`Mock: Deleting doc at path: ${docRef.path}, id: ${docRef.id}`);
+                const collectionContainer = getNestedContainer(_db, docRef._pathSegments.slice(0, -1));
+                if (collectionContainer[docRef.id]) {
+                    delete collectionContainer[docRef.id];
+                }
+            };
+
+            // Mock onSnapshot function
+            const onSnapshot = (queryRef, callback) => {
+                console.log(`Mock: Setting up snapshot listener for: ${queryRef.path}`);
+                const collectionData = getNestedContainer(_db, queryRef._pathSegments);
+                
+                // Simulate initial data load
+                const initialDocs = Object.values(collectionData || {}).map(d => {
+                    const clonedData = JSON.parse(JSON.stringify(d));
+                    if (clonedData.timestamp && typeof clonedData.timestamp === 'string') {
+                        clonedData.timestamp = new Date(clonedData.timestamp);
+                    }
+                    return { id: d.id, data: () => clonedData };
+                });
+                callback({ docs: initialDocs });
+
+                // In a real mock, you'd add a way to trigger updates.
+                // For simplicity in this demo, we just do the initial load.
+                return () => console.log(`Mock: Unsubscribed from snapshot for ${queryRef.path}.`);
+            };
+            const query = (collectionRef, ...constraints) => ({ ...collectionRef, constraints });
+            const where = (field, op, value) => ({ type: 'where', field, op, value });
+
+            return {
+                initializeApp, getFirestore, getAuth,
+                collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot,
+                query, where
+            };
+        })();
+
+        // Use mock Firebase for local development/Canvas without actual Firebase setup
+        const { initializeApp, getFirestore, getAuth,
+                        collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot,
+                        query, where } = mockFirebase;
+
+        let db;
+        let auth;
+        let currentUserId;
+        let isAuthReady = false;
+        let allUsers = []; 
+        let allGroups = []; 
+        let currentSuggestionsPage = 0;
+        const SUGGESTIONS_PER_PAGE = 2;
+        let currentChatType = null; 
+        let currentChatId = null; 
+        let currentChannelId = null; // New: To track active channel within a group
+        let unsubscribeChatListener = null; 
+
+        // DOM Elements (declared globally for easier access in functions)
+        let aiSuggestionsContainer;
+        let aiSuggestionsLoading;
+        let requestAISuggestionsButton;
+        let groupListContainer;
+        let communitySearchInput;
+        let searchCommunityButton;
+        let communityFilterMajor;
+        let communityFilterSkill;
+        let communityFilterSubject;
+        let communityFilterHobby;
+        let loadMoreSuggestionsButton;
+        let createGroupButton;
+        let chatModal;
+        let chatModalTitle;
+        let chatMessagesContainer;
+        let chatInput;
+        let createGroupModal;
+        let newGroupNameInput;
+        let newGroupTopicInput;
+        let newGroupMembersInput;
+        let createGroupForm; 
+        let memberSearchInput;
+        let searchMembersButton;
+        let memberSearchResults;
+        let userIdDisplay;
+        let requestAIGroupSuggestionsButton; // New: AI Group Suggestions Button
+        let aiGroupSuggestionsLoading; // New: AI Group Suggestions Loading Spinner
+        let aiGroupSuggestionsContainer; // New: AI Group Suggestions Container
+        let themeToggleButton; // New: Theme Toggle Button
+        let sunIcon; // New: Sun Icon
+        let moonIcon; // New: Moon Icon
+        let groupParticipantsDiv; // New: Group Participants Div
+        let channelTabsContainer; // New: Channel Tabs Container
+        let chatSearchInput; // New: Chat Search Input
+        let searchChatButton; // New: Chat Search Button
+        let emojiButton; // New: Emoji Button
+
+        // --- Function Declarations (Moved to top for hoisting) ---
+
+        // Custom Message/Alert Modal (instead of window.alert)
+        const showCustomMessage = (message, type = 'info') => {
+            let bgColor = 'bg-blue-500';
+            if (type === 'success') bgColor = 'bg-green-500';
+            if (type === 'error') bgColor = 'bg-red-500';
+            if (type === 'warning') bgColor = 'bg-yellow-500';
+
+            const messageBox = document.createElement('div');
+            messageBox.className = `fixed bottom-4 left-1/2 -translate-x-1/2 p-4 rounded-lg text-white ${bgColor} shadow-lg transition-all duration-300 ease-in-out z-20`;
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.remove();
+            }, 3000); 
+        };
+
+        // Function to copy text to clipboard
+        const copyToClipboard = (text) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showCustomMessage('Đã sao chép tin nhắn vào clipboard!', 'success');
+        };
+
+        // Function to render user suggestions
+        const renderUserSuggestions = (users) => {
+            aiSuggestionsContainer.innerHTML = ''; 
+            if (users.length === 0) {
+                aiSuggestionsContainer.innerHTML = '<p class="text-gray-500 text-center dark:text-gray-300">Không tìm thấy gợi ý nào.</p>';
+                loadMoreSuggestionsButton.classList.add('hidden');
+                return;
+            }
+            users.forEach(user => {
+                const userCard = `
+                    <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg shadow-sm dark:bg-gray-700">
+                        <img src="${user.avatar || 'https://placehold.co/48x48/random/FFFFFF?text=AVT'}" alt="Avatar" class="w-12 h-12 rounded-full object-cover">
+                        <div class="flex-grow">
+                            <p class="font-semibold text-gray-800 dark:text-gray-100">${user.name} <span class="text-xs ${user.status === 'online' ? 'text-green-500' : 'text-red-500'}">(${user.status === 'online' ? 'Online' : 'Offline'})</span></p>
+                            <p class="text-sm text-gray-500 dark:text-gray-300">${user.major}, ${Array.isArray(user.skills) ? user.skills.join(', ') : ''}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">ID: <span class="user-id-link cursor-pointer underline text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-500" data-user-id="${user.id}" data-user-name="${user.name}">${user.id}</span></p>
+                        </div>
+                        <button data-user-id="${user.id}" class="connect-button bg-green-500 text-white text-sm px-4 py-2 rounded-full hover:bg-green-600 transition duration-200 dark:bg-green-600 dark:hover:bg-green-700">Kết nối</button>
+                        <button data-user-id="${user.id}" data-user-name="${user.name}" class="chat-button bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600 transition duration-200 ml-2 dark:bg-blue-600 dark:hover:bg-blue-700">Nhắn tin</button>
+                    </div>
+                `;
+                aiSuggestionsContainer.insertAdjacentHTML('beforeend', userCard);
+            });
+            document.querySelectorAll('.connect-button').forEach(button => {
+                button.onclick = (event) => connectUser(event.target.dataset.userId);
+            });
+            document.querySelectorAll('.chat-button').forEach(button => {
+                button.onclick = (event) => openChatModal('direct', event.target.dataset.userId, event.target.dataset.userName);
+            });
+            // Attach event listener for clickable user IDs
+            document.querySelectorAll('.user-id-link').forEach(span => {
+                span.onclick = (event) => openChatModal('direct', event.target.dataset.userId, event.target.dataset.userName);
+            });
+
+
+            if (users.length < allUsers.length) {
+                loadMoreSuggestionsButton.classList.remove('hidden');
+                loadMoreSuggestionsButton.textContent = 'Xem thêm gợi ý';
+                loadMoreSuggestionsButton.disabled = false;
+                loadMoreSuggestionsButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                loadMoreSuggestionsButton.classList.add('hidden');
+            }
+        };
+
+        // Function to render group list
+        const renderGroupList = (groups) => {
+            groupListContainer.innerHTML = ''; 
+            if (groups.length === 0) {
+                groupListContainer.innerHTML = '<p class="text-gray-500 text-center dark:text-gray-300">Chưa có nhóm nào được tạo.</p>';
+                return;
+            }
+            groups.forEach(group => {
+                const groupCard = `
+                    <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg shadow-sm dark:bg-gray-700">
+                        <img src="${group.icon || 'https://placehold.co/48x48/random/FFFFFF?text=Nhóm'}" alt="Group Icon" class="w-12 h-12 rounded-lg object-cover">
+                        <div class="flex-grow">
+                            <p class="font-semibold text-gray-800 dark:text-gray-100">${group.name}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-300">Thành viên: ${group.members} | Chủ đề: ${group.topic}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">ID: ${group.id}</p>
+                        </div>
+                        <button data-group-id="${group.id}" data-group-name="${group.name}" class="join-group-button bg-purple-500 text-white text-sm px-4 py-2 rounded-full hover:bg-purple-600 transition duration-200 dark:bg-purple-600 dark:hover:bg-purple-700">Tham gia</button>
+                        <button data-group-id="${group.id}" data-group-name="${group.name}" class="group-chat-button bg-blue-500 text-white text-sm px-4 py-2 rounded-full hover:bg-blue-600 transition duration-200 ml-2 dark:bg-blue-600 dark:hover:bg-blue-700">Nhắn tin nhóm</button>
+                    </div>
+                `;
+                groupListContainer.insertAdjacentHTML('beforeend', groupCard);
+            });
+            document.querySelectorAll('.join-group-button').forEach(button => {
+                button.onclick = (event) => joinGroup(event.target.dataset.groupId, event.target.dataset.groupName);
+            });
+            document.querySelectorAll('.group-chat-button').forEach(button => {
+                button.onclick = (event) => openChatModal('group', event.target.dataset.groupId, event.target.dataset.groupName);
+            });
+        };
+
+        // Function to render AI group suggestions
+        const renderAIGroupSuggestions = (groups) => {
+            aiGroupSuggestionsContainer.innerHTML = '';
+            if (groups.length === 0) {
+                aiGroupSuggestionsContainer.innerHTML = '<p class="text-gray-500 text-center dark:text-gray-300">Không tìm thấy gợi ý nhóm nào từ AI.</p>';
+                return;
+            }
+            groups.forEach(group => {
+                const groupCard = `
+                    <div class="flex items-center space-x-4 p-3 bg-blue-50 rounded-lg shadow-sm dark:bg-blue-800 dark:text-gray-100">
+                        <img src="${group.icon || 'https://placehold.co/48x48/random/FFFFFF?text=AI_Nhóm'}" alt="AI Group Icon" class="w-12 h-12 rounded-lg object-cover">
+                        <div class="flex-grow">
+                            <p class="font-semibold text-gray-800 dark:text-gray-100">${group.name}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-300">Chủ đề: ${group.topic} | Kỹ năng gợi ý: ${Array.isArray(group.suggestedSkills) ? group.suggestedSkills.join(', ') : ''}</p>
+                        </div>
+                        <button type="button" data-group-name="${group.name}" data-group-topic="${group.topic}" data-group-skills="${Array.isArray(group.suggestedSkills) ? group.suggestedSkills.join(',') : ''}" class="create-ai-group-button bg-purple-600 text-white text-sm px-4 py-2 rounded-full hover:bg-purple-700 transition duration-200 dark:bg-purple-700 dark:hover:bg-purple-800">Tạo nhóm này</button>
+                    </div>
+                `;
+                aiGroupSuggestionsContainer.insertAdjacentHTML('beforeend', groupCard);
+            });
+            document.querySelectorAll('.create-ai-group-button').forEach(button => {
+                button.onclick = (event) => {
+                    newGroupNameInput.value = event.target.dataset.groupName;
+                    newGroupTopicInput.value = event.target.dataset.groupTopic;
+                    // For suggested skills, you might want to map them to user IDs if possible, or just add as a note.
+                    // For this demo, we'll just show them in the invite list placeholder.
+                    newGroupMembersInput.value = ''; // Clear existing invited members
+                    showCustomMessage(`Thông tin nhóm "${event.target.dataset.groupName}" đã được điền vào biểu mẫu!`, 'info');
+                    createGroupModal.style.display = 'flex'; // Open create group modal
+                };
+            });
+        };
+
+
+        const applyFiltersAndSearch = () => {
+            const searchTerm = communitySearchInput.value.toLowerCase();
+            const selectedMajor = communityFilterMajor.value.toLowerCase();
+            const selectedSkill = communityFilterSkill.value.toLowerCase();
+            const selectedSubject = communityFilterSubject.value.toLowerCase();
+            const selectedHobby = communityFilterHobby.value.toLowerCase();
+
+            let filteredUsers = allUsers.filter(user => {
+                const matchesSearch = searchTerm === '' ||
+                                            user.name.toLowerCase().includes(searchTerm) ||
+                                            user.major.toLowerCase().includes(searchTerm) ||
+                                            (Array.isArray(user.skills) && user.skills.some(s => s.toLowerCase().includes(searchTerm))) ||
+                                            (Array.isArray(user.subjects) && user.subjects.some(s => s.toLowerCase().includes(searchTerm))) ||
+                                            (Array.isArray(user.hobbies) && user.hobbies.some(h => h.toLowerCase().includes(searchTerm)));
+
+
+                const matchesMajor = selectedMajor === '' || user.major.toLowerCase().includes(selectedMajor);
+                const matchesSkill = selectedSkill === '' || (Array.isArray(user.skills) && user.skills.some(s => s.toLowerCase().includes(selectedSkill)));
+                const matchesSubject = selectedSubject === '' || (Array.isArray(user.subjects) && user.subjects.some(s => s.toLowerCase().includes(selectedSubject)));
+                const matchesHobby = selectedHobby === '' || (Array.isArray(user.hobbies) && user.hobbies.some(h => h.toLowerCase().includes(selectedHobby)));
+
+                return matchesSearch && matchesMajor && matchesSkill && matchesSubject && matchesHobby;
+            });
+            renderUserSuggestions(filteredUsers.slice(0, SUGGESTIONS_PER_PAGE));
+            currentSuggestionsPage = 0; 
+        };
+
+        // "Kết nối" (Connect) functionality
+        const connectUser = async (userId) => {
+            if (!currentUserId) {
+                showCustomMessage("Bạn cần đăng nhập để kết nối.", 'error');
+                return;
+            }
+            console.log(`Kết nối với người dùng ID: ${userId}`);
+            try {
+                const connectionsRef = collection(db, `artifacts/${appId}/users/${currentUserId}/connections`);
+                await addDoc(connectionsRef, {
+                    targetUserId: userId,
+                    status: 'pending', 
+                    timestamp: new Date()
+                });
+                showCustomMessage(`Đã gửi yêu cầu kết nối tới ${userId}!`, 'success');
+            } catch (error) {
+                console.error("Error sending connection request:", error);
+                showCustomMessage("Không thể gửi yêu cầu kết nối. Vui lòng thử lại.", 'error');
+            }
+        };
+
+        // "Tham gia nhóm" (Join Group) functionality
+        const joinGroup = async (groupId, groupName) => {
+            if (!currentUserId) {
+                showCustomMessage("Bạn cần đăng nhập để tham gia nhóm.", 'error');
+                return;
+            }
+            console.log(`Tham gia nhóm ID: ${groupId}`);
+            try {
+                const groupDocRef = doc(db, `artifacts/${appId}/public/data/groups`, groupId);
+                const groupDoc = await getDoc(groupDocRef);
+                if (groupDoc.exists()) {
+                    const groupData = groupDoc.data();
+                    const currentMembers = groupData.members || 0;
+                    const updatedMemberIds = new Set(groupData.memberIds || []);
+                    
+                    if (updatedMemberIds.has(currentUserId)) {
+                        showCustomMessage(`Bạn đã là thành viên của nhóm "${groupData.name}" rồi!`, 'warning');
+                        openChatModal('group', groupId, groupName);
+                        return;
+                    }
+
+                    updatedMemberIds.add(currentUserId);
+
+                    await updateDoc(groupDocRef, {
+                        members: currentMembers + 1,
+                        memberIds: Array.from(updatedMemberIds)
+                    });
+
+                    const userGroupsRef = collection(db, `artifacts/${appId}/users/${currentUserId}/myGroups`);
+                    await setDoc(doc(userGroupsRef, groupId), {
+                        groupId: groupId,
+                        joinedAt: new Date()
+                    });
+
+                    // Send system message to the group's general channel
+                    const generalChannelId = groupData.channels.general?.id || 'general'; // Access nested channel data
+                    const messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/groups/${groupId}/channels/${generalChannelId}/messages`);
+                    await addDoc(messagesCollectionRef, {
+                        senderId: 'system_bot',
+                        text: `${allUsers.find(u => u.id === currentUserId)?.name || 'Một thành viên mới'} đã tham gia nhóm! Chào mừng!`,
+                        timestamp: new Date(),
+                        type: 'system' // Custom type for system messages
+                    });
+
+                    showCustomMessage(`Bạn đã tham gia nhóm "${groupData.name}" thành công!`, 'success'); // Updated message
+                    openChatModal('group', groupId, groupName);
+                } else {
+                    showCustomMessage("Nhóm không tồn tại.", 'error');
+                }
+            } catch (error) {
+                console.error("Error joining group:", error);
+                showCustomMessage("Không thể tham gia nhóm. Vui lòng thử lại.", 'error');
+            }
+        };
+
+        // --- Channel Tabs Functions ---
+        const renderChannels = (groupId) => {
+            channelTabsContainer.innerHTML = '';
+            const group = allGroups.find(g => g.id === groupId);
+            if (group && group.channels) { // Check if group.channels exists and is an object
+                const channelArray = Object.values(group.channels); // Convert object to array for iteration
+                if (channelArray.length > 0) {
+                    channelTabsContainer.classList.remove('hidden');
+                    channelArray.forEach(channel => {
+                        const isActive = currentChannelId === channel.id;
+                        const channelButton = document.createElement('button');
+                        channelButton.className = `channel-tab text-sm px-3 py-1 rounded-full whitespace-nowrap ${isActive ? 'active' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'}`;
+                        channelButton.textContent = `#${channel.name}`;
+                        channelButton.dataset.channelId = channel.id;
+                        channelButton.onclick = () => {
+                            currentChannelId = channel.id;
+                            // Remove active class from all tabs
+                            document.querySelectorAll('.channel-tab').forEach(tab => {
+                                tab.classList.remove('active');
+                                tab.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-700', 'dark:text-gray-200', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                            });
+                            // Add active class to clicked tab
+                            channelButton.classList.add('active');
+                            channelButton.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-700', 'dark:text-gray-200', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                            loadChatMessages(currentChatType, currentChatId, currentChannelId);
+                        };
+                        channelTabsContainer.appendChild(channelButton);
+                    });
+                    // Set initial active channel if not already set or if switching groups
+                    if (!currentChannelId || !channelArray.some(c => c.id === currentChannelId)) {
+                        currentChannelId = channelArray[0].id;
+                        // Select the newly active tab
+                        const activeTabElement = document.querySelector(`.channel-tab[data-channel-id="${currentChannelId}"]`);
+                        if (activeTabElement) {
+                            activeTabElement.classList.add('active');
+                            activeTabElement.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-700', 'dark:text-gray-200', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                        }
+                    }
+                } else {
+                    channelTabsContainer.classList.add('hidden');
+                }
+            } else {
+                channelTabsContainer.classList.add('hidden');
+            }
+        };
+
+        // --- Chat Modal Functions ---
+        const openChatModal = (type, id, name) => {
+            if (!currentUserId) {
+                showCustomMessage("Bạn cần đăng nhập để trò chuyện.", 'error');
+                return;
+            }
+
+            currentChatType = type;
+            currentChatId = id;
+            chatModalTitle.textContent = type === 'direct' ? `Trò chuyện với ${name}` : `Nhóm: ${name}`;
+            chatMessagesContainer.innerHTML = ''; 
+            chatSearchInput.value = ''; // Clear search input when opening new chat
+
+            // Clear previous participants list
+            groupParticipantsDiv.innerHTML = '';
+            groupParticipantsDiv.classList.add('hidden');
+            channelTabsContainer.innerHTML = ''; // Clear channel tabs
+            channelTabsContainer.classList.add('hidden'); // Hide channel tabs
+
+
+            if (unsubscribeChatListener) {
+                unsubscribeChatListener();
+            }
+
+            if (type === 'group') {
+                renderChannels(currentChatId); // Render channels for the group
+                // Make sure to load messages for the initial channel after rendering channels
+                loadChatMessages(currentChatType, currentChatId, currentChannelId);
+            } else {
+                currentChannelId = null; // No channel for direct chats
+                loadChatMessages(currentChatType, currentChatId);
+            }
+            
+            chatModal.style.display = 'flex'; 
+            chatInput.focus();
+        };
+
+        const closeChatModal = () => {
+            chatModal.style.display = 'none'; 
+            currentChatType = null;
+            currentChatId = null;
+            currentChannelId = null; // Reset channel ID on close
+            if (unsubscribeChatListener) {
+                unsubscribeChatListener(); 
+                unsubscribeChatListener = null;
+            }
+        };
+
+        // Function to filter chat messages based on search input
+        const searchChatMessages = () => {
+            const searchTerm = chatSearchInput.value.toLowerCase().trim();
+            const messages = chatMessagesContainer.children;
+
+            for (let i = 0; i < messages.length; i++) {
+                const messageElement = messages[i];
+                // Only search regular messages, not system messages
+                if (messageElement.classList.contains('text-center') && messageElement.classList.contains('italic')) {
+                    continue; 
+                }
+
+                const messageText = messageElement.querySelector('.message-bubble')?.textContent.toLowerCase();
+                if (messageText && messageText.includes(searchTerm)) {
+                    messageElement.classList.remove('hidden');
+                    // Add a temporary highlight class instead of direct style
+                    messageElement.classList.add('bg-yellow-200', 'dark:bg-yellow-800'); 
+                } else {
+                    messageElement.classList.add('hidden');
+                    messageElement.classList.remove('bg-yellow-200', 'dark:bg-yellow-800'); 
+                }
+            }
+
+            if (searchTerm === '') {
+                // If search term is empty, show all messages and remove highlights
+                for (let i = 0; i < messages.length; i++) {
+                    messages[i].classList.remove('hidden');
+                    messages[i].classList.remove('bg-yellow-200', 'dark:bg-yellow-800');
+                }
+            }
+        };
+
+        // Function to add/remove a reaction to a message
+        const toggleReaction = async (messageDocId, emoji) => {
+            if (!currentUserId) {
+                showCustomMessage("Bạn cần đăng nhập để thả reaction.", 'error');
+                return;
+            }
+
+            let messageRef;
+            if (currentChatType === 'direct') {
+                const directChatId = [currentUserId, currentChatId].sort().join('_');
+                messageRef = doc(db, `artifacts/${appId}/public/data/chats/${directChatId}/messages`, messageDocId);
+            } else if (currentChatType === 'group' && currentChannelId) {
+                messageRef = doc(db, `artifacts/${appId}/public/data/groups/${currentChatId}/channels/${currentChannelId}/messages`, messageDocId);
+            } else {
+                console.error("Cannot add reaction: invalid chat type or channel.");
+                return;
+            }
+
+            try {
+                const docSnap = await getDoc(messageRef);
+                if (docSnap.exists()) {
+                    const messageData = docSnap.data();
+                    const reactions = messageData.reactions || {};
+                    let usersReacted = reactions[emoji] || [];
+
+                    if (usersReacted.includes(currentUserId)) {
+                        // User already reacted, remove reaction
+                        usersReacted = usersReacted.filter(uid => uid !== currentUserId);
+                        showCustomMessage(`Đã xóa reaction ${emoji}!`, 'info');
+                    } else {
+                        // User not reacted, add reaction
+                        usersReacted.push(currentUserId);
+                        showCustomMessage(`Đã thêm reaction ${emoji}!`, 'success');
+                    }
+
+                    if (usersReacted.length > 0) {
+                        reactions[emoji] = usersReacted;
+                    } else {
+                        delete reactions[emoji]; // Remove emoji if no users reacted
+                    }
+
+                    await updateDoc(messageRef, { reactions: reactions });
+                }
+            } catch (error) {
+                console.error("Error toggling reaction:", error);
+                showCustomMessage("Không thể thả reaction. Vui lòng thử lại.", 'error');
+            }
+        };
+
+
+        const loadChatMessages = (type, id, channelId = null) => {
+            if (!isAuthReady || !currentUserId) {
+                console.warn("Firebase Auth not ready or no user. Skipping chat message load.");
+                return;
+            }
+
+            // Ensure system_bot user exists in allUsers for proper display
+            if (!allUsers.some(user => user.id === 'system_bot')) {
+                allUsers.push({
+                    id: 'system_bot',
+                    name: "Hệ thống",
+                    major: "Bot",
+                    skills: [],
+                    subjects: [],
+                    hobbies: [],
+                    status: "online",
+                    avatar: "https://placehold.co/48x48/607D8B/FFFFFF?text=SYS" 
+                });
+            }
+
+            let messagesCollectionRef;
+            if (type === 'direct') {
+                const directChatId = [currentUserId, id].sort().join('_');
+                messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/chats/${directChatId}/messages`);
+            } else if (type === 'group' && channelId) {
+                messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/groups/${id}/channels/${channelId}/messages`);
+            } else {
+                console.error("Invalid chat type or missing channelId for group chat.");
+                return;
+            }
+
+            // Update group participants display
+            if (type === 'group') {
+                const group = allGroups.find(g => g.id === id);
+                if (group && Array.isArray(group.memberIds)) {
+                    // Filter out current user from participant list
+                    const participantNames = group.memberIds
+                        .filter(memberId => memberId !== currentUserId) // Exclude current user from this display
+                        .map(memberId => allUsers.find(u => u.id === memberId)?.name)
+                        .filter(name => name) // Filter out undefined names
+                        .join(', ');
+                    
+                    groupParticipantsDiv.innerHTML = `Thành viên: ${participantNames || 'Chưa có thành viên nào khác.'}`;
+                    groupParticipantsDiv.classList.remove('hidden');
+                } else {
+                    groupParticipantsDiv.classList.add('hidden');
+                }
+            } else {
+                groupParticipantsDiv.classList.add('hidden');
+            }
+
+
+            try {
+                unsubscribeChatListener = onSnapshot(messagesCollectionRef, (snapshot) => {
+                    chatMessagesContainer.innerHTML = ''; 
+                    snapshot.docs
+                        .map(doc => ({id: doc.id, ...doc.data()})) // Get doc.id along with data
+                        .sort((a, b) => (a.timestamp && b.timestamp) ? new Date(a.timestamp) - new Date(b.timestamp) : 0) // Convert Timestamp to Date
+                        .forEach(msg => {
+                            const isCurrentUser = msg.senderId === currentUserId;
+                            const isSystemMessage = msg.type === 'system';
+
+                            if (isSystemMessage) {
+                                const systemMessageElement = `
+                                    <div class="text-center text-gray-500 text-sm italic my-2 dark:text-gray-400">
+                                        ${msg.text}
+                                    </div>
+                                `;
+                                chatMessagesContainer.insertAdjacentHTML('beforeend', systemMessageElement);
+                                return;
+                            }
+
+                            const messageClass = isCurrentUser ? 'justify-end' : 'justify-start';
+                            const bubbleClass = isCurrentUser ? 'bg-green-200' : 'bg-blue-200'; // Apply Discord-like bubble colors in CSS
+                            const sender = allUsers.find(u => u.id === msg.senderId);
+                            const senderName = sender?.name || 'Người dùng ẩn danh';
+                            const senderAvatar = sender?.avatar || 'https://placehold.co/32x32/random/FFFFFF?text=AVT';
+                            const messageTime = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : ''; // Format time
+
+                            const reactionsHtml = Object.entries(msg.reactions || {}).map(([emoji, userIds]) => `
+                                <span class="reaction-bubble bg-gray-300 dark:bg-gray-600 px-2 py-0.5 rounded-full text-xs cursor-pointer flex items-center space-x-1"
+                                      onclick="toggleReaction('${msg.id}', '${emoji}')"
+                                      title="${userIds.map(uid => allUsers.find(u => u.id === uid)?.name || uid).join(', ')}">
+                                    ${emoji} ${userIds.length}
+                                </span>
+                            `).join('');
+                            
+                            const messageElement = `
+                                <div class="flex ${messageClass} items-start space-x-2 my-2 w-full group">
+                                    ${!isCurrentUser ? `
+                                        <img src="${senderAvatar}" alt="Avatar" class="w-8 h-8 rounded-full object-cover mt-1 flex-shrink-0">
+                                    ` : ''}
+                                    <div class="flex flex-col flex-grow">
+                                        <span class="font-semibold text-xs ${isCurrentUser ? 'text-right' : 'text-left'} text-gray-700 dark:text-gray-200 mb-1">${senderName}</span>
+                                        <div class="flex items-center space-x-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}">
+                                            <div class="message-bubble ${bubbleClass} p-2 rounded-lg max-w-[calc(100%-40px)] text-sm relative break-words">
+                                                ${msg.text}
+                                                <span class="absolute right-1 bottom-1 text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 dark:text-gray-300">${messageTime}</span>
+                                                <div class="flex flex-wrap gap-1 mt-1">
+                                                    ${reactionsHtml}
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
+                                                <button onclick="replyToMessage('${msg.text.replace(/'/g, "\\'")}')" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" title="Trả lời">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10a2 2 0 012-2h10a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10V4m-3 3l3-3 3 3" />
+                                                    </svg>
+                                                </button>
+                                                <button onclick="toggleReaction('${msg.id}', '❤️')" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200" title="Yêu thích">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                                <button onclick="toggleReaction('${msg.id}', '😂')" class="text-yellow-500 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-200" title="Haha">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </button>
+                                                <button onclick="toggleReaction('${msg.id}', '👍')" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200" title="Thích">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10a4 4 0 00-4 4v2H6a2 2 0 00-2 2v1h16v-1a2 2 0 00-2-2h-2v-2a4 4 0 00-4-4z" />
+                                                    </svg>
+                                                </button>
+                                                <button onclick="copyToClipboard('${msg.text.replace(/'/g, "\\'")}')" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" title="Sao chép">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M15 2l3-3 3 3M14 4h.01M17 4h.01" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ${isCurrentUser ? `
+                                        <img src="${senderAvatar}" alt="Avatar" class="w-8 h-8 rounded-full object-cover mt-1 flex-shrink-0">
+                                    ` : ''}
+                                </div>
+                            `;
+                            chatMessagesContainer.insertAdjacentHTML('beforeend', messageElement);
+                        });
+                    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; 
+                }, (error) => {
+                    console.error("Error loading chat messages:", error);
+                });
+            } catch (error) {
+                console.error("Error setting up chat listener:", error);
+            }
+        };
+
+        // Function to set reply text in chat input
+        const replyToMessage = (messageText) => {
+            chatInput.value = `> ${messageText}\n`;
+            chatInput.focus();
+        };
+
+        // Array of emojis for the sticker button
+        const emojis = ['😀', '😄', '😂', '🥳', '👍', '❤️', '🔥', '🚀', '🌟', '💡', '🤖', '📚'];
+
+        // Function to insert a random emoji
+        const insertEmoji = () => {
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            chatInput.value += randomEmoji;
+            chatInput.focus();
+        };
+
+
+        const sendChatMessage = async () => {
+            const messageText = chatInput.value.trim();
+            if (messageText === '' || !currentChatId || !currentUserId || !currentChatType) {
+                return;
+            }
+
+            let messagesCollectionRef;
+            if (currentChatType === 'direct') {
+                const directChatId = [currentUserId, currentChatId].sort().join('_');
+                messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/chats/${directChatId}/messages`);
+            } else if (currentChatType === 'group' && currentChannelId) {
+                messagesCollectionRef = collection(db, `artifacts/${appId}/public/data/groups/${currentChatId}/channels/${currentChannelId}/messages`);
+            } else {
+                console.error("Invalid chat type or no channel selected for group chat.");
+                return;
+            }
+
+            try {
+                await addDoc(messagesCollectionRef, {
+                    senderId: currentUserId,
+                    text: messageText,
+                    timestamp: new Date(),
+                    reactions: {} // Initialize reactions for new messages
+                });
+                chatInput.value = ''; 
+
+                // AI auto-reply for group chats (only in general channel for simplicity)
+                if (currentChatType === 'group' && currentChannelId === 'general') {
+                    // Simulate AI thinking time
+                    await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 500)); // 0.5 to 2 seconds
+
+                    const aiUserId = 'ai_bot_1'; // Unique ID for the AI bot
+                    const aiResponseText = "Chào bạn! Tôi là AI hỗ trợ nhóm. Có gì tôi có thể giúp không?"; // Simple AI response
+
+                    // Add AI user to allUsers if not already present
+                    if (!allUsers.some(user => user.id === aiUserId)) {
+                        allUsers.push({
+                            id: aiUserId,
+                            name: "AI Trợ Lý",
+                            major: "AI",
+                            skills: ["Hỗ trợ", "Tư vấn"],
+                            subjects: ["Đa dạng"],
+                            hobbies: ["Học hỏi"],
+                            status: "online",
+                            avatar: "https://placehold.co/48x48/808080/FFFFFF?text=AI" // Grey avatar for AI
+                        });
+                    }
+
+                    await addDoc(messagesCollectionRef, {
+                        senderId: aiUserId,
+                        text: aiResponseText,
+                        timestamp: new Date(),
+                        reactions: {} // Initialize reactions for AI messages
+                    });
+                }
+
+            } catch (error) {
+                console.error("Error sending message:", error);
+                showCustomMessage("Không thể gửi tin nhắn. Vui lòng thử lại.", 'error');
+            }
+        };
+
+        // --- Create Group Modal Functions ---
+        const closeCreateGroupModal = () => {
+            createGroupModal.style.display = 'none';
+        };
+
+        // Search members for invitation
+        const searchUsersForGroupInvitation = () => {
+            const searchTerm = memberSearchInput.value.toLowerCase().trim();
+            memberSearchResults.innerHTML = ''; 
+
+            if (searchTerm === '') {
+                memberSearchResults.innerHTML = '<p class="text-gray-500 p-2 dark:text-gray-400">Vui lòng nhập tên hoặc ID để tìm kiếm.</p>';
+                return;
+            }
+
+            const foundUsers = allUsers.filter(user =>
+                user.id.toLowerCase().includes(searchTerm) ||
+                user.name.toLowerCase().includes(searchTerm)
+            );
+
+            if (foundUsers.length === 0) {
+                memberSearchResults.innerHTML = '<p class="text-gray-500 p-2 dark:text-gray-400">Không tìm thấy thành viên nào.</p>';
+                return;
+            }
+
+            foundUsers.forEach(user => {
+                const userResultCard = `
+                    <div class="flex items-center justify-between p-2 border-b border-gray-200 last:border-b-0 dark:border-gray-600">
+                        <div class="flex items-center space-x-2">
+                            <img src="${user.avatar || 'https://placehold.co/32x32/random/FFFFFF?text=AVT'}" alt="Avatar" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <p class="font-semibold text-gray-800 dark:text-gray-100">${user.name}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">ID: <span class="user-id-link-search cursor-pointer underline text-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-500" data-user-id="${user.id}" data-user-name="${user.name}">${user.id}</span></p>
+                            </div>
+                        </div>
+                        <button type="button" data-user-id="${user.id}" class="add-member-button bg-blue-500 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-600 transition duration-200 dark:bg-blue-600 dark:hover:bg-blue-700">Thêm</button>
+                    </div>
+                `;
+                memberSearchResults.insertAdjacentHTML('beforeend', userResultCard);
+            });
+
+            document.querySelectorAll('.add-member-button').forEach(button => {
+                button.onclick = (event) => addSelectedUserToInviteList(event.target.dataset.userId);
+            });
+            // Attach event listener for clickable user IDs in search results
+            document.querySelectorAll('.user-id-link-search').forEach(span => {
+                span.onclick = (event) => openChatModal('direct', event.target.dataset.userId, event.target.dataset.userName);
+            });
+        };
+
+        const addSelectedUserToInviteList = (userId) => {
+            let currentMembers = newGroupMembersInput.value.split(',').map(id => id.trim()).filter(id => id !== '');
+            if (!currentMembers.includes(userId)) {
+                currentMembers.push(userId);
+                newGroupMembersInput.value = currentMembers.join(', ');
+                showCustomMessage(`Đã thêm ${userId} vào danh sách mời!`, 'success');
+            } else {
+                showCustomMessage(`${userId} đã có trong danh sách mời.`, 'warning');
+            }
+        };
+
+        const submitNewGroup = async () => {
+            const groupName = newGroupNameInput.value.trim();
+            const groupTopic = newGroupTopicInput.value.trim();
+            const invitedMemberIds = newGroupMembersInput.value.split(',').map(id => id.trim()).filter(id => id !== '');
+
+            if (!groupName || !groupTopic) {
+                showCustomMessage("Vui lòng điền đầy đủ tên nhóm và chủ đề.", 'warning');
+                return;
+            }
+
+            if (!currentUserId) {
+                showCustomMessage("Lỗi: Không tìm thấy ID người dùng hiện tại.", 'error');
+                return;
+            }
+
+            try {
+                const groupsCollectionRef = collection(db, `artifacts/${appId}/public/data/groups`);
+                const newGroupRef = await addDoc(groupsCollectionRef, {
+                    name: groupName,
+                    topic: groupTopic,
+                    members: 1 + invitedMemberIds.length, 
+                    creatorId: currentUserId,
+                    createdAt: new Date(),
+                    icon: `https://placehold.co/48x48/${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}/FFFFFF?text=Nhóm`,
+                    memberIds: [currentUserId, ...invitedMemberIds], // Store actual member IDs
+                    channels: {general: { id: 'general', name: 'chung' }} // Default general channel (as object for mock)
+                });
+
+                showCustomMessage(`Nhóm "${groupName}" đã được tạo thành công! Nhóm đã được thêm vào danh sách.`, 'success');
+                closeCreateGroupModal();
+                document.getElementById('groupList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } catch (error) {
+                console.error("Error creating group:", error);
+                showCustomMessage("Không thể tạo nhóm. Vui lòng thử lại.", 'error');
+            }
+        };
+
+        // --- AI Group Suggestion Logic ---
+        const requestAIGroupSuggestions = async () => {
+            aiGroupSuggestionsLoading.classList.remove('hidden');
+            requestAIGroupSuggestionsButton.disabled = true;
+            requestAIGroupSuggestionsButton.classList.add('opacity-50', 'cursor-not-allowed');
+            aiGroupSuggestionsContainer.innerHTML = ''; // Clear previous suggestions
+
+            try {
+                const prompt = "Generate 3 unique group profiles for a study community, focusing on diverse academic topics and skills. Each group should have a 'name', 'topic', and 'suggestedSkills' (an array of 2-3 relevant skills).";
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "name": { "type": "STRING" },
+                                    "topic": { "type": "STRING" },
+                                    "suggestedSkills": { "type": "ARRAY", "items": { "type": "STRING" } }
+                                }
+                            }
+                        }
+                    }
+                };
+                const apiKey = ""; // API key will be provided by Canvas runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                let newGroupSuggestions = [];
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    try {
+                        newGroupSuggestions = JSON.parse(result.candidates[0].content.parts[0].text);
+                        // Assign unique IDs and random icons
+                        newGroupSuggestions = newGroupSuggestions.map((group, index) => ({
+                            ...group,
+                            id: `ai_group_${Date.now()}_${index}`,
+                            members: Math.floor(Math.random() * 20) + 5, // Random members for display
+                            icon: `https://placehold.co/48x48/${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}/FFFFFF?text=AI_G`,
+                            memberIds: [], // AI suggestions don't have members initially
+                            channels: {general: { id: 'general', name: 'chung' }} // Default general channel (as object for mock)
+                        }));
+                    } catch (parseError) {
+                        console.error("Error parsing AI group response:", parseError);
+                        newGroupSuggestions = []; 
+                    }
+                } else {
+                    console.warn("AI group response did not contain expected content structure.");
+                    newGroupSuggestions = [];
+                }
+
+                renderAIGroupSuggestions(newGroupSuggestions);
+                showCustomMessage("Đã tải gợi ý nhóm từ AI!", 'success');
+
+            } catch (error) {
+                console.error("Error requesting AI group suggestions:", error);
+                showCustomMessage("Không thể tải gợi ý nhóm từ AI. Vui lòng thử lại.", 'error');
+            } finally {
+                aiGroupSuggestionsLoading.classList.add('hidden');
+                requestAIGroupSuggestionsButton.disabled = false;
+                requestAIGroupSuggestionsButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        };
+
+
+        // --- Firestore Data Fetching and Real-time Listeners ---
+        const fetchAndRenderCommunityData = () => {
+            if (!isAuthReady) {
+                console.warn("Firebase Auth not ready. Skipping data fetch.");
+                return;
+            }
+
+            const usersCollectionRef = collection(db, `artifacts/${appId}/public/data/users`);
+            onSnapshot(usersCollectionRef, (snapshot) => {
+                const fetchedUsers = [];
+                snapshot.docs.forEach(doc => {
+                    fetchedUsers.push({ id: doc.id, ...doc.data() });
+                });
+                // Ensure system_bot is added to allUsers if not already present
+                if (!fetchedUsers.some(user => user.id === 'system_bot')) {
+                    fetchedUsers.push({
+                        id: 'system_bot',
+                        name: "Hệ thống",
+                        major: "Bot",
+                        skills: [],
+                        subjects: [],
+                        hobbies: [],
+                        status: "online",
+                        avatar: "https://placehold.co/48x48/607D8B/FFFFFF?text=SYS" 
+                    });
+                }
+                if (fetchedUsers.length > 0) {
+                    allUsers = fetchedUsers;
+                } else {
+                    // Fallback mock data if Firestore is empty or inaccessible (including system_bot)
+                    allUsers = [
+                        { id: 'user3', name: "Lê Văn C", major: "Khoa học Dữ liệu", skills: ["R", "SQL", "Thống kê"], subjects: ["Xác suất thống kê"], hobbies: ["Thể thao"], status: "online", avatar: "https://placehold.co/48x48/87CEEB/FFFFFF?text=AVT" },
+                        { id: 'user4', name: "Phạm Thị D", major: "Kỹ thuật phần mềm", skills: ["Java", "Cloud Computing", "Web Dev"], subjects: ["Lập trình hướng đối tượng"], hobbies: ["Âm nhạc"], status: "online", avatar: "https://placehold.co/48x48/FFB6C1/FFFFFF?text=AVT" },
+                        { id: 'user1', name: "Nguyễn Văn A", major: "CNTT", skills: ["Python", "Machine Learning"], subjects: ["Toán cao cấp"], hobbies: ["Đọc sách"], status: "online", avatar: "https://placehold.co/48x48/AEC6CF/FFFFFF?text=AVT" },
+                        { id: 'user2', name: "Trần Thị B", major: "Marketing", skills: ["Content Creation", "SEO"], subjects: ["Kinh tế vi mô"], hobbies: ["Chơi game"], status: "offline", avatar: "https://placehold.co/48x48/FFD700/FFFFFF?text=AVT" },
+                        { id: 'user5', name: "Hoàng Minh E", major: "Thiết kế đồ họa", skills: ["UI/UX", "Figma"], subjects: ["Thiết kế web"], hobbies: ["Du lịch"], status: "offline", avatar: "https://placehold.co/48x48/B0E0E6/FFFFFF?text=AVT" },
+                        { id: 'user6', name: "Đỗ Thị F", major: "Kinh doanh quốc tế", skills: ["Thương mại điện tử", "Quản lý dự án"], subjects: ["Kinh doanh quốc tế"], hobbies: ["Nấu ăn"], status: "online", avatar: "https://placehold.co/48x48/DDA0DD/FFFFFF?text=AVT" },
+                        { id: 'system_bot', name: "Hệ thống", major: "Bot", skills: [], subjects: [], hobbies: [], status: "online", avatar: "https://placehold.co/48x48/607D8B/FFFFFF?text=SYS" } // Ensure system bot is always present
+                    ];
+                }
+                renderUserSuggestions(allUsers.slice(0, SUGGESTIONS_PER_PAGE));
+            }, (error) => {
+                console.error("Error fetching users:", error);
+                allUsers = [
+                    { id: 'user3', name: "Lê Văn C", major: "Khoa học Dữ liệu", skills: ["R", "SQL", "Thống kê"], subjects: ["Xác suất thống kê"], hobbies: ["Thể thao"], status: "online", avatar: "https://placehold.co/48x48/87CEEB/FFFFFF?text=AVT" },
+                    { id: 'user4', name: "Phạm Thị D", major: "Kỹ thuật phần mềm", skills: ["Java", "Cloud Computing", "Web Dev"], subjects: ["Lập trình hướng đối tượng"], hobbies: ["Âm nhạc"], status: "online", avatar: "https://placehold.co/48x48/FFB6C1/FFFFFF?text=AVT" },
+                    { id: 'system_bot', name: "Hệ thống", major: "Bot", skills: [], subjects: [], hobbies: [], status: "online", avatar: "https://placehold.co/48x48/607D8B/FFFFFF?text=SYS" }
+                ];
+                renderUserSuggestions(allUsers.slice(0, SUGGESTIONS_PER_PAGE));
+            });
+
+            const groupsCollectionRef = collection(db, `artifacts/${appId}/public/data/groups`);
+            onSnapshot(groupsCollectionRef, (snapshot) => {
+                const fetchedGroups = [];
+                snapshot.docs.forEach(doc => {
+                    fetchedGroups.push({ id: doc.id, ...doc.data() });
+                });
+                if (fetchedGroups.length > 0) {
+                    allGroups = fetchedGroups;
+                } else {
+                    // Fallback mock data if Firestore is empty or inaccessible
+                    allGroups = [
+                        { id: 'group3', name: "Nhóm Nghiên Cứu NLP", members: 10, topic: "Xử lý ngôn ngữ tự nhiên", icon: "https://placehold.co/48x48/F08080/FFFFFF?text=NLP", memberIds: ['user1', 'user3', 'user5', 'ai_bot_1'], channels: { general: { id: 'general', name: 'chung' }, nlp_research: { id: 'nlp_research', name: 'nghiên-cứu-nlp' } } },
+                        { id: 'group4', name: "CLB Lập Trình Thi Đấu", members: 25, topic: "Thuật toán, C++", icon: "https://placehold.co/48x48/90EE90/FFFFFF?text=Code", memberIds: ['user1', 'user2', 'user4', 'user6'], channels: { general: { id: 'general', name: 'chung' }, cpp_algo: { id: 'cpp_algo', name: 'cpp-thuật-toán' }, contest_prep: { id: 'contest_prep', name: 'luyện-thi' } } },
+                        { id: 'group1', name: "Nhóm Học Python Nâng Cao", members: 15, topic: "Python, AI", icon: "https://placehold.co/48x48/87CEEB/FFFFFF?text=Nhóm", memberIds: ['user1', 'user2', 'user3'], channels: { general: { id: 'general', name: 'chung' }, python_advanced: { id: 'python_advanced', name: 'python-nâng-cao' } } },
+                        { id: 'group2', name: "CLB AI & Robotics", members: 30, topic: "Robotics, Computer Vision", icon: "https://placehold.co/48x48/FFB6C1/FFFFFF?text=CLB", memberIds: ['user4', 'user5', 'user6', 'ai_bot_1'], channels: { general: { id: 'general', name: 'chung' }, robotics_vision: { id: 'robotics_vision', name: 'robotics-vision' }, ai_discussion: { id: 'ai_discussion', name: 'thảo-luận-ai' } } }
+                    ];
+                }
+                renderGroupList(allGroups);
+            }, (error) => {
+                console.error("Error fetching groups:", error);
+                // In case of error, still provide some mock data
+                allGroups = [
+                    { id: 'group3', name: "Nhóm Nghiên Cứu NLP", members: 10, topic: "Xử lý ngôn ngữ tự nhiên", icon: "https://placehold.co/48x48/F08080/FFFFFF?text=NLP", memberIds: ['user1', 'user3', 'user5', 'ai_bot_1'], channels: { general: { id: 'general', name: 'chung' }, nlp_research: { id: 'nlp_research', name: 'nghiên-cứu-nlp' } } },
+                    { id: 'group4', name: "CLB Lập Trình Thi Đấu", members: 25, topic: "Thuật toán, C++", icon: "https://placehold.co/48x48/90EE90/FFFFFF?text=Code", memberIds: ['user1', 'user2', 'user4', 'user6'], channels: { general: { id: 'general', name: 'chung' }, cpp_algo: { id: 'cpp_algo', name: 'cpp-thuật-toán' }, contest_prep: { id: 'contest_prep', name: 'luyện-thi' } } }
+                ];
+                renderGroupList(allGroups);
+            });
+        };
+
+        // --- Theme Toggle Functionality ---
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            }
+        };
+
+        const toggleTheme = () => {
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        };
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize DOM Elements
+            aiSuggestionsContainer = document.getElementById('aiSuggestions');
+            aiSuggestionsLoading = document.getElementById('aiSuggestionsLoading');
+            requestAISuggestionsButton = document.getElementById('requestAISuggestionsButton');
+            groupListContainer = document.getElementById('groupList');
+            communitySearchInput = document.getElementById('communitySearchInput');
+            searchCommunityButton = document.getElementById('searchCommunityButton');
+            communityFilterMajor = document.getElementById('communityFilterMajor');
+            communityFilterSkill = document.getElementById('communityFilterSkill');
+            communityFilterSubject = document.getElementById('communityFilterSubject');
+            communityFilterHobby = document.getElementById('communityFilterHobby');
+            loadMoreSuggestionsButton = document.getElementById('loadMoreSuggestions');
+            createGroupButton = document.getElementById('createGroupButton');
+            chatModal = document.getElementById('chatModal');
+            chatModalTitle = document.getElementById('chatModalTitle');
+            chatMessagesContainer = document.getElementById('chatMessages');
+            chatInput = document.getElementById('chatInput');
+            createGroupModal = document.getElementById('createGroupModal');
+            newGroupNameInput = document.getElementById('newGroupName');
+            newGroupTopicInput = document.getElementById('newGroupTopic');
+            newGroupMembersInput = document.getElementById('newGroupMembers');
+            createGroupForm = document.getElementById('createGroupForm'); 
+            memberSearchInput = document.getElementById('memberSearchInput');
+            searchMembersButton = document.getElementById('searchMembersButton');
+            memberSearchResults = document.getElementById('memberSearchResults');
+            userIdDisplay = document.getElementById('userIdDisplay');
+            requestAIGroupSuggestionsButton = document.getElementById('requestAIGroupSuggestionsButton'); // Get new button
+            aiGroupSuggestionsLoading = document.getElementById('aiGroupSuggestionsLoading'); // Get new loading spinner
+            aiGroupSuggestionsContainer = document.getElementById('aiGroupSuggestions'); // Get new container
+            themeToggleButton = document.getElementById('themeToggleButton'); // Get theme toggle button
+            sunIcon = document.getElementById('sunIcon'); // Get sun icon
+            moonIcon = document.getElementById('moonIcon'); // Get moon icon
+            groupParticipantsDiv = document.getElementById('groupParticipants'); // Get group participants div
+            channelTabsContainer = document.getElementById('channelTabsContainer'); // Get channel tabs container
+            chatSearchInput = document.getElementById('chatSearchInput'); // Get chat search input
+            searchChatButton = document.getElementById('searchChatButton'); // Get chat search button
+            emojiButton = document.getElementById('emojiButton'); // Get emoji button
+
+
+            // Apply saved theme or default to light
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            // Assign db and auth immediately after app initialization
+            db = getFirestore(app); 
+            auth = getAuth(app);    
+
+            // Authenticate user
+            if (initialAuthToken) {
+                await auth.signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await auth.signInAnonymously(auth);
+            }
+
+            // Listen for auth state changes and then fetch data
+            auth.onAuthStateChanged((user) => { 
+                if (user) {
+                    currentUserId = user.uid;
+                    isAuthReady = true; 
+                    console.log("Firebase Auth Ready. User ID:", currentUserId);
+                    userIdDisplay.textContent = `ID của bạn: ${currentUserId}`;
+                    userIdDisplay.classList.remove('hidden');
+                } else {
+                    currentUserId = null;
+                    isAuthReady = true; 
+                    console.log("Firebase Auth Ready. No user signed in.");
+                    userIdDisplay.classList.add('hidden');
+                }
+                // Fetch data after auth state is determined
+                fetchAndRenderCommunityData();
+            });
+
+            // --- Event Listeners ---
+            searchCommunityButton.addEventListener('click', () => {
+                applyFiltersAndSearch();
+            });
+            communitySearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    applyFiltersAndSearch();
+                }
+            });
+
+            communityFilterMajor.addEventListener('change', applyFiltersAndSearch);
+            communityFilterSkill.addEventListener('change', applyFiltersAndSearch);
+            communityFilterSubject.addEventListener('change', applyFiltersAndSearch);
+            communityFilterHobby.addEventListener('change', applyFiltersAndSearch);
+
+            loadMoreSuggestionsButton.addEventListener('click', () => {
+                currentSuggestionsPage++;
+                const startIndex = currentSuggestionsPage * SUGGESTIONS_PER_PAGE;
+                const endIndex = startIndex + SUGGESTIONS_PER_PAGE;
+                const currentFilteredUsers = allUsers.filter(user => {
+                    const searchTerm = communitySearchInput.value.toLowerCase();
+                    const selectedMajor = communityFilterMajor.value.toLowerCase();
+                    const selectedSkill = communityFilterSkill.value.toLowerCase();
+                    const selectedSubject = communityFilterSubject.value.toLowerCase();
+                    const selectedHobby = communityFilterHobby.value.toLowerCase();
+
+                    const matchesSearch = searchTerm === '' ||
+                                            user.name.toLowerCase().includes(searchTerm) ||
+                                            user.major.toLowerCase().includes(searchTerm) ||
+                                            (Array.isArray(user.skills) && user.skills.some(s => s.toLowerCase().includes(searchTerm))) ||
+                                            (Array.isArray(user.subjects) && user.subjects.some(s => s.toLowerCase().includes(searchTerm))) ||
+                                            (Array.isArray(user.hobbies) && user.hobbies.some(h => h.toLowerCase().includes(searchTerm)));
+
+                    const matchesMajor = selectedMajor === '' || user.major.toLowerCase().includes(selectedMajor);
+                    const matchesSkill = selectedSkill === '' || (Array.isArray(user.skills) && user.skills.some(s => s.toLowerCase().includes(selectedSkill)));
+                    const matchesSubject = selectedSubject === '' || (Array.isArray(user.subjects) && user.subjects.some(s => s.toLowerCase().includes(selectedSubject)));
+                    const matchesHobby = selectedHobby === '' || (Array.isArray(user.hobbies) && user.hobbies.some(h => h.toLowerCase().includes(selectedHobby)));
+
+                    return matchesSearch && matchesMajor && matchesSkill && matchesSubject && matchesHobby;
+                });
+
+                const usersToRender = currentFilteredUsers.slice(0, endIndex);
+                renderUserSuggestions(usersToRender);
+
+                if (endIndex >= currentFilteredUsers.length) {
+                    loadMoreSuggestionsButton.textContent = 'Đã tải hết';
+                    loadMoreSuggestionsButton.disabled = true;
+                    loadMoreSuggestionsButton.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            requestAISuggestionsButton.addEventListener('click', async () => {
+                aiSuggestionsLoading.classList.remove('hidden');
+                requestAISuggestionsButton.disabled = true;
+                requestAISuggestionsButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+                try {
+                    const prompt = "Generate 3 user profiles for a study community, focusing on diverse skills and interests, including their name, major, skills (array), subjects (array), hobbies (array), and status (online/offline).";
+                    const payload = {
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        "name": { "type": "STRING" },
+                                        "major": { "type": "STRING" },
+                                        "skills": { "type": "ARRAY", "items": { "type": "STRING" } },
+                                        "subjects": { "type": "ARRAY", "items": { "type": "STRING" } },
+                                        "hobbies": { "type": "ARRAY", "items": { "type": "STRING" } },
+                                        "status": { "type": "STRING", "enum": ["online", "offline"] }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    const apiKey = ""; // API key will be provided by Canvas runtime
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    let newSuggestions = [];
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        try {
+                            newSuggestions = JSON.parse(result.candidates[0].content.parts[0].text);
+                            newSuggestions = newSuggestions.map((user, index) => ({
+                                ...user,
+                                id: `ai_user_${Date.now()}_${index}`,
+                                avatar: `https://placehold.co/48x48/${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}/FFFFFF?text=AI`
+                            }));
+                        } catch (parseError) {
+                            console.error("Error parsing AI response:", parseError);
+                            newSuggestions = []; 
+                        }
+                    } else {
+                        console.warn("AI response did not contain expected content structure.");
+                        newSuggestions = [];
+                    }
+
+                    allUsers = [...newSuggestions, ...allUsers];
+                    renderUserSuggestions(allUsers.slice(0, SUGGESTIONS_PER_PAGE));
+                    currentSuggestionsPage = 0; 
+                    showCustomMessage("Đã tải gợi ý AI mới!", 'success');
+
+                } catch (error) {
+                    console.error("Error requesting AI suggestions:", error);
+                    showCustomMessage("Không thể tải gợi ý AI. Vui lòng thử lại.", 'error');
+                } finally {
+                    aiSuggestionsLoading.classList.add('hidden');
+                    requestAISuggestionsButton.disabled = false;
+                    requestAISuggestionsButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+
+            createGroupButton.addEventListener('click', () => {
+                if (!currentUserId) {
+                    showCustomMessage("Bạn cần đăng nhập để tạo nhóm.", 'error');
+                    return;
+                }
+                newGroupNameInput.value = '';
+                newGroupTopicInput.value = '';
+                newGroupMembersInput.value = '';
+                memberSearchInput.value = ''; 
+                memberSearchResults.innerHTML = ''; 
+                createGroupModal.style.display = 'flex';
+            });
+
+            createGroupForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); 
+                submitNewGroup(); 
+            });
+
+            searchMembersButton.addEventListener('click', () => {
+                searchUsersForGroupInvitation();
+            });
+            memberSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchUsersForGroupInvitation();
+                }
+            });
+
+            // New: Event listener for AI Group Suggestion button
+            requestAIGroupSuggestionsButton.addEventListener('click', requestAIGroupSuggestions);
+
+            // New: Event listener for Theme Toggle button
+            themeToggleButton.addEventListener('click', toggleTheme);
+
+            // New: Event listeners for chat search
+            searchChatButton.addEventListener('click', searchChatMessages);
+            chatSearchInput.addEventListener('input', searchChatMessages); // Live search as user types
+            chatSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchChatMessages();
+                }
+            });
+
+            // New: Event listener for emoji button
+            emojiButton.addEventListener('click', insertEmoji);
+
+            window.onclick = function(event) {
+                if (event.target == chatModal) {
+                    closeChatModal();
+                }
+                if (event.target == createGroupModal) {
+                    closeCreateGroupModal();
+                }
+            };
+        });
+    </script>
+</body>
+</html>

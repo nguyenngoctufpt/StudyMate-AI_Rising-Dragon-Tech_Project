@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Phân Tích Kỹ Năng | Tuyển dụng & Sự nghiệp</title>
+    <!-- Tải Tailwind CSS từ CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tải Font Awesome cho các icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tải Chart.js cho biểu đồ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Tải PDF.js để đọc file PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        // Cấu hình workerSrc cho PDF.js.
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+    <style>
+        :root {
+            --primary-blue: #3b82f6; --dark-blue: #1d4ed8; --accent-purple: #8b5cf6;
+            --background-light: #f4f7fe; --card-background: #ffffff; --text-primary: #111827;
+            --text-secondary: #4b5563; --border-color: #e5e7eb; --input-border: #d1d5db;
+        }
+
+        html.dark-theme {
+            --primary-blue: #60a5fa; --dark-blue: #3b82f6; --accent-purple: #a78bfa;
+            --background-light: #0d1117; --card-background: #161b22; --text-primary: #f0f6fc;
+            --text-secondary: #a1a1aa; --border-color: #30363d; --input-border: #4b5563;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-secondary);
+            transition: background-color 0.3s ease;
+        }
+
+        .main-container { max-width: 1400px; margin: auto; padding: 2rem 1.5rem; }
+        .card {
+            background-color: var(--card-background);
+            border-radius: 16px; padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color); transition: all 0.3s ease;
+        }
+        
+        .tab-button {
+            padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            border-radius: 0;
+        }
+        .tab-button.active {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .primary-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            color: #ffffff; padding: 0.75rem 1.5rem; border-radius: 12px;
+            border: none; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px -5px rgba(99, 102, 241, 0.4);
+        }
+        .primary-button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 20px -5px rgba(99, 102, 241, 0.5); }
+        .primary-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        input, textarea, select {
+            width: 100%; padding: 0.75rem; background-color: var(--background-light);
+            border: 1px solid var(--input-border); border-radius: 8px;
+            font-size: 1rem; outline: none; color: var(--text-primary);
+            transition: all 0.2s ease-in-out;
+        }
+        textarea { resize: vertical; }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        
+        .file-input-custom {
+            display: flex; align-items: center; justify-content: center;
+            padding: 2rem; border: 2px dashed var(--input-border);
+            border-radius: 8px; cursor: pointer; background-color: var(--background-light);
+            color: var(--text-secondary); transition: all 0.2s ease;
+        }
+        .file-input-custom:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+        .file-input-custom input[type="file"] { display: none; }
+
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+            flex-direction: column; color: white;
+        }
+        .loading-spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid white;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite; margin-bottom: 1rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hidden { display: none; }
+        
+        .modal-overlay {
+            position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all .3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+             background-color: var(--card-background); border-radius: 16px;
+             padding: 2rem; width: 90%; max-width: 800px;
+             max-height: 90vh; overflow-y: auto;
+             transform: scale(0.95); transition: all .3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .notification-dot {
+            width: 10px; height: 10px; background-color: #ef4444; border-radius: 50%;
+        }
+        .filter-button {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+        }
+        .filter-button.active {
+             background-color: var(--primary-blue);
+             color: white;
+             border-color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body class="text-base">
+
+    <div class="main-container">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            
+             <h1 id="home-button" class="text-3xl font-extrabold flex items-center cursor-pointer" style="color: var(--text-primary);">
+                 <i class="fas fa-brain text-2xl mr-3 text-blue-500"></i>
+                 <span>AI Phân Tích Kỹ Năng</span>
+            </h1>
+            <div id="header-actions" class="flex items-center gap-4">
+                <!-- Updated back button text -->
+                <button id="back-to-home-btn" class="hidden text-sm font-semibold text-blue-500 hover:underline"><i class="fas fa-arrow-left mr-2"></i>Quay lại màn hình chính</button>
+                <!-- New reset button with updated text and function -->
+               <div class="flex items-center space-x-4">
+    <a href="index.html" id="reset-app-btn" class="text-sm font-semibold text-red-500 hover:underline flex items-center">
+        <i class="fas fa-redo mr-2"></i>Quay lại menu 
+    </a>
+    <button id="theme-toggle-button" class="text-2xl" style="color: var(--text-secondary);">
+        <i class="fas fa-adjust"></i>
+    </button
+                <button id="theme-toggle-button" class="text-2xl" style="color: var(--text-secondary);"><i class="fas fa-adjust"></i></button>
+            </div>
+        </header>
+
+        <!-- Role Selection View -->
+        <div id="role-selection-view">
+            <h2 class="text-3xl font-bold text-center mb-2" style="color: var(--text-primary);">Chào mừng bạn đến với StudyMate AI</h2>
+            <p class="text-lg text-center mb-10">Vui lòng chọn vai trò của bạn để bắt đầu.</p>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div id="select-student" class="card hover:border-blue-500 cursor-pointer text-center transition-all duration-300 transform hover:-translate-y-1">
+                    <i class="fas fa-user-graduate text-6xl bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-4"></i>
+                    <h3 class="text-xl font-bold" style="color: var(--text-primary);">Tôi là Sinh viên / Người tìm việc</h3>
+                    <p class="mt-2">Phân tích CV, khám phá kỹ năng và tìm kiếm cơ hội việc làm.</p>
+                </div>
+                <div id="select-enterprise" class="card hover:border-purple-500 cursor-pointer text-center transition-all duration-300 transform hover:-translate-y-1">
+                    <i class="fas fa-building text-6xl bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent mb-4"></i>
+                    <h3 class="text-xl font-bold" style="color: var(--text-primary);">Tôi là Doanh nghiệp / Nhà tuyển dụng</h3>
+                    <p class="mt-2">Đăng tin, phân tích JD, và đánh giá ứng viên bằng AI.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student View -->
+        <div id="student-view" class="hidden">
+            <div class="flex space-x-4 mb-6 border-b" style="border-color: var(--border-color);">
+                <button class="tab-button" data-tab="student-analyze-tab">Phân Tích Hồ Sơ</button>
+                <button class="tab-button" data-tab="student-jobs-tab">Việc Làm & Trạng Thái</button>
+            </div>
+            <div id="student-analyze-tab" class="tab-content">
+                 <div class="grid lg:grid-cols-5 gap-8">
+                    <!-- Left 3 columns for input and text results -->
+                    <div class="lg:col-span-3 flex flex-col gap-8">
+                        <div class="card">
+                            <h3 class="text-xl font-bold mb-4" style="color: var(--text-primary);"><i class="fas fa-upload mr-2 text-blue-500"></i>Tự động Phân tích CV</h3>
+                            <p class="mb-6">Tải lên CV (PDF), AI sẽ tự động phân tích để giúp bạn hiểu rõ điểm mạnh, yếu và nhận lộ trình phát triển.</p>
+                            <label for="studentPdfInput" class="file-input-custom">
+                                <i class="fas fa-file-pdf mr-2 text-2xl"></i> 
+                                <span id="studentPdfFileName">Tải lên CV để Phân tích</span>
+                                <input type="file" id="studentPdfInput" accept=".pdf">
+                            </label>
+                        </div>
+                        <div class="card" id="student-analysis-results-container">
+                             <p class="text-center">Kết quả phân tích sẽ hiện ở đây.</p>
+                        </div>
+                    </div>
+                    <!-- Right 2 columns for the chart -->
+                    <div class="lg:col-span-2 card flex flex-col">
+                        <h3 class="text-xl font-bold mb-4" style="color: var(--text-primary);"><i class="fas fa-chart-pie mr-2 text-purple-500"></i>Biểu Đồ Kỹ Năng</h3>
+                        <div class="flex-grow min-h-[300px]"><canvas id="studentRadarChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <div id="student-jobs-tab" class="tab-content">
+                 <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="card">
+                         <h3 class="text-xl font-bold mb-4">Danh sách việc làm</h3>
+                         <input type="search" id="jobSearchInput" placeholder="Tìm kiếm theo chức danh..." class="mb-4">
+                         <div id="job-listings-for-student" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
+                    </div>
+                    <div class="card">
+                         <h3 class="text-xl font-bold mb-4">Trạng thái ứng tuyển của bạn</h3>
+                         <div id="student-application-filters" class="flex flex-wrap gap-2 mb-4"></div>
+                         <div id="student-applications-status" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+        <!-- Enterprise View -->
+        <div id="enterprise-view" class="hidden">
+            <div class="flex space-x-4 mb-6 border-b" style="border-color: var(--border-color);">
+                 <button class="tab-button" data-tab="enterprise-analytics-tab">Tổng quan</button>
+                <button class="tab-button" data-tab="enterprise-jobs-tab">Quản lý Tuyển Dụng</button>
+            </div>
+            <div id="enterprise-analytics-tab" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="card p-6 flex items-center"><div class="p-4 bg-blue-100 dark:bg-blue-900/50 rounded-lg mr-4"><i class="fas fa-briefcase text-2xl text-blue-500"></i></div><div><p class="text-sm">Tổng tin đăng</p><p id="total-jobs-stat" class="text-2xl font-bold" style="color:var(--text-primary)">0</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="p-4 bg-purple-100 dark:bg-purple-900/50 rounded-lg mr-4"><i class="fas fa-users text-2xl text-purple-500"></i></div><div><p class="text-sm">Tổng ứng viên</p><p id="total-applicants-stat" class="text-2xl font-bold" style="color:var(--text-primary)">0</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="p-4 bg-green-100 dark:bg-green-900/50 rounded-lg mr-4"><i class="fas fa-user-check text-2xl text-green-500"></i></div><div><p class="text-sm">Đã tuyển</p><p id="hired-stat" class="text-2xl font-bold" style="color:var(--text-primary)">0</p></div></div>
+                    <div class="card p-6 flex items-center"><div class="p-4 bg-yellow-100 dark:bg-yellow-900/50 rounded-lg mr-4"><i class="fas fa-hourglass-half text-2xl text-yellow-500"></i></div><div><p class="text-sm">Đang phỏng vấn</p><p id="interview-stat" class="text-2xl font-bold" style="color:var(--text-primary)">0</p></div></div>
+                </div>
+                <div class="card">
+                    <h4 class="text-lg font-semibold text-center mb-4">Phân bổ ứng viên theo trạng thái</h4>
+                    <div class="h-80"><canvas id="analytics-status-chart"></canvas></div>
+                </div>
+                <div class="card mt-6">
+                    <h3 class="text-xl font-bold mb-4">Thông báo toàn cầu (Realtime Database)</h3>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="global-announcement-input" placeholder="Nhập thông báo mới..." class="flex-grow">
+                        <button id="send-announcement-btn" class="primary-button text-sm py-2 px-4">Gửi</button>
+                    </div>
+                    <p class="text-sm font-semibold mt-4">Thông báo hiện tại:</p>
+                    <div id="global-announcement-display" class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200">
+                        Chưa có thông báo.
+                    </div>
+                </div>
+            </div>
+             <div id="enterprise-jobs-tab" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="card">
+                        <h3 class="text-xl font-bold mb-4">Đăng tin tuyển dụng mới</h3>
+                        <div class="space-y-4">
+                            <div><label class="font-semibold block mb-2">Tên công ty</label><input type="text" id="companyNameInput" placeholder="VD: Công ty TNHH ABC"></div>
+                            <div><label class="font-semibold block mb-2">Chức danh công việc</label><input type="text" id="jobTitleInput" placeholder="VD: Chuyên viên Marketing"></div>
+                            <div><label class="font-semibold block mb-2">Địa điểm làm việc</label><input type="text" id="jobLocationInput" placeholder="VD: Hà Nội"></div>
+                            <div><label class="font-semibold block mb-2">Tải lên Mô tả công việc (PDF)</label><label class="file-input-custom"><i class="fas fa-file-upload mr-2"></i> <span id="jdFileName">Chọn file PDF</span><input type="file" id="jdPdfInput" accept=".pdf"></label></div>
+                            <div><label class="font-semibold block mb-2">Hoặc nhập Mô tả công việc</label><textarea id="jobDescriptionInput" rows="8" placeholder="Mô tả chi tiết công việc, yêu cầu, quyền lợi..."></textarea></div>
+                            <button id="postJobBtn" class="primary-button w-full">Đăng tin & Phân tích JD</button>
+                        </div>
+                    </div>
+                     <div class="card">
+                        <h3 class="text-xl font-bold mb-4">Các tin đã đăng & Ứng viên</h3>
+                        <div id="posted-jobs-list" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div><p id="loadingMessage" class="text-lg">AI đang phân tích...</p>
+    </div>
+    <div id="analysis-modal" class="modal-overlay">
+        <div id="analysis-modal-content" class="modal-content relative"></div>
+    </div>
+    <div id="apply-modal" class="modal-overlay">
+        <div id="apply-modal-content" class="modal-content relative"></div>
+    </div>
+     <div id="add-applicant-modal" class="modal-overlay">
+        <div id="add-applicant-modal-content" class="modal-content relative"></div>
+    </div>
+
+    <!-- New PDF Viewer Modal -->
+    <div id="pdf-viewer-modal" class="modal-overlay">
+        <div class="modal-content relative">
+            <button class="js-modal-close absolute top-4 right-5 text-2xl font-bold">&times;</button>
+            <h3 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Xem CV (PDF)</h3>
+            <div id="pdf-viewer-container" class="space-y-4 overflow-y-auto max-h-[70vh]">
+                <!-- PDF pages will be rendered here -->
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-4">Lưu ý: Chỉ các file PDF nhỏ mới có thể hiển thị trực tiếp.</p>
+        </div>
+    </div>
+    
+    <script type="module">
+        // --- Firebase Imports ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js"; 
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js"; 
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"; 
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js"; 
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js"; // Import Realtime Database functions
+
+        // Declare __app_id and __initial_auth_token for local development compatibility
+        // These will be overridden by the Canvas environment if the app is run there.
+        let __app_id;
+        let __initial_auth_token;
+
+        // Ensure window properties exist for older environments or strict modes
+        if (typeof window.__app_id === 'undefined') {
+            window.__app_id = 'default-app-id-local'; // A default for local testing
+        }
+        if (typeof window.__initial_auth_token === 'undefined') {
+            window.__initial_auth_token = null; // A default for local testing
+        }
+        // Assign to local variables for use within this module scope
+        __app_id = window.__app_id;
+        __initial_auth_token = window.__initial_auth_token;
+
+
+        // --- Firebase Variables ---
+        let app;
+        let db; // Firestore instance
+        let rtdb; // Realtime Database instance
+        let auth;
+        let analytics; 
+        let userId = 'anonymous'; 
+        let isAuthReady = false; 
+
+        // --- STATE & CONSTANTS ---
+        let jobPostings = []; 
+        let studentApplications = []; 
+        let editingJobId = null; 
+        
+        const STATUSES = {
+            NEW: 'Mới',
+            REVIEWED: 'Đã xem',
+            INTERVIEW: 'Phỏng vấn',
+            OFFER: 'Mời nhận việc',
+            HIRED: 'Đã tuyển',
+            REJECTED: 'Trượt'
+        };
+
+        // --- DOM Elements ---
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const homeButton = document.getElementById('home-button');
+        const backToHomeBtn = document.getElementById('back-to-home-btn');
+        const resetAppBtn = document.getElementById('reset-app-btn'); 
+        const roleSelectionView = document.getElementById('role-selection-view');
+        const studentView = document.getElementById('student-view');
+        const enterpriseView = document.getElementById('enterprise-view');
+        const selectStudentBtn = document.getElementById('select-student');
+        const selectEnterpriseBtn = document.getElementById('select-enterprise');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        const modals = {
+            analysis: document.getElementById('analysis-modal'),
+            apply: document.getElementById('apply-modal'),
+            addApplicant: document.getElementById('add-applicant-modal'),
+            pdfViewer: document.getElementById('pdf-viewer-modal'), 
+        };
+
+        // Student elements
+        const studentPdfInput = document.getElementById('studentPdfInput');
+        const studentPdfFileName = document.getElementById('studentPdfFileName');
+        const studentAnalysisContainer = document.getElementById('student-analysis-results-container');
+        const jobListingsForStudent = document.getElementById('job-listings-for-student');
+        const studentApplicationsStatus = document.getElementById('student-applications-status');
+        const studentApplicationFilters = document.getElementById('student-application-filters');
+        const jobSearchInput = document.getElementById('jobSearchInput');
+
+        // Enterprise elements
+        const companyNameInput = document.getElementById('companyNameInput'); 
+        const jobLocationInput = document.getElementById('jobLocationInput'); 
+        const jdPdfInput = document.getElementById('jdPdfInput'); 
+        const jdFileName = document.getElementById('jdFileName'); 
+        const jobTitleInput = document.getElementById('jobTitleInput');
+        const jobDescriptionInput = document.getElementById('jobDescriptionInput');
+        const postJobBtn = document.getElementById('postJobBtn');
+        const postedJobsList = document.getElementById('posted-jobs-list');
+        const totalJobsStat = document.getElementById('total-jobs-stat');
+        const totalApplicantsStat = document.getElementById('total-applicants-stat');
+        const hiredStat = document.getElementById('hired-stat');
+        const interviewStat = document.getElementById('interview-stat');
+        const globalAnnouncementInput = document.getElementById('global-announcement-input'); // New RTDB element
+        const globalAnnouncementDisplay = document.getElementById('global-announcement-display'); // New RTDB element
+        const sendAnnouncementBtn = document.getElementById('send-announcement-btn'); // New RTDB element
+
+        
+        // --- THEME & VIEW MANAGEMENT ---
+        const applyTheme = (theme) => document.documentElement.classList.toggle('dark-theme', theme === 'dark');
+        themeToggleButton.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark-theme') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        const setupTabs = (viewId) => {
+            const view = document.getElementById(viewId);
+            const tabButtons = view.querySelectorAll('.tab-button');
+            const tabContents = view.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(button.dataset.tab).classList.add('active');
+
+                    if(button.dataset.tab === 'enterprise-analytics-tab') {
+                        renderAnalyticsDashboard();
+                    }
+                });
+            });
+            // Click the first tab to activate it by default if any exist
+            if(tabButtons.length) tabButtons[0].click();
+        };
+
+        const resetToHomeView = () => {
+             roleSelectionView.classList.remove('hidden');
+             studentView.classList.add('hidden');
+             enterpriseView.classList.add('hidden');
+             backToHomeBtn.classList.add('hidden'); 
+             // Keep resetAppBtn visible: This is the core change.
+             // resetAppBtn.classList.add('hidden'); // REMOVED THIS LINE
+             // Reset job posting form state when returning to home view
+             resetJobForm();
+        };
+
+        const showView = (view) => {
+            roleSelectionView.classList.add('hidden');
+            studentView.classList.add('hidden');
+            enterpriseView.classList.add('hidden');
+            const targetView = view === 'student' ? studentView : enterpriseView;
+            targetView.classList.remove('hidden');
+            setupTabs(targetView.id);
+            backToHomeBtn.classList.remove('hidden'); 
+            // Keep resetAppBtn visible: This is the core change.
+            // resetAppBtn.classList.remove('hidden'); // REMOVED THIS LINE
+        };
+
+        selectStudentBtn.addEventListener('click', () => showView('student'));
+        selectEnterpriseBtn.addEventListener('click', () => showView('enterprise'));
+        homeButton.addEventListener('click', resetToHomeView);
+        backToHomeBtn.addEventListener('click', resetToHomeView); 
+        resetAppBtn.addEventListener('click', () => { 
+            showCustomMessage('Đang trở về màn hình lựa chọn vai trò...', 'info', false, () => {
+                resetToHomeView(); 
+            });
+        });
+
+        // --- UTILITY FUNCTIONS ---
+        const showLoading = (message) => { loadingMessage.textContent = message; loadingOverlay.classList.remove('hidden'); };
+        const hideLoading = () => loadingOverlay.classList.add('hidden');
+        
+        // Modified to also return Base64 string for PDF storage
+        const extractPdfTextAndBase64 = async (file) => {
+            if (!file) return { text: null, base64: null };
+
+            const reader = new FileReader();
+            const promise = new Promise((resolve, reject) => {
+                reader.onload = async () => {
+                    const arrayBuffer = reader.result;
+                    // Check file size before base64 encoding to prevent hitting Firestore limit too early
+                    if (arrayBuffer.byteLength > 1024 * 1024) { // Max ~1MB
+                        return reject(new Error("File PDF quá lớn (tối đa 1MB). Vui lòng chọn file nhỏ hơn."));
+                    }
+                    const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')); // Base64 encode ArrayBuffer
+
+                    try {
+                        const pdfDocument = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        let extractedText = '';
+                        for (let i = 1; i <= pdfDocument.numPages; i++) {
+                            const page = await pdfDocument.getPage(i);
+                            const textContent = await page.getTextContent();
+                            extractedText += textContent.items.map(item => item.str).join(' ') + '\n';
+                        }
+                        resolve({ text: extractedText.trim(), base64: base64 });
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+            return promise;
+        };
+
+        const closeModal = (modalKey) => modals[modalKey]?.classList.remove('active');
+        
+        // --- GEMINI API CALL ---
+        const callGeminiAPI = async (prompt, schema) => {
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json", responseSchema: schema }
+            };
+            // API Key provided by the user
+            const apiKey = "AIzaSyAoVSY9_SoZRhmllzr4ItHWac1ms3X5VWg"; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API Error Response:", errorText); // Log raw error response
+                throw new Error(`API request failed: ${response.status} - ${response.statusText}. Chi tiết: ${errorText}`);
+            }
+            const result = await response.json(); // FIXED: Added await here
+
+            if (result && result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0 && result.candidates[0].content.parts[0].text) {
+                try {
+                    return JSON.parse(result.candidates[0].content.parts[0].text);
+                } catch (e) {
+                    console.error("Lỗi phân tích JSON từ phản hồi AI:", e, "Văn bản thô:", result.candidates[0].content.parts[0].text);
+                    throw new Error("Không thể phân tích phản hồi của AI thành JSON. AI có thể đã trả về JSON sai định dạng.");
+                }
+            } else if (result.promptFeedback && result.promptFeedback.safetyRatings) {
+                // Handle cases where content is blocked by safety filters
+                const blockedReasons = result.promptFeedback.safetyRatings
+                    .filter(rating => rating.blocked)
+                    .map(rating => rating.category.replace('HARM_CATEGORY_', ''));
+                console.warn("Phản hồi AI bị chặn do quy tắc an toàn:", result);
+                throw new Error(`Nội dung bị chặn do quy tắc an toàn (${blockedReasons.join(', ')}). Vui lòng thử lại với nội dung khác.`);
+            } else {
+                console.error("Cấu trúc phản hồi API không mong đợi hoặc nội dung trống:", result);
+                throw new Error("Cấu trúc phản hồi không hợp lệ từ API. Thiếu ứng cử viên hoặc nội dung.");
+            }
+        };
+
+        // --- CHARTING ---
+        const drawChart = (canvasId, type, chartLabels, chartDatasets, customOptions = {}) => {
+            const ctx = document.getElementById(canvasId)?.getContext('2d');
+            if (!ctx) return null;
+
+            const chartVarName = `${canvasId}Instance`;
+            if (window[chartVarName]) {
+                window[chartVarName].destroy();
+            }
+
+            const isDarkMode = document.documentElement.classList.contains('dark-theme');
+            const legendColor = isDarkMode ? '#f0f6fc' : '#111827';
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+            const pointLabelColor = isDarkMode ? '#a1a1aa' : '#4b5563';
+            const tickColor = isDarkMode ? '#a1a1aa' : '#6b7280';
+
+            const baseOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: legendColor, font: { size: 12 } }
+                    }
+                }
+            };
+
+            let specificOptions = {};
+            if (type === 'radar') {
+                specificOptions = {
+                    plugins: { ...baseOptions.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label || ''}: ${context.parsed.r.toFixed(0)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: { 
+                            suggestedMin: 0, suggestedMax: 100,
+                            grid: { color: gridColor }, angleLines: { color: gridColor },
+                            pointLabels: { font: { size: 12, weight: '500' }, color: pointLabelColor },
+                            ticks: { backdropColor: 'transparent', color: tickColor, stepSize: 20, callback: value => value + '%' }
+                        }
+                    }
+                };
+            }
+            
+            const finalOptions = { ...baseOptions, ...specificOptions, ...customOptions };
+
+            const chart = new Chart(ctx, {
+                type: type,
+                data: { labels: chartLabels, datasets: chartDatasets },
+                options: finalOptions
+            });
+            window[chartVarName] = chart;
+            return chart;
+        };
+        
+        // --- RENDERING FUNCTIONS ---
+        const renderAll = () => {
+            renderPostedJobs();
+            renderJobPostingsForStudent();
+            renderStudentApplications();
+        };
+
+        const renderPostedJobs = () => {
+             postedJobsList.innerHTML = jobPostings.length === 0 
+                ? `<p>Chưa có tin tuyển dụng nào.</p>`
+                : jobPostings.map(job => `
+                <div class="p-4 rounded-lg border" style="border-color: var(--border-color); background-color: var(--background-light);">
+                    <div class="flex justify-between items-start">
+                         <div>
+                            <h4 class="font-bold" style="color: var(--text-primary);">${job.title}</h4>
+                            <p class="text-sm text-gray-500">${job.companyName || 'Không rõ công ty'} - ${job.jobLocation || 'Không rõ địa điểm'}</p>
+                         </div>
+                         <div class="flex flex-col sm:flex-row gap-2">
+                            <button class="text-xs font-semibold text-blue-500 hover:underline" onclick="window.showAddApplicantModal('${job.id}')">+ Thêm ứng viên</button>
+                            <button class="text-xs font-semibold text-purple-500 hover:underline" onclick="window.editJob('${job.id}')">Sửa tin</button>
+                            <button class="text-xs font-semibold text-red-500 hover:underline" onclick="window.deleteJob('${job.id}')">Xóa tin</button>
+                         </div>
+                    </div>
+                    <p class="text-sm font-semibold text-purple-500 my-2">Tổng ứng viên: ${job.applicants ? job.applicants.length : 0}</p>
+                    <div class="mt-2 space-y-3">${job.applicants && job.applicants.length > 0 ? job.applicants.map((app, index) => renderApplicant(job.id, app, index)).join('') : '<p class="text-sm text-gray-500">Chưa có ứng viên nào.</p>'}</div>
+                </div>`).join('');
+        };
+
+        const renderApplicant = (jobId, app, appIndex) => {
+            const statusOptions = Object.values(STATUSES).map(status => 
+                `<option value="${status}" ${app.status === status ? 'selected' : ''}>${status}</option>`
+            ).join('');
+
+            return `
+            <div class="p-3 border rounded-md" style="border-color: var(--input-border);">
+                 <p class="font-semibold" style="color: var(--text-primary);">${app.name || `Ứng viên #${appIndex + 1}`}</p>
+                 <p class="text-sm text-gray-500">${app.email || 'Không có email'}</p>
+                 <div class="grid grid-cols-2 gap-2 mt-2">
+                     <button class="text-sm text-blue-500 font-semibold text-left" onclick="window.analyzeApplicant('${jobId}', ${appIndex})">Phân tích CV</button>
+                     ${app.cvBase64 ? `<button class="text-sm text-green-500 font-semibold text-left" onclick="window.viewApplicantPdf('${jobId}', ${appIndex})">Xem CV (PDF)</button>` : ''}
+                     <select class="text-sm border rounded-md p-1" onchange="window.updateApplicantStatus(this, '${jobId}', ${appIndex}, this.value)">
+                          ${statusOptions}
+                     </select>
+                 </div>
+                 <div class="mt-2">
+                    <textarea class="w-full text-sm p-1" rows="2" placeholder="Để lại bình luận..." id="feedback-textarea-${jobId}-${appIndex}">${app.feedback || ''}</textarea>
+                    <button class="primary-button text-xs py-1 px-2 mt-1 w-full" onclick="window.saveFeedback(this, '${jobId}', ${appIndex})">Lưu & Gửi Phản Hồi</button>
+                 </div>
+            </div>`;
+        }
+
+        const renderJobPostingsForStudent = (searchTerm = '') => {
+            const filteredJobs = jobPostings.filter(job => 
+                job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                (job.companyName && job.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (job.jobLocation && job.jobLocation.toLowerCase().includes(searchTerm.toLowerCase()))
+            ); 
+            jobListingsForStudent.innerHTML = filteredJobs.length === 0
+                ? `<p>Không tìm thấy công việc nào.</p>`
+                : filteredJobs.map(job => `
+                <div class="p-4 rounded-lg border flex items-center gap-4" style="border-color: var(--border-color);">
+                    <div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center"><i class="far fa-building text-2xl text-gray-400"></i></div>
+                    <div class="flex-grow">
+                        <h4 class="font-bold" style="color: var(--text-primary);">${job.title}</h4>
+                        <p class="text-sm my-1 text-gray-600">${job.companyName || 'Không rõ công ty'} - ${job.jobLocation || 'Không rõ địa điểm'}</p>
+                        <p class="text-sm my-1">${job.description ? job.description.substring(0, 100) + '...' : ''}</p>
+                        <div class="text-xs font-semibold my-2 text-blue-500">Yêu cầu: ${job.requiredSkills ? job.requiredSkills.join(', ') : 'N/A'}</div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button class="primary-button text-sm py-2 px-4 self-center" onclick="window.showApplyModal('${job.id}')">Ứng tuyển</button>
+                        <!-- Nút Xem JD (PDF) luôn hiển thị, kiểm tra jdBase64 khi hàm được gọi -->
+                        <button class="primary-button text-sm py-2 px-4 self-center bg-purple-500" onclick="window.viewJdPdf('${job.id}')">Xem JD (PDF)</button>
+                    </div>
+                </div>`).join('');
+        };
+
+        const renderStudentApplications = (statusFilter = 'all') => {
+            // Filter applications relevant to the current user
+            const currentUserApplications = jobPostings.flatMap(job => 
+                job.applicants ? job.applicants.map((applicant, index) => ({ job, applicant, applicantIndex: index })) : []
+            ).filter(({ applicant }) => applicant.applicantUserId === userId);
+
+            const filteredApps = currentUserApplications.filter(appInfo => {
+                if (statusFilter === 'all') return true;
+                return appInfo.applicant.status === statusFilter;
+            });
+
+            studentApplicationsStatus.innerHTML = filteredApps.length === 0 ? `<p>Không có đơn ứng tuyển nào khớp.</p>` : filteredApps.map(appInfo => {
+                    const { job, applicant, applicantIndex } = appInfo;
+                    const statusColor = applicant.status === STATUSES.HIRED || applicant.status === STATUSES.OFFER ? 'text-green-500' : (applicant.status === STATUSES.REJECTED ? 'text-red-500' : 'text-yellow-500');
+                    const hasNewFeedback = applicant.hasNewFeedback;
+                    return `
+                    <div class="p-3 rounded-lg border relative cursor-pointer" style="border-color: var(--border-color);" onclick="window.markFeedbackAsRead('${job.id}', ${applicantIndex})">
+                        ${hasNewFeedback ? '<div class="notification-dot absolute top-2 right-2"></div>' : ''}
+                        <p class="font-bold" style="color: var(--text-primary);">${job.title}</p>
+                        <p class="text-sm text-gray-600">${job.companyName || 'Không rõ công ty'}</p>
+                        <p class="text-sm my-1">${applicant.name || 'Người ứng tuyển'}</p>
+                        <p class="text-sm font-semibold">Trạng thái: <span class="${statusColor}">${applicant.status}</span></p>
+                        <p class="text-sm font-semibold">Phản hồi từ NTD:</p>
+                        <p class="text-sm p-2 mt-1 rounded" style="background-color: var(--background-light);">${applicant.feedback || 'Chưa có phản hồi.'}</p>
+                    </div>`}).join('');
+        };
+        const renderStudentAnalysisResult = (result) => {
+            studentAnalysisContainer.innerHTML = `
+                 <h3 class="text-xl font-bold mb-4" style="color: var(--text-primary);"><i class="fas fa-lightbulb text-yellow-400 mr-2"></i>Kỹ Năng Cần Phát Triển</h3>
+                 <ul class="space-y-2">${result.skillsToDevelop.map(s => `<li class="flex items-center"><i class="fas fa-star text-yellow-400/50 mr-2"></i>${s}</li>`).join('') || '<p>Không có đề xuất.</p>'}</ul>
+                 <h3 class="text-xl font-bold mt-6 mb-4" style="color: var(--text-primary);"><i class="fas fa-road mr-2 text-green-500"></i>Lộ Trình Học Tập Gợi Ý</h3>
+                 <div class="space-y-3">${result.learningPath.map((p, i) => `<div class="p-3 rounded" style="background-color:var(--background-light)"><p class="font-bold"><span class="text-blue-500">Bước ${i+1}:</span> ${p.step}</p><p class="text-sm">${p.description}</p></div>`).join('') || '<p>Không có đề xuất.</p>'}</div>`;
+            const chartDatasets = [{ 
+                label: 'Mức độ thành thạo', 
+                data: result.skills.map(s => s.level * 20),
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: 'rgb(59, 130, 246)',
+                pointBackgroundColor: 'rgb(59, 130, 246)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(59, 130, 246)',
+                borderWidth: 2,
+            }];
+            drawChart('studentRadarChart', 'radar', result.skills.map(s => s.name), chartDatasets);
+        };
+        const renderStudentApplicationFilters = () => {
+            const allStatuses = ['all', ...Object.values(STATUSES)];
+            studentApplicationFilters.innerHTML = allStatuses.map(status => 
+                `<button class="filter-button ${status === 'all' ? 'active' : ''}" data-status="${status}">${status === 'all' ? 'Tất cả' : status}</button>`
+            ).join('');
+
+            studentApplicationFilters.querySelectorAll('.filter-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    studentApplicationFilters.querySelector('.active').classList.remove('active');
+                    button.classList.add('active');
+                    renderStudentApplications(button.dataset.status);
+                });
+            });
+        };
+        const renderAnalyticsDashboard = () => {
+            const allApplicants = jobPostings.flatMap(job => job.applicants || []);
+            totalJobsStat.textContent = jobPostings.length; // Total jobs is jobPostings.length
+            totalApplicantsStat.textContent = allApplicants.length; // Corrected total applicants count
+
+            const statusCounts = Object.values(STATUSES).reduce((acc, status) => {
+                acc[status] = 0;
+                return acc;
+            }, {});
+
+            allApplicants.forEach(app => {
+                if (statusCounts.hasOwnProperty(app.status)) {
+                    statusCounts[app.status]++;
+                }
+            });
+
+            hiredStat.textContent = statusCounts[STATUSES.HIRED];
+            interviewStat.textContent = statusCounts[STATUSES.INTERVIEW];
+            
+            drawChart('analytics-status-chart', 'pie', Object.keys(statusCounts), [{
+                data: Object.values(statusCounts),
+                backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#3b82f6'],
+                hoverOffset: 4
+            }]);
+        };
+
+
+        // --- STUDENT LOGIC ---
+        const analyzeStudentProfile = async (cvText) => {
+            if (!cvText || cvText.trim().length < 50) {
+                showCustomMessage("Nội dung CV không hợp lệ hoặc quá ngắn để phân tích.", "error");
+                return;
+            }
+            showLoading('AI đang phân tích hồ sơ của bạn...');
+            const prompt = `Phân tích CV sau đây: "${cvText}". Trả về JSON với cấu trúc: {"skills": [{"name": string, "level": number(1-5)}], "skillsToDevelop": [string], "learningPath": [{"step": string, "description": string}]}. Toàn bộ nội dung bằng tiếng Việt.`;
+            const schema = { type: "OBJECT", properties: {
+                "skills": { type: "ARRAY", items: { type: "OBJECT", properties: { "name": { "type": "STRING" }, "level": { "type": "NUMBER" } }, required: ["name", "level"] }},
+                "skillsToDevelop": { type: "ARRAY", items: { "type": "STRING" }},
+                "learningPath": { type: "ARRAY", items: { type: "OBJECT", properties: { "step": { "type": "STRING" }, "description": { "type": "STRING" } }, required: ["step", "description"] }}
+            }, required: ["skills", "skillsToDevelop", "learningPath"] };
+
+            try {
+                const result = await callGeminiAPI(prompt, schema);
+                 if (result && Array.isArray(result.skills) && Array.isArray(result.skillsToDevelop) && Array.isArray(result.learningPath)) {
+                    renderStudentAnalysisResult(result);
+                } else {
+                    throw new Error("Dữ liệu trả về từ AI không đúng định dạng.");
+                }
+            } catch (e) {
+                showCustomMessage('Lỗi phân tích CV: ' + e.message, "error");
+                studentAnalysisContainer.innerHTML = `<p class="text-red-500">Đã xảy ra lỗi. Vui lòng thử lại.</p>`;
+                if (window.studentRadarChartInstance) window.studentRadarChartInstance.destroy();
+                console.error(e);
+            } finally {
+                hideLoading();
+            }
+        };
+
+        studentPdfInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            studentPdfFileName.textContent = "Đang xử lý...";
+            try {
+                const { text, base64 } = await extractPdfTextAndBase64(file);
+                if (!text || text.length < 50) {
+                     showCustomMessage('Nội dung CV quá ngắn hoặc không đọc được từ file PDF.', "error");
+                     studentPdfFileName.textContent = "Tải lên CV để Phân tích";
+                     return;
+                }
+                studentPdfFileName.textContent = file.name;
+                await analyzeStudentProfile(text);
+            } catch (err) {
+                studentPdfFileName.textContent = "Tải lên CV để Phân tích";
+                console.error('Lỗi đọc PDF:', err);
+                showCustomMessage('Lỗi: Không thể đọc file PDF này. ' + err.message, "error");
+            }
+        });
+
+        window.showApplyModal = (jobId) => {
+            const job = jobPostings.find(j => j.id === jobId);
+            if (!job) {
+                showCustomMessage("Không tìm thấy tin tuyển dụng này.", "error");
+                return;
+            }
+
+            modals.apply.querySelector('.modal-content').innerHTML = `
+                <button class="js-modal-close absolute top-4 right-5 text-2xl font-bold">&times;</button>
+                <h3 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Ứng tuyển: ${job.title}</h3>
+                <div class="space-y-4">
+                    <div><label class="font-semibold block mb-2">Tên của bạn</label><input type="text" id="applicantNameInput" placeholder="VD: Nguyễn Văn A"></div>
+                    <div><label class="font-semibold block mb-2">Email của bạn</label><input type="email" id="applicantEmailInput" placeholder="VD: email@example.com"></div>
+                    <div><label class="font-semibold block mb-2">Tải lên CV (PDF)</label><label class="file-input-custom"><i class="fas fa-upload mr-2"></i> <span id="applyCvFileName">Chọn file</span><input type="file" id="applyCvFile" accept=".pdf"></label></div>
+                    <div><label class="font-semibold block mb-2">Thư ứng tuyển (Cover Letter)</label><textarea id="applyCoverLetter" rows="6" placeholder="Viết thư ứng tuyển của bạn tại đây..."></textarea></div>
+                    <button id="submitApplicationBtn" class="primary-button w-full">Nộp đơn</button>
+                </div>`;
+            modals.apply.classList.add('active');
+
+            const cvInput = document.getElementById('applyCvFile');
+            cvInput.addEventListener('change', () => document.getElementById('applyCvFileName').textContent = cvInput.files[0]?.name || 'Chọn file');
+            
+            document.getElementById('submitApplicationBtn').onclick = async () => {
+                const applicantName = document.getElementById('applicantNameInput').value.trim();
+                const applicantEmail = document.getElementById('applicantEmailInput').value.trim();
+                const cvFile = cvInput.files[0];
+                const coverLetter = document.getElementById('applyCoverLetter').value;
+
+                if (!applicantName || !applicantEmail || !cvFile) {
+                    showCustomMessage('Vui lòng điền đầy đủ tên, email và tải lên CV.', "warning");
+                    return;
+                }
+                
+                showLoading('Đang xử lý đơn ứng tuyển của bạn...');
+                try {
+                    const { text: cvText, base64: cvBase64 } = await extractPdfTextAndBase64(cvFile);
+                    if (!cvText || cvText.length < 50) {
+                        showCustomMessage('Nội dung CV quá ngắn hoặc không đọc được từ file PDF. Vui lòng kiểm tra lại file.', "error");
+                        hideLoading();
+                        return;
+                    }
+                    if (cvBase64.length * 0.75 > 1024 * 1024) { // Check if base64 size exceeds ~1MB
+                        showCustomMessage('File CV quá lớn để lưu trữ trực tiếp. Vui lòng sử dụng file nhỏ hơn (dưới 1MB).', 'error');
+                        hideLoading();
+                        return;
+                    }
+
+                    // Add new applicant data including userId and cvBase64
+                    const newApplicant = { 
+                        name: applicantName, 
+                        email: applicantEmail, 
+                        cvText: cvText, 
+                        cvBase64: cvBase64, // Store Base64
+                        coverLetter: coverLetter, 
+                        status: STATUSES.NEW, 
+                        feedback: '', 
+                        hasNewFeedback: false,
+                        applicantUserId: userId 
+                    };
+
+                    const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, jobId);
+                    await updateDoc(jobRef, {
+                        applicants: arrayUnion(newApplicant)
+                    });
+                    
+                    showCustomMessage(`Bạn đã ứng tuyển thành công vị trí "${job.title}"!`, "success");
+                    closeModal('apply');
+                } catch(e) { 
+                    console.error(e); 
+                    showCustomMessage('Lỗi khi xử lý đơn ứng tuyển: ' + e.message, "error"); 
+                } finally { 
+                    hideLoading(); 
+                }
+            };
+        };
+
+        window.markFeedbackAsRead = async (jobId, appIndex) => {
+            const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, jobId);
+            const jobData = jobPostings.find(j => j.id === jobId);
+
+            if (jobData && jobData.applicants && jobData.applicants[appIndex]) {
+                const updatedApplicants = [...jobData.applicants];
+                updatedApplicants[appIndex].hasNewFeedback = false;
+
+                await updateDoc(jobRef, {
+                    applicants: updatedApplicants
+                });
+            }
+        };
+
+        // --- ENTERPRISE LOGIC ---
+        // Function to reset the job posting form
+        const resetJobForm = () => {
+            editingJobId = null;
+            companyNameInput.value = '';
+            jobTitleInput.value = ''; 
+            jobLocationInput.value = '';
+            jdPdfInput.value = ''; 
+            jdFileName.textContent = 'Chọn file PDF';
+            jobDescriptionInput.value = ''; 
+            postJobBtn.textContent = 'Đăng tin & Phân tích JD';
+            postJobBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            postJobBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-500'); // Reset to original gradient
+        };
+
+        postJobBtn.addEventListener('click', async () => {
+            const companyName = companyNameInput.value.trim(); 
+            const title = jobTitleInput.value.trim();
+            const jobLocation = jobLocationInput.value.trim(); 
+            const jdFile = jdPdfInput.files[0];
+            let description = jobDescriptionInput.value.trim(); 
+            let jdBase64 = null; // To store base64 of JD PDF
+
+            if (!companyName || !title || !jobLocation) {
+                showCustomMessage('Vui lòng nhập đầy đủ Tên công ty, Chức danh và Địa điểm làm việc.', "warning");
+                return;
+            }
+
+            if (!description && !jdFile) {
+                 showCustomMessage('Vui lòng nhập hoặc tải lên Mô tả công việc.', "warning");
+                 return;
+            }
+
+            showLoading('AI đang phân tích JD...');
+            
+            if (jdFile) {
+                try {
+                    const extracted = await extractPdfTextAndBase64(jdFile);
+                    if (!extracted.text || extracted.text.length < 50) {
+                        throw new Error("Nội dung PDF quá ngắn hoặc không đọc được.");
+                    }
+                    description = extracted.text; // Prioritize text from PDF if file is provided
+                    jdBase64 = extracted.base64; // Store Base64 for JD
+                    // Size check is already in extractPdfTextAndBase64
+                } catch (error) {
+                    showCustomMessage(`Lỗi đọc file PDF: ${error.message}. Vui lòng thử nhập thủ công.`, "error");
+                    hideLoading();
+                    return;
+                }
+            } else {
+                jdBase64 = null; // Ensure jdBase64 is null if no file is provided
+            }
+
+
+            const prompt = `Phân tích Mô tả công việc sau: "${description}". Trả về JSON {"requiredSkills": [string]}. Tối đa 10 kỹ năng. Tiếng Việt.`;
+            const schema = { type: "OBJECT", properties: { "requiredSkills": { type: "ARRAY", items: { "type": "STRING" } } }, required: ["requiredSkills"] };
+
+            try {
+                const result = await callGeminiAPI(prompt, schema);
+                const jobData = {
+                    companyName, 
+                    title, 
+                    jobLocation, 
+                    description, 
+                    jdBase64, // Save JD Base64
+                    requiredSkills: result.requiredSkills, 
+                };
+
+                if (editingJobId) {
+                    // Update existing job
+                    const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, editingJobId);
+                    await updateDoc(jobRef, jobData);
+                    showCustomMessage('Tin tuyển dụng đã được cập nhật và phân tích thành công!', "success");
+                } else {
+                    // Add new job
+                    await addDoc(collection(db, `artifacts/${__app_id}/public/data/jobPostings`), {
+                        ...jobData,
+                        applicants: [] // Initialize with empty applicants array for new jobs
+                    });
+                    showCustomMessage('Tin tuyển dụng đã được đăng và phân tích thành công!', "success");
+                }
+                
+                resetJobForm(); // Clear input fields and reset button
+            } catch(e) { 
+                showCustomMessage('Lỗi phân tích JD: ' + e.message, "error"); 
+                console.error("Lỗi khi đăng/cập nhật tin:", e); 
+            } finally { 
+                hideLoading(); 
+            }
+        });
+        
+        // Update JD file name display
+        jdPdfInput.addEventListener('change', (e) => {
+            jdFileName.textContent = e.target.files[0]?.name || 'Chọn file PDF';
+        });
+
+        // Function to handle editing a job
+        window.editJob = (jobId) => {
+            const job = jobPostings.find(j => j.id === jobId);
+            if (!job) {
+                showCustomMessage("Không tìm thấy tin tuyển dụng để chỉnh sửa.", "error");
+                return;
+            }
+
+            // Populate the form
+            companyNameInput.value = job.companyName || '';
+            jobTitleInput.value = job.title || '';
+            jobLocationInput.value = job.jobLocation || '';
+            jobDescriptionInput.value = job.description || '';
+            jdPdfInput.value = ''; // Clear file input
+            jdFileName.textContent = job.jdBase64 ? 'Đã có file PDF' : 'Chọn file PDF'; // Indicate if JD PDF is already present
+
+            // Set editing state
+            editingJobId = jobId;
+            postJobBtn.textContent = 'Cập nhật tin & Phân tích JD';
+            postJobBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            postJobBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-500'); // Change to green for update
+
+            // Scroll to the top of the form
+            document.getElementById('enterprise-jobs-tab').querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // Function to handle deleting a job
+        window.deleteJob = (jobId) => {
+            showCustomMessage('Bạn có chắc chắn muốn xóa tin tuyển dụng này không? Hành động này không thể hoàn tác.', 'warning', true, async () => {
+                showLoading('Đang xóa tin tuyển dụng...');
+                try {
+                    const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, jobId);
+                    await deleteDoc(jobRef);
+                    showCustomMessage('Tin tuyển dụng đã được xóa thành công.', 'success');
+                    resetJobForm(); // Reset form after deletion
+                } catch (e) {
+                    showCustomMessage('Lỗi khi xóa tin tuyển dụng: ' + e.message, "error");
+                    console.error("Error deleting job:", e);
+                } finally {
+                    hideLoading();
+                }
+            });
+        };
+
+
+        window.showAddApplicantModal = (jobId) => {
+            const job = jobPostings.find(j => j.id === jobId);
+            if (!job) {
+                showCustomMessage("Không tìm thấy tin tuyển dụng này để thêm ứng viên.", "error");
+                return;
+            }
+
+             modals.addApplicant.querySelector('.modal-content').innerHTML = `
+                 <button class="js-modal-close absolute top-4 right-5 text-2xl font-bold">&times;</button>
+                 <h3 class="text-xl font-bold mb-4">Thêm ứng viên thủ công cho: ${job.title}</h3>
+                 <div class="space-y-4">
+                    <div><label class="font-semibold block mb-2">Tên ứng viên</label><input type="text" id="manualApplicantName" placeholder="VD: Nguyễn Văn A"></div>
+                    <div><label class="font-semibold block mb-2">Email ứng viên</label><input type="email" id="manualApplicantEmail" placeholder="VD: email@example.com"></div>
+                    <div><label class="font-semibold block mb-2">Tải lên CV (PDF)</label><label class="file-input-custom"><i class="fas fa-upload mr-2"></i> <span id="manualCvFileName">Tải lên CV (PDF)</span><input type="file" id="manualCvFile" accept=".pdf"></label></div>
+                 </div>
+                 <button id="addManualApplicantBtn" class="primary-button w-full mt-4">Thêm ứng viên</button>`;
+            modals.addApplicant.classList.add('active');
+
+            document.getElementById('manualCvFile').addEventListener('change', (e) => document.getElementById('manualCvFileName').textContent = e.target.files[0]?.name || 'Chọn file');
+            
+            document.getElementById('addManualApplicantBtn').addEventListener('click', async () => {
+                const name = document.getElementById('manualApplicantName').value.trim();
+                const email = document.getElementById('manualApplicantEmail').value.trim();
+                const cvFile = document.getElementById('manualCvFile').files[0];
+
+                if (!name || !email || !cvFile) {
+                    showCustomMessage('Vui lòng điền đầy đủ tên, email và tải lên CV cho ứng viên thủ công.', "warning");
+                    return;
+                }
+
+                closeModal('addApplicant');
+                showLoading('Đang xử lý và tự động phân tích CV...');
+                try {
+                    const { text: cvText, base64: cvBase64 } = await extractPdfTextAndBase64(cvFile);
+                    if (!cvText || cvText.length < 50) {
+                         showCustomMessage('Nội dung CV quá ngắn hoặc không đọc được từ file PDF. Vui lòng kiểm tra lại file.', "error");
+                         hideLoading();
+                         return;
+                    }
+                    // Size check is already in extractPdfTextAndBase64
+                    
+                    const newApplicant = { 
+                        name, 
+                        email, 
+                        cvText: cvText, 
+                        cvBase64: cvBase64, 
+                        coverLetter: 'Nguồn ngoại tuyến.', 
+                        status: STATUSES.NEW, 
+                        feedback: '', 
+                        hasNewFeedback: false,
+                        applicantUserId: null 
+                    };
+
+                    const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, jobId);
+                    await updateDoc(jobRef, {
+                        applicants: arrayUnion(newApplicant)
+                    });
+
+                    showCustomMessage('Đã thêm ứng viên thủ công và bắt đầu phân tích CV.', "success");
+                } catch (err) { 
+                    console.error(err); 
+                    showCustomMessage('Lỗi xử lý CV thủ công: ' + err.message, "error"); 
+                    hideLoading(); 
+                } finally {
+                    const updatedJob = jobPostings.find(j => j.id === jobId);
+                    if (updatedJob) {
+                        const newApplicantIndex = updatedJob.applicants.findIndex(
+                            app => app.name === name && app.email === email && app.cvText === cvText
+                        );
+                        if (newApplicantIndex !== -1) {
+                            setTimeout(() => window.analyzeApplicant(jobId, newApplicantIndex), 500); 
+                        }
+                    }
+                }
+            });
+        };
+
+        window.analyzeApplicant = async (jobId, applicantIndex) => {
+            const job = jobPostings.find(j => j.id === jobId);
+            if (!job || !job.applicants || !job.applicants[applicantIndex]) {
+                showCustomMessage("Không tìm thấy dữ liệu ứng viên để phân tích.", "error");
+                return;
+            }
+            const applicant = job.applicants[applicantIndex];
+
+            if (!applicant.cvText) {
+                showCustomMessage("Không có nội dung CV để phân tích cho ứng viên này. Vui lòng đảm bảo CV đã được tải lên đúng cách.", "error");
+                return;
+            }
+
+            showLoading('AI đang so sánh CV và JD...');
+            const prompt = `Phân tích và so sánh CV của ứng viên với Mô tả công việc (JD).
+                JD yêu cầu các kỹ năng chính: ${job.requiredSkills ? job.requiredSkills.join(', ') : ''}.
+                Nội dung CV của ứng viên: "${applicant.cvText}".
+                Vui lòng trả về một đối tượng JSON với cấu trúc sau:
+                1.  **matchScore**: Một con số từ 0 đến 100 thể hiện mức độ phù hợp.
+                2.  **candidateSkills**: Một mảng các đối tượng kỹ năng của ứng viên tìm thấy trong CV. Mỗi đối tượng có "name" (tên kỹ năng) và "level" (mức độ từ 1-5).
+                3.  **summary**: Một chuỗi (string) tóm tắt đánh giá ngắn gọn về sự phù hợp, điểm mạnh, điểm yếu của ứng viên so với JD.
+                Yêu cầu quan trọng: Toàn bộ nội dung trong các trường "name" và "summary" phải được viết bằng tiếng Việt.`;
+
+            const schema = { type: "OBJECT", properties: {
+                "matchScore": { "type": "NUMBER" },
+                "candidateSkills": { "type": "ARRAY", items: { "type": "OBJECT", properties: { "name": { "type": "STRING" }, "level": { "type": "NUMBER" } }}},
+                "summary": { "type": "STRING" }
+            }};
+            try {
+                const result = await callGeminiAPI(prompt, schema);
+                modals.analysis.querySelector('.modal-content').innerHTML = `
+                    <button class="js-modal-close absolute top-4 right-5 text-2xl font-bold">&times;</button>
+                    <h3 class="text-xl font-bold mb-4 text-center">Kết quả Phân tích Ứng viên: ${applicant.name || `Ứng viên #${applicantIndex + 1}`}</h3>
+                     <div class="text-center mb-4">
+                        <h4 class="font-semibold mb-1" style="color: var(--text-primary);">Điểm phù hợp</h4>
+                        <p class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">${result.matchScore}%</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 items-center">
+                        <div><h4 class="font-semibold mb-2 text-center" style="color: var(--text-primary);">Biểu đồ so sánh kỹ năng</h4><div class="h-80"><canvas id="enterpriseRadarChartModal"></canvas></div></div>
+                        <div><h4 class="font-semibold mb-2 mt-4" style="color: var(--text-primary);">Tóm tắt của AI:</h4><p class="p-3 rounded-lg text-sm" style="background-color: var(--background-light);">${result.summary}</p></div>
+                    </div>`;
+                modals.analysis.classList.add('active');
+                
+                setTimeout(() => {
+                    // Ensure requiredSkills is an array before mapping
+                    const jdSkillsForChart = (job.requiredSkills || []).map(name => ({ name, level: 5 }));
+                    const chartDatasets = [
+                         { label: 'Yêu cầu (JD)', data: [], fill: true, backgroundColor: 'rgba(59, 130, 246, 0.2)', borderColor: 'rgb(59, 130, 246)' },
+                         { label: 'Ứng viên (CV)', data: [], fill: true, backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgb(139, 92, 246)' }
+                    ];
+                    const chartLabels = [...new Set([...jdSkillsForChart.map(s => s.name), ...(result.candidateSkills || []).map(s => s.name)])];
+                    
+                    const chart = drawChart('enterpriseRadarChartModal', 'radar', chartLabels, chartDatasets);
+                    chart.data.datasets[0].data = chartLabels.map(l => jdSkillsForChart.find(s=>s.name===l)?100:0);
+                    chart.data.datasets[1].data = chartLabels.map(l => ((result.candidateSkills || []).find(s=>s.name===l)?.level||0)*20);
+                    chart.update();
+                }, 100);
+            } catch(e) { 
+                showCustomMessage('Lỗi phân tích ứng viên: ' + e.message, "error"); 
+                console.error(e); 
+            } finally { 
+                hideLoading(); 
+            }
+        };
+
+        // New function to view PDF
+        window.viewApplicantPdf = async (jobId, appIndex) => {
+            const job = jobPostings.find(j => j.id === jobId);
+            if (!job || !job.applicants || !job.applicants[appIndex]) {
+                showCustomMessage("Không tìm thấy dữ liệu ứng viên để xem PDF.", "error");
+                return;
+            }
+            const applicant = job.applicants[appIndex];
+
+            if (!applicant.cvBase64) {
+                showCustomMessage("Không tìm thấy file PDF CV cho ứng viên này.", "error");
+                return;
+            }
+
+            const pdfData = atob(applicant.cvBase64); // Decode Base64 to binary string
+            const pdfViewerContainer = document.getElementById('pdf-viewer-container');
+            pdfViewerContainer.innerHTML = ''; // Clear previous PDF
+
+            showLoading('Đang tải CV PDF...');
+
+            try {
+                const pdfDocument = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                
+                for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+                    const page = await pdfDocument.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 1.5 }); // Adjust scale as needed
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    pdfViewerContainer.appendChild(canvas);
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    await page.render(renderContext).promise;
+                }
+                modals.pdfViewer.classList.add('active'); // Show the PDF viewer modal
+            } catch (error) {
+                console.error("Error rendering PDF:", error);
+                showCustomMessage("Không thể hiển thị CV PDF. Có thể file bị lỗi hoặc quá lớn. Chi tiết: " + error.message, "error");
+            } finally {
+                hideLoading();
+            }
+        };
+
+        // New function for students to view JD PDF
+        window.viewJdPdf = async (jobId) => {
+            const job = jobPostings.find(j => j.id === jobId);
+            if (!job) {
+                console.error("Job not found for viewJdPdf:", jobId);
+                showCustomMessage("Không tìm thấy tin tuyển dụng này.", "error");
+                return;
+            }
+
+            if (!job.jdBase64) {
+                showCustomMessage("Không tìm thấy file JD PDF cho tin tuyển dụng này. Vui lòng xem mô tả chi tiết bằng văn bản.", "info");
+                return;
+            }
+
+            const pdfData = atob(job.jdBase64); // Decode Base64 to binary string
+            const pdfViewerContainer = document.getElementById('pdf-viewer-container');
+            pdfViewerContainer.innerHTML = ''; // Clear previous PDF
+
+            showLoading('Đang tải JD PDF...');
+
+            try {
+                const pdfDocument = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                
+                for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+                    const page = await pdfDocument.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 1.5 }); // Adjust scale as needed
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    pdfViewerContainer.appendChild(canvas);
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    await page.render(renderContext).promise;
+                }
+                modals.pdfViewer.classList.add('active'); // Show the PDF viewer modal
+            } catch (error) {
+                console.error("Error rendering JD PDF:", error);
+                showCustomMessage("Không thể hiển thị JD PDF. Có thể file bị lỗi hoặc quá lớn. Chi tiết: " + error.message, "error");
+            } finally {
+                hideLoading();
+            }
+        };
+
+        
+        window.saveFeedback = async (button, jobId, appIndex) => {
+            const feedbackText = document.getElementById(`feedback-textarea-${jobId}-${appIndex}`).value;
+            const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, jobId);
+            const jobData = jobPostings.find(j => j.id === jobId);
+
+            if (jobData && jobData.applicants && jobData.applicants[appIndex]) {
+                const updatedApplicants = [...jobData.applicants];
+                updatedApplicants[appIndex].feedback = feedbackText;
+                updatedApplicants[appIndex].hasNewFeedback = true; // Mark as new feedback for student
+
+                // Update the document in Firestore
+                await updateDoc(jobRef, {
+                    applicants: updatedApplicants
+                });
+                
+                if (button) {
+                    const originalText = "Lưu & Gửi Phản Hồi";
+                    button.innerHTML = `<i class="fas fa-check mr-1"></i>Đã gửi!`;
+                    button.disabled = true;
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }, 2000);
+                }
+                // onSnapshot will re-render
+            }
+        };
+
+        window.updateApplicantStatus = async (selectElement, jobId, appIndex, status) => { 
+            const jobRef = doc(db, `artifacts/${__app_id}/public/data/jobPostings`, jobId);
+            const jobData = jobPostings.find(j => j.id === jobId);
+
+            if (jobData && jobData.applicants && jobData.applicants[appIndex]) {
+                const updatedApplicants = [...jobData.applicants];
+                updatedApplicants[appIndex].status = status; 
+                updatedApplicants[appIndex].hasNewFeedback = true; // Mark as new feedback for student
+                
+                // Update the document in Firestore
+                await updateDoc(jobRef, {
+                    applicants: updatedApplicants
+                });
+
+                // Add a temporary visual highlight
+                selectElement.classList.add('border-green-500');
+                setTimeout(() => {
+                    selectElement.classList.remove('border-green-500');
+                }, 1500);
+                // onSnapshot will re-render
+            }
+        };
+
+        // Custom Message Box (replacing alert())
+        const showCustomMessage = (message, type = "info", confirmOption = false, onConfirm = null) => {
+            const modalContent = modals.analysis.querySelector('.modal-content');
+            modalContent.innerHTML = `
+                <button class="js-modal-close absolute top-4 right-5 text-2xl font-bold">&times;</button>
+                <div class="p-6 text-center">
+                    ${type === 'success' ? '<i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>' : ''}
+                    ${type === 'error' ? '<i class="fas fa-times-circle text-red-500 text-6xl mb-4"></i>' : ''}
+                    ${type === 'warning' ? '<i class="fas fa-exclamation-triangle text-yellow-500 text-6xl mb-4"></i>' : ''}
+                    ${type === 'info' ? '<i class="fas fa-info-circle text-blue-500 text-6xl mb-4"></i>' : ''}
+                    <p class="text-xl font-semibold mb-4" style="color:var(--text-primary);">${message}</p>
+                    <div class="flex justify-center gap-4">
+                        ${confirmOption ? `<button id="confirmActionButton" class="primary-button bg-red-500 hover:bg-red-600">Xác nhận</button>` : ''}
+                        <button class="primary-button js-modal-close ${confirmOption ? 'bg-gray-500 hover:bg-gray-600' : ''}">Đóng</button>
+                    </div>
+                </div>
+            `;
+            modals.analysis.classList.add('active');
+
+            if (confirmOption && onConfirm) {
+                document.getElementById('confirmActionButton').onclick = () => {
+                    closeModal('analysis');
+                    onConfirm();
+                };
+            }
+        };
+
+        // --- FIREBASE INITIALIZATION & LISTENERS ---
+        const initializeFirebase = async () => {
+            try {
+                // Your web app's Firebase configuration
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCE1PhGyCDKEy4KcY9N9qQgQh8IcF8lIRg",
+                    authDomain: "rising-dragon-tech-4fdd2.firebaseapp.com",
+                    databaseURL: "https://rising-dragon-tech-4fdd2-default-rtdb.asia-southeast1.firebasedatabase.app", // Added databaseURL
+                    projectId: "rising-dragon-tech-4fdd2",
+                    storageBucket: "rising-dragon-tech-4fdd2.firebasestorage.app",
+                    messagingSenderId: "211164188796",
+                    appId: "1:211164188796:web:37912132988dd2f21939f9", // Updated app ID
+                    measurementId: "G-0ZPP3N9Z8E" // Updated measurement ID
+                };
+
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                analytics = getAnalytics(app); // Initialize analytics
+                rtdb = getDatabase(app); // Initialize Realtime Database
+
+                let userSignedIn = null; // Track actual signed-in user
+
+                // Try signing in with custom token first (provided by Canvas)
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token !== null) {
+                        const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+                        userSignedIn = userCredential.user;
+                        console.log("Signed in with custom token.");
+                    }
+                } catch (tokenError) {
+                    console.warn("Custom token sign-in failed:", tokenError.code, tokenError.message);
+                    // Fallback to anonymous sign-in if custom token fails
+                    try {
+                        const userCredential = await signInAnonymously(auth);
+                        userSignedIn = userCredential.user;
+                        console.log("Signed in anonymously.");
+                    } catch (anonError) {
+                        console.error("Anonymous sign-in also failed:", anonError);
+                        // If both fail, throw a fatal error
+                        throw new Error("Failed to sign in. Cannot connect to Firebase Authentication services.");
+                    }
+                }
+
+                if (userSignedIn) {
+                    userId = userSignedIn.uid;
+                    isAuthReady = true;
+                    console.log("Firebase Auth Ready. User ID:", userId);
+                    setupFirestoreListeners();
+                    setupRealtimeDbListener();
+                } else {
+                    // This case should ideally not be reached if the above logic is sound,
+                    // but as a fallback, ensure userId is still set and listeners are attempted.
+                    // This block means sign-in attempt failed, so proceed with a fallback userId.
+                    userId = crypto.randomUUID(); 
+                    isAuthReady = true;
+                    console.log("Firebase Auth might not be fully ready, proceeding anonymously with generated ID. User ID:", userId);
+                    setupFirestoreListeners();
+                    setupRealtimeDbListener();
+                }
+
+            } catch (error) {
+                console.error("Lỗi khởi tạo Firebase:", error);
+                showCustomMessage("Không thể kết nối với dịch vụ lưu trữ. Vui lòng thử lại sau. Chi tiết: " + error.message, "error");
+            }
+        };
+
+        const setupFirestoreListeners = () => {
+            if (!db || !isAuthReady) {
+                console.log("Firestore or Auth not ready, skipping listeners setup.");
+                return;
+            }
+
+            // Get the app ID from the Canvas environment, or use a default
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id-for-local'; // Use the more robust default
+            // Reference to the 'jobPostings' collection within the public data path for this app
+            const publicJobPostingsRef = collection(db, `artifacts/${appId}/public/data/jobPostings`);
+
+            // Listen for changes to public job postings in real-time
+            onSnapshot(publicJobPostingsRef, (snapshot) => {
+                // Map the Firestore documents to local jobPostings array
+                jobPostings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log("Job Postings loaded/updated:", jobPostings);
+                // Re-render all sections of the UI that depend on jobPostings data
+                renderAll(); 
+            }, (error) => {
+                console.error("Lỗi khi lắng nghe jobPostings:", error);
+                showCustomMessage("Không thể tải danh sách việc làm. Vui lòng kiểm tra kết nối.", "error");
+            });
+
+            // Student applications data is derived directly from jobPostings and the current userId.
+            // A separate 'student_applications' collection is not necessary for this structure.
+        };
+
+        // --- Realtime Database Logic ---
+        const setupRealtimeDbListener = () => {
+            if (!rtdb || !isAuthReady) {
+                console.log("Realtime Database or Auth not ready, skipping listener setup.");
+                return;
+            }
+            // Listen for changes to the global announcement
+            const announcementRef = ref(rtdb, 'global_announcement');
+            onValue(announcementRef, (snapshot) => {
+                const data = snapshot.val();
+                if (globalAnnouncementDisplay) {
+                    globalAnnouncementDisplay.textContent = data || 'Chưa có thông báo.';
+                }
+            }, (error) => {
+                console.error("Error reading global announcement from RTDB:", error);
+            });
+        };
+
+        const updateGlobalAnnouncement = async (message) => {
+            if (!rtdb || !isAuthReady) {
+                showCustomMessage('Dịch vụ Realtime Database chưa sẵn sàng hoặc bạn chưa đăng nhập.', 'error');
+                return;
+            }
+            try {
+                await set(ref(rtdb, 'global_announcement'), message);
+                showCustomMessage('Thông báo toàn cầu đã được cập nhật!', 'success');
+            } catch (error) {
+                console.error("Error setting global announcement:", error);
+                showCustomMessage('Lỗi khi cập nhật thông báo toàn cầu: ' + error.message, 'error');
+            }
+        };
+
+        if (sendAnnouncementBtn) {
+            sendAnnouncementBtn.addEventListener('click', () => {
+                const message = globalAnnouncementInput.value.trim();
+                if (message) {
+                    updateGlobalAnnouncement(message);
+                    globalAnnouncementInput.value = ''; // Clear input after sending
+                } else {
+                    showCustomMessage('Vui lòng nhập thông báo.', 'warning');
+                }
+            });
+        }
+
+
+        // --- INITIALIZATION ---
+        // This runs when the DOM is fully fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply the saved theme preference from local storage
+            applyTheme(localStorage.getItem('theme') || 'light');
+            
+            // Event listener for all modal close buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.matches('.js-modal-close')) {
+                    // Find the closest parent with 'modal-overlay' class and remove 'active' class
+                    e.target.closest('.modal-overlay').classList.remove('active');
+                }
+            });
+            // Event listener for job search input (student view)
+            jobSearchInput.addEventListener('input', (e) => renderJobPostingsForStudent(e.target.value));
+            // Render initial student application filters
+            renderStudentApplicationFilters();
+            // Initialize Firebase services and set up real-time data listeners
+            // renderAll() will be called automatically once Firestore data is loaded by onSnapshot
+            initializeFirebase(); 
+        });
+    </script>
+</body>
+</html>

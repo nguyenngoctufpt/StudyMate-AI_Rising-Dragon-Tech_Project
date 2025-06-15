@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ Học viên - StudyMate AI</title>
+    <!-- Tải Chart.js cho biểu đồ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Tải Font Awesome cho các biểu tượng -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body and Animated Background */
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(1deg); }
+            66% { transform: translateY(-15px) rotate(-1deg); }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 32px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="20" cy="80" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Cover Image Section */
+        .cover-section {
+            position: relative;
+            height: 220px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+            cursor: pointer;
+            overflow: hidden;
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(2px);
+        }
+
+        .cover-section:hover .cover-overlay {
+            opacity: 1;
+        }
+
+        .camera-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            padding: 32px 40px;
+            position: relative;
+        }
+
+        .avatar-container {
+            position: absolute;
+            top: -70px;
+            left: 40px;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 6px solid white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .avatar:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 50%;
+            backdrop-filter: blur(2px);
+        }
+
+        .avatar:hover .avatar-overlay {
+            opacity: 1;
+        }
+
+        .profile-info {
+            margin-top: 90px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        .basic-info h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Activity Status Indicator */
+        .status-indicator {
+            width: 16px;
+            height: 16px;
+            background: #ccc; /* Default gray for inactive */
+            border-radius: 50%;
+            animation: none; /* No pulse when inactive */
+            box-shadow: none;
+            position: relative;
+        }
+
+        .status-indicator.active {
+            background: #10b981; /* Green for active */
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .verification-badge {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .user-details {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 28px;
+            border-radius: 20px;
+            margin: 24px 0;
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            background: rgba(255,255,255,0.5);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 4px -12px 16px -12px;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+
+        .detail-value {
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .editable {
+            background: transparent; /* Default to transparent when not editing */
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 250px;
+            text-align: right;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .editable:not([readonly]) {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: white;
+            padding: 36px;
+            margin: 24px 0;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-section h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 450px; /* Fixed height for consistent radar display */
+            width: 100%;
+            max-width: 600px; /* Limit width for larger screens */
+            margin: 0 auto;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 36px;
+            border-radius: 20px;
+            margin: 24px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .suggestions::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+        }
+
+        .suggestions h3 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .suggestion-item {
+            background: rgba(255,255,255,0.15);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .suggestion-item:last-child {
+            margin-bottom: 0;
+        }
+        .suggestion-item i {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Learning Path */
+        .learning-path {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 36px;
+            border-radius: 20px;
+            margin: 24px 0;
+        }
+
+        .learning-path h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .path-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .path-step:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        .path-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            flex-shrink: 0;
+        }
+
+        /* Hidden file inputs */
+        .file-input {
+            display: none;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 32px;
+            border-radius: 20px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-content h3 {
+            font-size: 20px;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            color: #4a5568;
+            margin-bottom: 24px;
+        }
+        .modal-content .btn {
+            width: 120px;
+        }
+
+        /* Notification Box */
+        .notification-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .notification-box.success { background-color: #4CAF50; }
+        .notification-box.error { background-color: #f44336; }
+        .notification-box.info { background-color: #2196F3; }
+
+        .chart-loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 5;
+            border-radius: 20px;
+        }
+
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-section {
+                padding: 20px;
+            }
+            
+            .avatar-container {
+                left: 20px;
+            }
+
+            .editable {
+                width: 100%; /* Take full width on smaller screens */
+                text-align: left; /* Align text left when stacked */
+            }
+
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .chart-section, .suggestions, .learning-path {
+                padding: 20px;
+            }
+            .chart-container {
+                height: 300px; /* Adjust height for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 16px;
+            }
+
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+                top: -50px; /* Adjust avatar position */
+            }
+            .avatar-container {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .profile-info {
+                margin-top: 70px; /* Adjust margin for avatar */
+            }
+
+
+            .basic-info h2 {
+                font-size: 24px;
+                justify-content: center; /* Center name and status */
+            }
+            .header-title h1 {
+                font-size: 22px;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-around;
+            }
+            .btn {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            .chart-container {
+                height: 250px; /* Further adjust height */
+            }
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <span>🎓</span>
+                <h1>Hồ sơ Học viên</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="goToIndex()">
+                    <span>🏠</span>
+                    <span>Về trang chủ</span>
+                </button>
+                <button class="btn btn-primary" onclick="toggleEdit()">
+                    <span>✏️</span>
+                    <span id="editText">Chỉnh sửa</span>
+                </button>
+                <button class="btn btn-secondary" onclick="showLogoutModal()">
+                    <span>🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Cover Image Section -->
+        <div class="cover-section" onclick="triggerCoverInput()">
+            <img id="coverImage" class="cover-image" alt="Ảnh bìa">
+            <div class="cover-overlay">
+                <span class="camera-text">
+                    <span>📷</span>
+                    <span>Thay đổi ảnh bìa</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="avatar-container">
+                <div class="avatar" onclick="triggerAvatarInput()">
+                    <img id="avatarImage" class="avatar-image" alt="Ảnh đại diện">
+                    <span id="avatarText">👤</span>
+                    <div class="avatar-overlay">
+                        <span style="color: white; font-size: 18px;">📷</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="basic-info">
+                    <h2>
+                        <span id="userNameDisplay">Tên người dùng</span>
+                        <span class="status-indicator" id="activityStatusDot" title="Trạng thái hoạt động"></span>
+                        <span class="verification-badge" id="verificationBadge" title="Tài khoản đã xác thực">✓</span>
+                    </h2>
+                    <p style="color: #6b7280; margin-top: 4px; text-align: center;" id="userEmailDisplay">email@example.com</p>
+                    
+                    <!-- New position for Major: directly under email -->
+                    <p style="text-align: center; color: #4a5568; font-weight: 500; margin-top: 10px; margin-bottom: 20px;">
+                        <span style="font-weight: 600;">Ngành học:</span> <span id="majorDisplayValue"></span>
+                    </p>
+
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>🆔</span>
+                                <span>ID học viên:</span>
+                            </span>
+                            <span class="detail-value" id="userIdDisplay"></span>
+                            <button class="btn-icon" onclick="copyUserId()" style="background: none; border: none; cursor: pointer; color: #667eea;">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>📅</span>
+                                <span>Ngày tham gia:</span>
+                            </span>
+                            <span class="detail-value" id="joinDateDisplay"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>💡</span>
+                                <span>Trạng thái:</span>
+                            </span>
+                            <span class="detail-value">
+                                <input type="text" id="activityStatusInput" class="editable" value="" readonly>
+                            </span>
+                        </div>
+                        <!-- Major input remains here, but hidden/controlled by JS for editing -->
+                        <input type="hidden" id="majorInput" class="editable" value="">
+                        
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>❤️</span>
+                                <span>Sở thích:</span>
+                            </span>
+                            <span class="detail-value">
+                                <input type="text" id="interestsInput" class="editable" value="" readonly>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>🎯</span>
+                                <span>Mục tiêu học tập:</span>
+                            </span>
+                            <span class="detail-value">
+                                <input type="text" id="goalsInput" class="editable" value="" readonly>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>📚</span>
+                                <span>Khóa học hiện tại:</span>
+                            </span>
+                            <span class="detail-value">
+                                <input type="text" id="currentCoursesInput" class="editable" value="" readonly>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>🚀</span>
+                                <span>Kỹ năng mong muốn:</span>
+                            </span>
+                            <span class="detail-value">
+                                <input type="text" id="desiredSkillsInput" class="editable" value="" readonly>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                <span>💼</span>
+                                <span>Dự án đang làm:</span>
+                            </span>
+                            <span class="detail-value">
+                                <input type="text" id="projectsInput" class="editable" value="" readonly>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <h3>📊 Biểu đồ Phân tích Kỹ năng</h3>
+            <div class="chart-container">
+                <canvas id="skillChart"></canvas>
+                <div class="chart-loading-overlay" id="chartLoadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Đang phân tích kỹ năng...</p>
+                </div>
+                <p id="noChartDataMessage" style="text-align: center; color: #6b7280; margin-top: 15px; display: none;">
+                    Chưa có dữ liệu kỹ năng để vẽ biểu đồ. Vui lòng cập nhật "Khóa học hiện tại" hoặc "Kỹ năng mong muốn" trong hồ sơ.
+                </p>
+            </div>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="suggestions">
+            <h3>💡 Gợi ý Kỹ năng Cần Phát triển</h3>
+            <div id="skillSuggestions">
+                <!-- Suggestions will be dynamically generated here -->
+                <p style="text-align: center; color: rgba(255,255,255,0.7);">Không có gợi ý kỹ năng cần phát triển.</p>
+            </div>
+        </div>
+
+        <!-- Learning Path -->
+        <div class="learning-path">
+            <h3>🗺️ Lộ Trình Học Tập Gợi Ý</h3>
+            <div id="learningPathStepsContainer">
+                <!-- Learning path steps will be dynamically generated here -->
+                <p style="text-align: center; color: #6b7280;">Không có lộ trình học tập gợi ý.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="avatarInput" class="file-input" accept="image/*" onchange="handleImageChange(event, 'avatar')">
+    <input type="file" id="coverInput" class="file-input" accept="image/*" onchange="handleImageChange(event, 'cover')">
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>🚪 Xác nhận đăng xuất</h3>
+            <p>Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="btn btn-primary" onclick="confirmLogout()">
+                    <span>✔️</span>
+                    <span>Đồng ý</span>
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal()">
+                    <span>✖️</span>
+                    <span>Hủy bỏ</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Notification Box -->
+    <div id="notificationBox" class="notification-box"></div>
+
+    <script>
+        let isEditing = false;
+        let skillChartInstance; // Renamed for clarity with Chart.js
+        const API_KEY = "AIzaSyDM2NYrzBmqqINCp6lE_GC-XjAgacIoKA8"; // Updated API Key
+
+        // Default placeholder images
+        const DEFAULT_AVATAR = 'https://placehold.co/140x140/CCCCCC/666666?text=👤';
+        const DEFAULT_COVER_PHOTO = 'https://placehold.co/960x220/A7D9FF/FFFFFF?text=Ảnh+Bìa+Mặc+Định';
+
+        // User data structure
+        let userData = {
+            userId: null,
+            name: 'Học viên',
+            email: 'student@example.com',
+            joinDate: new Date().toISOString(), // Store as ISO string
+            activityStatus: 'Đang học Python, Tìm hiểu AI...',
+            major: 'Công nghệ thông tin',
+            interests: 'Lập trình, AI, Đọc sách',
+            goals: 'Trở thành Full-stack Developer',
+            currentCourses: 'AI, Lập trình Python',
+            desiredSkills: 'Machine Learning, Data Science, Cloud Computing',
+            projects: 'Biểu đồ phân tích hồ sơ bằng radar chart',
+            avatar: null,
+            coverPhoto: null,
+            isVerified: false, // For future auth integration
+            aiAnalysisResult: null // Cache for AI analysis
+        };
+
+        // --- DOM Element References ---
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const userEmailDisplay = document.getElementById('userEmailDisplay');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const majorDisplayValue = document.getElementById('majorDisplayValue'); // New: Element for major display
+        const joinDateDisplay = document.getElementById('joinDateDisplay');
+        const activityStatusDot = document.getElementById('activityStatusDot');
+        const verificationBadge = document.getElementById('verificationBadge');
+
+        const coverImage = document.getElementById('coverImage');
+        const avatarImage = document.getElementById('avatarImage');
+        const avatarText = document.getElementById('avatarText');
+
+        const editTextButton = document.getElementById('editText');
+        const editableInputs = document.querySelectorAll('.editable');
+
+        const activityStatusInput = document.getElementById('activityStatusInput');
+        const majorInput = document.getElementById('majorInput'); // Input field for major (now hidden in display mode)
+        const interestsInput = document.getElementById('interestsInput');
+        const goalsInput = document.getElementById('goalsInput');
+        const currentCoursesInput = document.getElementById('currentCoursesInput');
+        const desiredSkillsInput = document.getElementById('desiredSkillsInput');
+        const projectsInput = document.getElementById('projectsInput');
+
+        const skillChartCanvas = document.getElementById('skillChart');
+        const chartLoadingOverlay = document.getElementById('chartLoadingOverlay');
+        const noChartDataMessage = document.getElementById('noChartDataMessage');
+        const skillSuggestionsContainer = document.getElementById('skillSuggestions');
+        const learningPathStepsContainer = document.getElementById('learningPathStepsContainer');
+
+        const logoutModal = document.getElementById('logoutModal');
+        const notificationBox = document.getElementById('notificationBox');
+
+        // --- Core Functions ---
+
+        /**
+         * Shows a toast-like notification to the user.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'info'.
+         * @param {number} duration - How long to show the notification in ms.
+         */
+        function showNotification(message, type = 'info', duration = 3000) {
+            notificationBox.textContent = message;
+            notificationBox.className = `notification-box show ${type}`; // Add type class
+            notificationBox.style.display = 'flex'; // Ensure it's visible
+
+            setTimeout(() => {
+                notificationBox.classList.remove('show');
+                notificationBox.style.display = 'none'; // Hide after transition
+            }, duration);
+        }
+
+        /**
+         * Loads user data from local storage, or initializes with defaults.
+         */
+        function loadUserData() {
+            try {
+                const storedData = localStorage.getItem('studymateUserProfile');
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    // Merge stored data with defaults to ensure new fields are present
+                    userData = { ...userData, ...parsedData };
+                    // Ensure userId exists and is a UUID, if not, generate one
+                    if (!userData.userId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userData.userId)) {
+                        userData.userId = crypto.randomUUID();
+                        saveUserData(); // Save new UUID
+                    }
+                    console.log("User data loaded:", userData);
+                } else {
+                    // If no data, generate a new UUID for the userId
+                    userData.userId = crypto.randomUUID();
+                    console.log("No user data found. Initializing with defaults and new UUID.");
+                    saveUserData(); // Save initial defaults with new UUID
+                }
+            } catch (e) {
+                console.error("Error loading user data from localStorage:", e);
+                showNotification("Lỗi khi tải dữ liệu hồ sơ.", "error");
+                // Reset to defaults if loading fails
+                localStorage.removeItem('studymateUserProfile');
+                userData.userId = crypto.randomUUID();
+                saveUserData();
+            }
+        }
+
+        /**
+         * Saves current user data to local storage.
+         */
+        function saveUserData() {
+            try {
+                localStorage.setItem('studymateUserProfile', JSON.stringify(userData));
+                console.log("User data saved:", userData);
+            } catch (e) {
+                console.error("Lỗi khi lưu dữ liệu hồ sơ.", "error");
+                showNotification("Lỗi khi lưu dữ liệu hồ sơ.", "error");
+            }
+        }
+
+        /**
+         * Updates the UI with current user data.
+         */
+        async function updateProfileUI() {
+            userNameDisplay.textContent = userData.name || 'Người dùng';
+            userEmailDisplay.textContent = userData.email || 'email@example.com';
+            userIdDisplay.textContent = (userData.userId || 'Không xác định').substring(0, 5); 
+            joinDateDisplay.textContent = new Date(userData.joinDate).toLocaleDateString('vi-VN', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            }) || 'Chưa cập nhật';
+
+            // Update Major display value
+            majorDisplayValue.textContent = userData.major || 'Chưa cập nhật';
+
+            // Update activity status dot
+            if (userData.activityStatus && userData.activityStatus.trim() !== '' && userData.activityStatus.trim().toLowerCase() !== 'chưa cập nhật') {
+                activityStatusDot.classList.add('active');
+            } else {
+                activityStatusDot.classList.remove('active');
+            }
+            
+            // Set input values for display
+            activityStatusInput.value = userData.activityStatus || '';
+            majorInput.value = userData.major || ''; // Keep majorInput updated even if hidden
+            interestsInput.value = userData.interests || '';
+            goalsInput.value = userData.goals || '';
+            currentCoursesInput.value = userData.currentCourses || '';
+            desiredSkillsInput.value = userData.desiredSkills || '';
+            projectsInput.value = userData.projects || '';
+
+            // Handle avatar image display
+            if (userData.avatar) {
+                avatarImage.src = userData.avatar;
+                avatarImage.style.display = 'block';
+                avatarText.style.display = 'none';
+            } else {
+                avatarImage.style.display = 'none';
+                avatarText.style.display = 'block';
+                avatarImage.src = ''; // Clear src if no avatar
+            }
+
+            // Handle cover photo display
+            if (userData.coverPhoto) {
+                coverImage.src = userData.coverPhoto;
+                coverImage.style.display = 'block';
+                coverImage.parentElement.style.background = 'none'; // Remove gradient background if image exists
+            } else {
+                coverImage.style.display = 'none';
+                coverImage.parentElement.style.background = 'linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1)'; // Show gradient
+                coverImage.src = ''; // Clear src if no cover photo
+            }
+
+            // Always hide verification badge as there's no real auth
+            verificationBadge.style.display = 'none'; 
+
+            // Trigger AI analysis if necessary
+            await triggerSkillAnalysis();
+        }
+
+        /**
+         * Toggles between display and edit mode for profile fields.
+         */
+        function toggleEdit() {
+            isEditing = !isEditing;
+            editTextButton.textContent = isEditing ? 'Lưu hồ sơ' : 'Chỉnh sửa';
+            
+            // Update the display of the major input depending on edit mode
+            const majorDetailItem = majorInput.closest('.detail-item');
+            if (isEditing) {
+                // In edit mode, majorInput should be visible and editable
+                majorInput.readOnly = false;
+                majorInput.classList.remove('editable-readonly'); // Ensure styling for editable input
+                if (majorDetailItem) majorDetailItem.style.display = 'flex'; // Show if it was hidden
+            } else {
+                // In display mode, majorInput should be readonly and effectively hidden from the main view
+                majorInput.readOnly = true;
+                // Since major is now displayed outside user-details, we can hide the input within user-details if not editing
+                if (majorDetailItem) majorDetailItem.style.display = 'none'; 
+            }
+
+            // Apply readonly state to other editable inputs
+            editableInputs.forEach(input => {
+                if (input.id !== 'majorInput') { // Major is handled separately
+                    input.readOnly = !isEditing;
+                    if (isEditing) {
+                        input.classList.remove('editable-readonly');
+                    }
+                }
+            });
+
+            // If switching to display mode, save data and update UI
+            if (!isEditing) {
+                // Collect data from inputs and update userData object
+                userData.name = userNameDisplay.textContent; // Name not directly editable via input
+                userData.activityStatus = activityStatusInput.value.trim();
+                userData.major = majorInput.value.trim(); // Get value from the hidden input
+                userData.interests = interestsInput.value.trim();
+                userData.goals = goalsInput.value.trim();
+                userData.currentCourses = currentCoursesInput.value.trim();
+                userData.desiredSkills = desiredSkillsInput.value.trim();
+                userData.projects = projectsInput.value.trim();
+
+                // Clear cached AI results to force re-analysis on save
+                userData.aiAnalysisResult = null; 
+
+                saveUserData();
+                updateProfileUI(); // Re-render UI and re-trigger AI analysis
+                showNotification('Hồ sơ đã được lưu thành công!', 'success');
+            } else {
+                // Populate inputs when entering edit mode
+                activityStatusInput.value = userData.activityStatus || '';
+                majorInput.value = userData.major || '';
+                interestsInput.value = userData.interests || '';
+                goalsInput.value = userData.goals || '';
+                currentCoursesInput.value = userData.currentCourses || '';
+                desiredSkillsInput.value = userData.desiredSkills || '';
+                projectsInput.value = userData.projects || '';
+                showNotification('Bạn đang ở chế độ chỉnh sửa.', 'info');
+            }
+        }
+        
+        /**
+         * Handles file input change for avatar and cover photos.
+         * @param {Event} event - The change event from the file input.
+         * @param {string} type - 'avatar' or 'cover'.
+         */
+        function handleImageChange(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showNotification('Vui lòng chọn một tệp ảnh hợp lệ.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (type === 'avatar') {
+                    userData.avatar = e.target.result;
+                } else if (type === 'cover') {
+                    userData.coverPhoto = e.target.result;
+                }
+                saveUserData();
+                updateProfileUI(); // Update UI with new image
+                showNotification(`${type === 'avatar' ? 'Ảnh đại diện' : 'Ảnh bìa'} đã được cập nhật!`, 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /** Triggers the hidden avatar file input. */
+        function triggerAvatarInput() {
+            document.getElementById('avatarInput').click();
+        }
+
+        /** Triggers the hidden cover photo file input. */
+        function triggerCoverInput() {
+            document.getElementById('coverInput').click();
+        }
+
+        /** Copies the displayed user ID to the clipboard. */
+        function copyUserId() {
+            const userIdFull = userData.userId; // Copy full UUID
+            if (userIdFull) {
+                const textArea = document.createElement('textarea');
+                textArea.value = userIdFull;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification('Đã sao chép ID người dùng!', 'success');
+                } catch (err) {
+                    console.error('Failed to copy text:', err);
+                    showNotification('Không thể sao chép ID người dùng.', 'error');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        /**
+         * Initializes and updates the skill radar chart.
+         * @param {Array} skillLevels - An array of skill objects with 'skill', 'level', 'strength'.
+         */
+        function createSkillChart(skillLevels = []) {
+            if (skillChartInstance) {
+                skillChartInstance.destroy();
+            }
+
+            if (!skillLevels || skillLevels.length === 0) {
+                skillChartCanvas.style.display = 'none';
+                noChartDataMessage.style.display = 'block';
+                return;
+            }
+
+            skillChartCanvas.style.display = 'block';
+            noChartDataMessage.style.display = 'none';
+
+            const labels = skillLevels.map(s => s.skill);
+            const data = skillLevels.map(s => s.level);
+
+            const pointBackgroundColors = skillLevels.map(s => {
+                if (s.strength === 'strong') return 'rgba(34, 197, 94, 0.8)'; // Green-500
+                if (s.strength === 'weak') return 'rgba(239, 68, 68, 0.8)'; // Red-500
+                return 'rgba(59, 130, 246, 0.8)'; // Blue-500
+            });
+            const pointBorderColors = skillLevels.map(s => {
+                if (s.strength === 'strong') return 'rgba(22, 163, 74, 1)'; // Green-600
+                if (s.strength === 'weak') return 'rgba(185, 28, 28, 1)'; // Red-600
+                return 'rgba(37, 99, 235, 1)'; // Blue-600
+            });
+
+            skillChartInstance = new Chart(skillChartCanvas, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mức độ thành thạo (%)',
+                        data: data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)', // Light purple/blue for fill
+                        borderColor: '#667eea', // Darker purple/blue for line
+                        borderWidth: 2,
+                        pointBackgroundColor: pointBackgroundColors,
+                        pointBorderColor: pointBorderColors,
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: pointBorderColors,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Set to false to allow custom height/width from container
+                    elements: {
+                        line: {
+                            tension: 0.1 // Slight curve
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#4a5568',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                beginAtZero: true,
+                                display: false, // Hide numeric labels on radar axis
+                                maxTicksLimit: 5
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#2d3748',
+                                font: {
+                                    size: 14,
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const strength = skillLevels[context.dataIndex]?.strength || 'neutral';
+                                    let strengthText = '';
+                                    if (strength === 'strong') strengthText = 'Mạnh';
+                                    else if (strength === 'weak') strengthText = 'Yếu';
+                                    else strengthText = 'Trung bình';
+                                    return `${context.dataset.label}: ${context.raw}% (${strengthText})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Updates skill suggestions and learning path sections based on AI analysis.
+         * @param {Object} analysisData - The structured data from AI analysis.
+         */
+        function updateSkillAnalysisSections(analysisData) {
+            // Update Skill Suggestions
+            skillSuggestionsContainer.innerHTML = ''; // Clear previous content
+            if (analysisData && analysisData.skillsToDevelop && analysisData.skillsToDevelop.length > 0) {
+                analysisData.skillsToDevelop.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.innerHTML = `<i class="fas fa-lightbulb" style="color: #fff;"></i> <span><b>${item.skill}:</b> ${item.reason}</span>`;
+                    skillSuggestionsContainer.appendChild(div);
+                });
+            } else {
+                skillSuggestionsContainer.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7);">Không có gợi ý kỹ năng cần phát triển.</p>';
+            }
+
+            // Update Learning Path Suggestions
+            learningPathStepsContainer.innerHTML = ''; // Clear previous content
+            if (analysisData && analysisData.learningPath && analysisData.learningPath.length > 0) {
+                analysisData.learningPath.forEach((step, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'path-step';
+                    div.innerHTML = `
+                        <div class="step-number">${index + 1}</div>
+                        <div>
+                            <strong>${step.step}</strong><br>
+                            <span style="color: #6b7280;">Dự kiến: ${step.duration}</span>
+                        </div>
+                    `;
+                    learningPathStepsContainer.appendChild(div);
+                });
+            } else {
+                learningPathStepsContainer.innerHTML = '<p style="text-align: center; color: #6b7280;">Không có lộ trình học tập gợi ý.</p>';
+            }
+        }
+
+        /**
+         * Calls the Gemini API for skill analysis.
+         * @param {string} currentSkills - Comma-separated string of current skills.
+         * @param {string} desiredSkills - Comma-separated string of desired skills.
+         * @param {string} careerGoal - User's career goal.
+         * @returns {Promise<Object|null>} - Analysis result object or null on error.
+         */
+        async function getSkillAnalysisFromAI(currentSkills, desiredSkills, careerGoal) {
+            try {
+                const prompt = `Bạn là một chuyên gia phân tích kỹ năng và tư vấn nghề nghiệp. Hãy phân tích các kỹ năng sau đây và mục tiêu nghề nghiệp để:
+                1. Đánh giá mức độ thành thạo (0-100%) của từng kỹ năng.
+                2. Phân loại xem mỗi kỹ năng là "strong" (mạnh), "weak" (yếu), hay "neutral" (trung bình/khác) so với mục tiêu nghề nghiệp và bối cảnh hiện tại.
+                3. Đề xuất một danh sách các kỹ năng cần phát triển để đạt được mục tiêu, kèm theo lý do cụ thể.
+                4. Gợi ý một lộ trình học tập gồm các bước cụ thể và thời gian ước tính.
+                
+                Kỹ năng cần phân tích bao gồm cả "kỹ năng hiện có" và "kỹ năng mong muốn". Nếu một kỹ năng xuất hiện trong cả hai, hãy ưu tiên đánh giá dựa trên khả năng đạt được mục tiêu và đưa ra một đánh giá tổng hợp.
+                
+                Kỹ năng hiện có: "${currentSkills}"
+                Kỹ năng mong muốn: "${desiredSkills}"
+                Mục tiêu nghề nghiệp: "${careerGoal}"
+
+                Vui lòng trả về kết quả dưới định dạng JSON sau:
+                {
+                  "skillLevels": [
+                    {"skill": "Tên kỹ năng", "level": 80, "strength": "strong"},
+                    {"skill": "Tên kỹ năng", "level": 45, "strength": "weak"},
+                    {"skill": "Tên kỹ năng", "level": 60, "strength": "neutral"}
+                  ],
+                  "skillsToDevelop": [
+                    {"skill": "Tên kỹ năng", "reason": "Lý do cần phát triển"}
+                  ],
+                  "learningPath": [
+                    {"step": "Mô tả bước học tập", "duration": "Thời gian ước tính"}
+                  ]
+                }
+                Đảm bảo level là số nguyên từ 0 đến 100 và strength là một trong các giá trị "strong", "weak", "neutral".
+                `;
+
+                const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "skillLevels": {
+                                    type: "ARRAY",
+                                    items: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            "skill": { "type": "STRING" },
+                                            "level": { "type": "NUMBER" },
+                                            "strength": { "type": "STRING", "enum": ["strong", "weak", "neutral"] }
+                                        },
+                                        "propertyOrdering": ["skill", "level", "strength"]
+                                    }
+                                },
+                                "skillsToDevelop": {
+                                    type: "ARRAY",
+                                    items: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            "skill": { "type": "STRING" },
+                                            "reason": { "type": "STRING" }
+                                        },
+                                        "propertyOrdering": ["skill", "reason"]
+                                    }
+                                },
+                                "learningPath": {
+                                    type: "ARRAY",
+                                    items: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            "step": { "type": "STRING" },
+                                            "duration": { "type": "STRING" }
+                                        },
+                                        "propertyOrdering": ["step", "duration"]
+                                    }
+                                }
+                            },
+                            "propertyOrdering": ["skillLevels", "skillsToDevelop", "learningPath"]
+                        }
+                    }
+                };
+                
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API call failed: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    const parsedJson = JSON.parse(jsonString);
+                    // Validate AI response structure
+                    if (parsedJson && Array.isArray(parsedJson.skillLevels) &&
+                        Array.isArray(parsedJson.skillsToDevelop) && Array.isArray(parsedJson.learningPath)) {
+                        return parsedJson;
+                    } else {
+                        throw new Error("Cấu trúc phản hồi JSON từ AI không hợp lệ.");
+                    }
+                } else {
+                    throw new Error("Cấu trúc phản hồi từ AI không như mong đợi hoặc không có nội dung.");
+                }
+            } catch (error) {
+                console.error("Lỗi khi gọi API Gemini để phân tích kỹ năng:", error);
+                showNotification("Lỗi khi phân tích kỹ năng AI. Vui lòng thử lại.", "error");
+                return null;
+            }
+        }
+
+        /**
+         * Triggers the AI skill analysis and updates chart and suggestions.
+         */
+        async function triggerSkillAnalysis() {
+            const currentSkills = userData.currentCourses || '';
+            const desiredSkills = userData.desiredSkills || '';
+            const careerGoal = userData.goals || 'mục tiêu nghề nghiệp chưa xác định';
+
+            // Show loading overlay
+            chartLoadingOverlay.style.display = 'flex';
+            skillChartCanvas.style.display = 'none';
+            noChartDataMessage.style.display = 'none';
+
+            let analysisData = null;
+
+            // Check if input data for AI has changed, if so, re-run analysis
+            const savedAnalysis = userData.aiAnalysisResult;
+            const inputsMatchSavedAnalysis = savedAnalysis &&
+                savedAnalysis.currentSkills === currentSkills &&
+                savedAnalysis.desiredSkills === desiredSkills &&
+                savedAnalysis.careerGoal === careerGoal;
+
+            if (inputsMatchSavedAnalysis && savedAnalysis.data) {
+                analysisData = savedAnalysis.data;
+                console.log("Using cached AI analysis results.");
+            } else if (currentSkills || desiredSkills || careerGoal !== 'mục tiêu nghề nghiệp chưa xác định') {
+                console.log("Calling AI for new skill analysis...");
+                analysisData = await getSkillAnalysisFromAI(currentSkills, desiredSkills, careerGoal);
+                if (analysisData) {
+                    userData.aiAnalysisResult = {
+                        currentSkills,
+                        desiredSkills,
+                        careerGoal,
+                        data: analysisData,
+                        timestamp: new Date().toISOString()
+                    };
+                    saveUserData();
+                }
+            }
+            
+            // Hide loading overlay
+            chartLoadingOverlay.style.display = 'none';
+
+            // Update UI with analysis data
+            createSkillChart(analysisData?.skillLevels);
+            updateSkillAnalysisSections(analysisData);
+        }
+
+        // --- Modal Functions ---
+
+        /** Shows the logout confirmation modal. */
+        function showLogoutModal() {
+            logoutModal.style.display = 'block';
+        }
+
+        /** Hides any active modal. */
+        function closeModal() {
+            logoutModal.style.display = 'none';
+        }
+
+        /** Confirms and performs logout. */
+        function confirmLogout() {
+            localStorage.removeItem('studymateUserProfile'); // Clear all local user data
+            showNotification('Đăng xuất thành công!', 'info');
+            // Redirect to a login page or home page
+            window.location.href = 'dangnhap.html'; // Assuming you have a login page
+        }
+
+        /** Redirects to index.html */
+        function goToIndex() {
+            window.location.href = 'index.html';
+        }
+
+        // --- Event Listeners ---
+
+        // Initialize on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            updateProfileUI(); // Initial render of UI
+        });
+
+        // Event listener for form submission if any
+        // Note: We are using a toggleEdit button instead of a form submission for explicit save.
+        // If you wrap editable inputs in a form, you'd handle form.onsubmit here.
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,955 @@
+/* --- style.css --- */
+
+/* Các biến màu */
+:root {
+    --primary-color: #2196F3; /* Xanh dương tươi sáng */
+    --primary-dark-color: #1976D2; /* Xanh dương đậm hơn */
+    --primary_light_color: #BBDEFB; /* Xanh dương nhạt */
+    --accent-color: #FF4081; /* Hồng Fuchsia */
+    --background-light: #F8F9FA; /* Nền trắng xám nhẹ */
+    --card-background: #FFFFFF; /* Nền thẻ trắng tinh */
+    --text-primary: #212121; /* Chữ đen đậm */
+    --text-secondary: #757575; /* Chữ xám nhạt */
+    --bottom-nav-selected: var(--primary-color);
+    --bottom-nav-unselected: #BDBDBD;
+}
+
+/* Reset CSS cơ bản và thiết lập font */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden; /* Ngăn cuộn trang tổng thể */
+}
+
+.app-container {
+    width: 100%;
+    max-width: 400px; /* Chiều rộng tối đa cho màn hình điện thoại */
+    height: 100vh; /* Chiều cao chiếm toàn bộ viewport */
+    max-height: 800px; /* Chiều cao tối đa cho app */
+    background-color: var(--background-light);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Đảm bảo không có scrollbar không mong muốn */
+    position: relative;
+}
+
+/* Header / Toolbar */
+.app-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.app-header .app-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+}
+
+.app-header .settings-icon {
+    font-size: 24px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+/* Main Content Area */
+.app-main-content {
+    flex-grow: 1;
+    overflow-y: auto; /* Cho phép cuộn nội dung chính */
+    padding-bottom: calc(80px + 60px); /* Padding cho bottom-nav và footer */
+}
+
+/* Search Bar */
+.search-bar-card {
+    background-color: var(--card-background);
+    margin: 16px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+}
+
+.search-bar-card .search-icon {
+    color: var(--text-secondary);
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.search-bar-card .search-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--text-primary);
+    padding: 8px 0;
+}
+
+.search-bar-card .search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Welcome Text */
+.welcome-text {
+    color: var(--primary-dark-color);
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    margin: 24px 16px;
+    line-height: 1.4;
+}
+
+/* Slideshow Card */
+.slideshow-card {
+    background-color: var(--card-background);
+    margin: 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+    height: 200px;
+}
+
+.slideshow-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.my-slides {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: fadeEffect 1.5s;
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0.3;}
+    to {opacity: 1;}
+}
+
+.slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+    color: white;
+    padding: 24px;
+}
+
+.slide-title {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.slide-description {
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+.dot-container {
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    z-index: 5;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+    cursor: pointer;
+}
+
+.dot.active, .dot:hover {
+    background-color: var(--primary-color);
+}
+
+/* Section Title for Categories */
+.section-title {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    margin: 16px 16px 8px 16px;
+}
+
+/* Categories Grid */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    padding: 0 16px;
+    margin-bottom: 20px;
+}
+
+.category-card {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.category-card .category-icon {
+    font-size: 48px;
+    color: var(--primary-dark-color);
+    margin-bottom: 10px;
+}
+
+.category-card .category-name {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+.category-card .category-description {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+/* App Footer */
+.app-footer {
+    background-color: var(--primary-dark-color);
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    z-index: 14;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+}
+
+.app-footer p {
+    margin: 3px 0;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--card-background);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    height: 60px;
+    align-items: center;
+    z-index: 15;
+}
+
+.bottom-nav .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--bottom-nav-unselected);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 5px 0;
+    transition: color 0.2s ease;
+    height: 100%;
+}
+
+.bottom-nav .nav-item.active {
+    color: var(--bottom-nav-selected);
+}
+
+.bottom-nav .nav-item:hover {
+    color: var(--bottom-nav-selected);
+}
+
+.bottom-nav .nav-item i {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+/* FAB Nằm giữa Bottom Nav */
+.bottom-nav .nav-item.fab-center {
+    flex: 1.2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    position: relative;
+    height: 100%;
+}
+
+.fab-chatbot {
+    background-color: var(--accent-color);
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 20;
+    transition: background-color 0.2s ease;
+    position: absolute;
+    bottom: 20px; /* Điều chỉnh để nó nhô lên so với đáy nav item */
+}
+
+.fab-chatbot:hover {
+    background-color: #d81b60;
+}
+
+
+/* --- Styles cho MÀN HÌNH CHI TIẾT (detail_template.html, skill_analysis.html, resource_curator.html, schedule_manager.html, career_and_interview.html) --- */
+
+/* Header của màn hình chi tiết */
+.detail-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.detail-header .back-icon {
+    font-size: 24px;
+    margin-right: 15px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.detail-header .detail-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    flex-grow: 1;
+    text-align: center;
+    margin-right: 40px;
+}
+
+/* Main Content Area cho màn hình chi tiết */
+.detail-main-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 16px;
+    padding-bottom: 20px;
+}
+
+/* Các Card chung cho màn hình chi tiết */
+.card {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.card-title {
+    color: var(--primary-dark-color);
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+/* Styles cho Career Info Display */
+.career-info-display {
+    background-color: var(--background-light);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    display: none;
+}
+
+.career-info-display h4 {
+    color: var(--primary-dark-color);
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.career-info-display p {
+    margin-bottom: 5px;
+}
+
+.career-info-display ul {
+    list-style: disc;
+    margin-left: 20px;
+    padding: 0;
+}
+
+.career-info-display li {
+    margin-bottom: 3px;
+}
+
+/* Styles cho Biểu đồ Cạnh tranh */
+.competition-chart-card {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.competition-chart-card canvas {
+    max-height: 250px; /* Chiều cao tối đa cho biểu đồ */
+    width: 100% !important;
+    height: auto !important;
+    margin: auto;
+    display: block;
+}
+
+.chart-caption {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Styles cho Interview Practice Card */
+.interview-question-area {
+    background-color: var(--primary_light_color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: var(--primary-dark-color);
+    font-family: 'Inter', sans-serif;
+}
+
+.interview-question-area .question-text {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+textarea#interviewAnswerInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.ai-feedback-output {
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #388E3C;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    min-height: 50px;
+    display: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Điều chỉnh filter-select (Dropdown) */
+.filter-select {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px; /* Tăng padding cho select */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px; /* Tăng font size */
+    color: var(--text-primary);
+    background-color: var(--card-background);
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23757575%22%20d%3D%22M287%2C197.35L146.2%2C56.6C142.3%2C52.7 136.7%2C52.7 132.8%2C56.6L-2.8%2C191.45L9.65%2C203.9c3.9%2C3.9 10.2%2C3.9 14.1%2C0L146.2%2C76.9L268.25%2C198.9c3.9%2C3.9 10.2%2C3.9 14.1%2C0L287%2C197.35z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px; /* Kích thước mũi tên lớn hơn */
+}
+
+/* Nút chính */
+.primary-button {
+    margin-top: 20px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 18sp;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.primary-button:hover {
+    background-color: #d81b60;
+    transform: translateY(-2px);
+}
+
+.primary-button.small-button {
+    padding: 10px 15px;
+    font-size: 16px;
+    width: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+
+/* --- Styles cho Quản lý lịch học (schedule_manager.html) --- */
+
+/* Styles cho Điều khiển Lịch */
+.schedule-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.schedule-controls .secondary-button {
+    background-color: var(--background-light);
+    color: var(--primary-dark-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.schedule-controls .secondary-button:hover {
+    background-color: var(--primary_light_color);
+    color: var(--primary-color);
+}
+
+.schedule-controls .current-day-display {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+/* Styles cho Bảng Lịch Học */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+}
+
+.schedule-table thead tr {
+    background-color: var(--primary_light_color);
+    color: var(--primary_dark_color);
+    text-align: left;
+}
+
+.schedule-table th, .schedule-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+.schedule-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.schedule-table tbody tr:hover {
+    background-color: #f0f2f5;
+}
+
+.schedule-table .reminder-icon {
+    font-size: 18px;
+    color: var(--accent-color);
+    cursor: pointer;
+}
+
+.table-caption {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Styles cho Cài đặt Nhắc nhở */
+.reminder-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.reminder-option label {
+    font-size: 15px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.reminder-option .filter-select {
+    flex-grow: 0;
+    width: auto;
+}
+
+.add-schedule-button {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+/* --- Responsive adjustments (Điều chỉnh cho màn hình nhỏ hơn) --- */
+
+@media (max-width: 400px) {
+    .app-container {
+        max-width: 100%;
+        height: 100vh;
+        box-shadow: none;
+    }
+    .detail-header .detail-title {
+        font-size: 18px;
+    }
+    .detail-header .back-icon {
+        font-size: 22px;
+    }
+    .detail-main-content {
+        padding: 12px;
+    }
+    .card {
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+    .card-title {
+        font-size: 16px;
+    }
+    .card-description {
+        font-size: 13px;
+    }
+    .primary-button {
+        font-size: 16px;
+        padding: 12px 15px;
+    }
+    .primary-button.small-button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    /* Các phần của AI Tổng Hợp & Đề Xuất Học Liệu */
+    textarea#summaryInput {
+        font-size: 13px;
+        padding: 8px;
+    }
+    .summary-output {
+        font-size: 14px;
+        padding: 12px;
+    }
+    .search-input-group .search-input,
+    .search-input-group .search-button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+    .filter-options {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .filter-select {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    .resource-results .resource-card {
+        padding: 12px;
+        gap: 8px;
+    }
+    .resource-results .resource-card img {
+        width: 70px;
+        height: 50px;
+    }
+    .resource-results .resource-card .resource-title {
+        font-size: 14px;
+    }
+    .resource-results .resource-card .resource-description {
+        font-size: 11px;
+    }
+    .resource-results .resource-card .resource-source {
+        font-size: 10px;
+    }
+    /* Các phần của AI Phân Tích Kỹ Năng & Lộ Trình */
+    .skill-radar-chart canvas {
+        max-height: 250px;
+    }
+    #skillsToDevelopList li {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    .learning-path-step strong {
+        font-size: 15px;
+    }
+    .learning-path-step p {
+        font-size: 13px;
+    }
+    /* Các phần của AI Cố Vấn Nghề Nghiệp & Luyện Phỏng Vấn Ảo */
+    .career-info-display {
+        padding: 12px;
+        font-size: 13px;
+    }
+    .career-info-display h4 {
+        font-size: 15px;
+    }
+    .interview-question-area {
+        padding: 12px;
+        font-size: 13px;
+    }
+    .interview-question-area .question-text {
+        font-size: 14px;
+    }
+    textarea#interviewAnswerInput {
+        font-size: 13px;
+        padding: 8px;
+    }
+    .ai-feedback-output {
+        font-size: 13px;
+        padding: 12px;
+    }
+    .competition-chart-card { /* Biểu đồ cạnh tranh */
+        padding: 15px;
+    }
+    .competition-chart-card canvas {
+        max-height: 200px; /* Điều chỉnh chiều cao biểu đồ trên di động */
+    }
+    /* Các phần của AI Quản Lý Lịch Học */
+    .schedule-table {
+        font-size: 12px;
+    }
+    .schedule-table th, .schedule-table td {
+        padding: 8px 6px;
+    }
+    .schedule-table .reminder-icon {
+        font-size: 16px;
+    }
+    .current-day-display {
+        font-size: 14px;
+    }
+    .schedule-controls .secondary-button {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    .reminder-option label {
+        font-size: 14px;
+    }
+    .reminder-option .filter-select {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    .add-schedule-button {
+        margin-bottom: 15px; /* Giảm margin bottom */
+    }
+
+    /* Footer và FAB trên di động */
+    .app-main-content {
+        padding-bottom: calc(60px + 60px); /* 60px height of bottom nav + 60px assumed footer height */
+    }
+    .fab-chatbot {
+        bottom: calc(15px + 60px); /* 15px from nav item, + footer height */
+    }
+}
+
+@media (max-width: 320px) {
+    .detail-header .detail-title {
+        font-size: 16px;
+        margin-right: 30px;
+    }
+    .card-title {
+        font-size: 15px;
+    }
+    .card-description {
+        font-size: 12px;
+    }
+    .primary-button {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+    .primary-button.small-button {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    /* Các phần của AI Tổng Hợp & Đề Xuất Học Liệu */
+    textarea#summaryInput {
+        font-size: 12px;
+        padding: 6px;
+    }
+    .summary-output {
+        font-size: 13px;
+        padding: 10px;
+    }
+    .search-input-group .search-input,
+    .search-input-group .search-button {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    .filter-select {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    .resource-results .resource-card {
+        padding: 10px;
+        gap: 6px;
+    }
+    .resource-results .resource-card img {
+        width: 60px;
+        height: 45px;
+    }
+    .resource-results .resource-card .resource-title {
+        font-size: 13px;
+    }
+    .resource-results .resource-card .resource-description {
+        font-size: 10px;
+    }
+    .resource-results .resource-card .resource-source {
+        font-size: 9px;
+    }
+    /* Các phần của AI Phân Tích Kỹ Năng & Lộ Trình */
+    .skill-radar-chart canvas {
+        max-height: 220px;
+    }
+    #skillsToDevelopList li {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    .learning-path-step strong {
+        font-size: 14px;
+    }
+    .learning-path-step p {
+        font-size: 12px;
+    }
+    /* Các phần của AI Cố Vấn Nghề Nghiệp & Luyện Phỏng Vấn Ảo */
+    .career-info-display {
+        font-size: 12px;
+        padding: 10px;
+    }
+    .career-info-display h4 {
+        font-size: 14px;
+    }
+    .interview-question-area {
+        font-size: 12px;
+        padding: 10px;
+    }
+    .interview-question-area .question-text {
+        font-size: 13px;
+    }
+    textarea#interviewAnswerInput {
+        font-size: 12px;
+        padding: 6px;
+    }
+    .ai-feedback-output {
+        font-size: 12px;
+        padding: 10px;
+    }
+    .competition-chart-card canvas {
+        max-height: 180px;
+    }
+    /* Các phần của AI Quản Lý Lịch Học */
+    .schedule-table {
+        font-size: 11px;
+    }
+    .schedule-table th, .schedule-table td {
+        padding: 6px 4px;
+    }
+    .current-day-display {
+        font-size: 13px;
+    }
+    .schedule-controls .secondary-button {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+    .reminder-option label {
+        font-size: 13px;
+    }
+    .reminder-option .filter-select {
+        font-size: 12px;
+    }
+}

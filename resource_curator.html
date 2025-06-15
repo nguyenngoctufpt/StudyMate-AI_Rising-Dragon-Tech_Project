@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tổng Hợp & Đề Xuất Học Liệu - AI4LIFE</title>
+    <!-- Inter font and Font Awesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Tailwind CSS CDN for utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and general body background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Hide scrollbar for clean aesthetics but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="app-container w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-hidden md:flex md:flex-col">
+        <!-- Header Section -->
+        <header class="detail-header bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 flex items-center shadow-lg rounded-t-lg">
+         <i class="fas fa-arrow-left back-icon text-2xl cursor-pointer hover:text-blue-200 transition-colors duration-200" onclick="window.location.href = 'index.html';" aria-label="Quay lại"></i>
+            <span class="detail-title text-2xl font-bold ml-4">Tổng Hợp & Đề Xuất Học Liệu</span>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="detail-main-content p-6 space-y-8 no-scrollbar overflow-y-auto">
+            <!-- Section: Summarize & Explain -->
+            <div class="card function-intro-card bg-white p-7 rounded-2xl shadow-lg border border-gray-200">
+                <h3 class="card-title text-xl font-extrabold text-gray-800 mb-3" id="summary-section-title">Tóm Tắt & Giải Thích Thông Minh</h3>
+                <p class="card-description text-gray-600 text-sm mb-5">Dán văn bản hoặc URL để AI tóm tắt nội dung chính hoặc giải thích các khái niệm phức tạp.</p>
+                <textarea id="summaryInput" placeholder="Dán văn bản hoặc URL cần tóm tắt/giải thích tại đây..." rows="6"
+                          class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500 text-gray-700 bg-gray-50 resize-y mb-5 shadow-sm"
+                          aria-label="Nhập văn bản hoặc URL để tóm tắt hoặc giải thích"></textarea>
+                
+                <!-- New: Summary/Explanation Type Selection -->
+                <div class="mb-5">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Chọn loại xử lý:</label>
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="summaryType" value="summarize" class="form-radio text-blue-600 focus:ring-blue-500" checked>
+                            <span class="ml-2 text-gray-700">Tóm Tắt</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="summaryType" value="explain" class="form-radio text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-gray-700">Giải Thích</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Voice Selection for Read Aloud -->
+                <div class="mb-5">
+                    <label for="ttsVoiceSelect" class="block text-gray-700 text-sm font-semibold mb-2">Chọn giọng đọc:</label>
+                    <select id="ttsVoiceSelect" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 cursor-pointer">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-5">
+                    <button class="primary-button small-button bg-blue-600 text-white px-7 py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 text-base font-semibold shadow-md active:scale-95 flex-grow"
+                            id="summarizeButton" aria-label="Tóm tắt hoặc giải thích nội dung đã nhập">
+                        Tóm Tắt / Giải Thích
+                    </button>
+                    <button class="secondary-button small-button bg-gray-200 text-gray-800 px-7 py-3 rounded-xl hover:bg-gray-300 transition-all duration-300 text-base font-semibold shadow-md active:scale-95 flex-grow"
+                            id="readAloudButton" aria-label="Đọc to kết quả tóm tắt hoặc giải thích">
+                        <i class="fas fa-volume-up mr-2"></i> Đọc To
+                    </button>
+                </div>
+                <!-- File Upload Section -->
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-5 items-center">
+                    <input type="file" id="fileUploadInput" accept=".txt" class="hidden" aria-label="Chọn tệp văn bản để tải lên">
+                    <button class="primary-button small-button bg-green-600 text-white px-7 py-3 rounded-xl hover:bg-green-700 transition-all duration-300 text-base font-semibold shadow-md active:scale-95 flex-grow"
+                            id="uploadFileButton" aria-label="Tải lên tệp văn bản (.txt)">
+                        <i class="fas fa-upload mr-2"></i> Tải Lên Tệp (.txt)
+                    </button>
+                    <span id="fileNameDisplay" class="text-sm text-gray-600 flex-grow text-center sm:text-left" aria-live="polite">Chưa có tệp nào được chọn.</span>
+                </div>
+                <!-- Download Audio Section -->
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-5">
+                    <button class="secondary-button small-button bg-purple-600 text-white px-7 py-3 rounded-xl hover:bg-purple-700 transition-all duration-300 text-base font-semibold shadow-md active:scale-95 flex-grow"
+                            id="downloadAudioButton" aria-label="Tải xuống âm thanh của văn bản đã tóm tắt">
+                        <i class="fas fa-download mr-2"></i> Tải Xuống Giọng Nói
+                    </button>
+                </div>
+
+                <div id="summaryOutput" class="summary-output mt-6 p-5 bg-blue-50 border border-blue-200 rounded-xl text-gray-800 whitespace-pre-wrap min-h-[80px] shadow-inner flex items-center justify-center text-center"
+                     role="status" aria-live="polite" aria-labelledby="summary-section-title">
+                    <span class="text-gray-500 text-sm">Kết quả tóm tắt/giải thích sẽ hiển thị tại đây...</span>
+                </div>
+                <div id="summaryLoading" class="hidden mt-4 text-center text-blue-600" role="status" aria-live="polite">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...
+                </div>
+            </div>
+
+            <!-- Section: Resource Search & Discovery -->
+            <div class="card resource-search-card bg-white p-7 rounded-2xl shadow-lg border border-gray-200">
+                <h3 class="card-title text-xl font-extrabold text-gray-800 mb-3" id="resource-section-title">Tìm Kiếm & Khám Phá Tài Nguyên</h3>
+                <div class="search-input-group flex flex-col sm:flex-row items-stretch sm:space-x-3 mb-5">
+                    <input type="text" id="resourceSearchInput" placeholder="Tìm kiếm tài liệu, khóa học..."
+                           class="flex-grow p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500 text-gray-700 bg-gray-50 mb-3 sm:mb-0 shadow-sm"
+                           aria-label="Nhập từ khóa tìm kiếm tài liệu hoặc khóa học">
+                    <button class="search-button bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-md active:scale-95"
+                            id="searchResourceButton" aria-label="Thực hiện tìm kiếm tài nguyên">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </div>
+                <div class="filter-options flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-6">
+                    <select id="resourceFilterTopic" class="filter-select flex-grow p-3 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-3 focus:ring-blue-500 shadow-sm"
+                            aria-label="Lọc tài nguyên theo chủ đề">
+                        <option value="">-- Chủ đề --</option>
+                        <option value="Lập trình">Lập trình</option>
+                        <option value="Thiết kế">Thiết kế</option>
+                        <option value="Khoa học dữ liệu">Khoa học dữ liệu</option>
+                        <option value="Kinh tế">Kinh tế</option>
+                    </select>
+                    <select id="resourceFilterSource" class="filter-select flex-grow p-3 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-3 focus:ring-blue-500 shadow-sm"
+                            aria-label="Lọc tài nguyên theo nguồn">
+                        <option value="">-- Nguồn --</option>
+                        <option value="Coursera">Coursera</option>
+                        <option value="edX">edX</option>
+                        <option value="YouTube">YouTube</option>
+                        <option value="Udemy">Udemy</option>
+                    </select>
+                </div>
+                <div id="resourceResults" class="resource-results space-y-4" role="region" aria-live="polite" aria-labelledby="resource-section-title">
+                    <div class="text-gray-500 text-sm text-center">Kết quả tìm kiếm tài nguyên sẽ hiển thị tại đây...</div>
+                </div>
+                <div id="resourceLoading" class="hidden mt-4 text-center text-blue-600" role="status" aria-live="polite">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tìm kiếm...
+                </div>
+            </div>
+
+            <!-- Custom Message Box -->
+            <div id="messageBox" class="mt-4 p-3 rounded-lg hidden" role="alert">
+                <!-- Thông báo lỗi hoặc trạng thái sẽ hiển thị ở đây -->
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // Get references to DOM elements
+        const summaryInput = document.getElementById('summaryInput');
+        const summarizeButton = document.getElementById('summarizeButton');
+        const summaryOutput = document.getElementById('summaryOutput');
+        const summaryLoading = document.getElementById('summaryLoading');
+        const readAloudButton = document.getElementById('readAloudButton');
+        const fileUploadInput = document.getElementById('fileUploadInput');
+        const uploadFileButton = document.getElementById('uploadFileButton');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const downloadAudioButton = document.getElementById('downloadAudioButton');
+        const messageBox = document.getElementById('messageBox'); // Tham chiếu đến hộp thông báo
+        const ttsVoiceSelect = document.getElementById('ttsVoiceSelect'); // New voice select element
+        const summaryTypeRadios = document.querySelectorAll('input[name="summaryType"]'); // New radio buttons
+
+        const resourceSearchInput = document.getElementById('resourceSearchInput');
+        const searchResourceButton = document.getElementById('searchResourceButton');
+        const resourceFilterTopic = document.getElementById('resourceFilterTopic');
+        const resourceFilterSource = document.getElementById('resourceFilterSource');
+        const resourceResults = document.getElementById('resourceResults');
+        const resourceLoading = document.getElementById('resourceLoading');
+
+        // Variable to store available voices
+        let availableVoices = [];
+
+        /**
+         * Function to display messages in the custom message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'error' for red box, 'success' for green box, 'info' for blue box.
+         */
+        function showMessage(message, type = 'error') {
+            messageBox.textContent = message;
+            let bgColorClass = '';
+            let textColorClass = '';
+            if (type === 'error') {
+                bgColorClass = 'bg-red-100';
+                textColorClass = 'text-red-700';
+            } else if (type === 'success') {
+                bgColorClass = 'bg-green-100';
+                textColorClass = 'text-green-700';
+            } else if (type === 'info') {
+                bgColorClass = 'bg-blue-100'; // Using blue for info
+                textColorClass = 'text-blue-700';
+            }
+            messageBox.className = `mt-4 p-3 rounded-lg block ${bgColorClass} ${textColorClass}`;
+        }
+
+        /**
+         * Function to hide the custom message box.
+         */
+        function hideMessage() {
+            messageBox.classList.add('hidden');
+        }
+
+        /**
+         * Populates the voice select dropdown with available voices.
+         * Prioritizes Vietnamese voices.
+         */
+        function populateVoiceList() {
+            const allVoices = speechSynthesis.getVoices().sort((a, b) => {
+                const aname = a.name.toUpperCase();
+                const bname = b.name.toUpperCase();
+                if (aname < bname) return -1;
+                if (aname > bname) return +1;
+                return 0;
+            });
+
+            // Separate Vietnamese voices from others
+            const viVoices = allVoices.filter(voice => voice.lang.includes('vi-VN'));
+            const otherVoices = allVoices.filter(voice => !voice.lang.includes('vi-VN'));
+
+            // Combine them, putting Vietnamese voices first
+            availableVoices = [...viVoices, ...otherVoices];
+
+            ttsVoiceSelect.innerHTML = ''; // Clear existing options
+
+            let defaultViVoiceFound = false;
+
+            if (availableVoices.length === 0) {
+                const option = document.createElement('option');
+                option.textContent = 'Không có giọng đọc nào khả dụng';
+                option.disabled = true;
+                ttsVoiceSelect.appendChild(option);
+            } else {
+                availableVoices.forEach((voice) => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.setAttribute('data-lang', voice.lang);
+                    option.setAttribute('data-name', voice.name);
+                    ttsVoiceSelect.appendChild(option);
+
+                    // Set first Vietnamese voice as default
+                    if (voice.lang.includes('vi-VN') && !defaultViVoiceFound) {
+                        option.selected = true;
+                        defaultViVoiceFound = true;
+                    }
+                });
+
+                // If no Vietnamese voice was found (e.g., browser doesn't have one), select the first available
+                if (!defaultViVoiceFound) {
+                    ttsVoiceSelect.selectedIndex = 0;
+                }
+            }
+        }
+
+        // Listen for voices being loaded/changed by the browser
+        if ('speechSynthesis' in window) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+            // Call immediately in case voices are already loaded
+            populateVoiceList();
+        }
+
+        /**
+         * Function to simulate an API call to the Gemini LLM.
+         * This function now focuses purely on the API request and response,
+         * with UI updates (loading, error messages) handled by the calling functions.
+         * @param {string} prompt - The text prompt for the LLM.
+         * @param {Object} [options] - Additional options for the API call.
+         * @param {boolean} [options.isUrl] - True if the prompt is a URL to be browsed.
+         * @param {Object} [options.responseSchema] - Optional JSON schema for structured output.
+         * @returns {Promise<string|Object>} - The generated text or parsed JSON object.
+         * @throws {Error} - Throws an error if the API call fails or response structure is unexpected.
+         */
+        async function callGeminiAPI(prompt, options = {}) {
+            let chatHistory = [];
+            let payload = {};
+            // Your provided API Key
+            const apiKey = "AIzaSyBbypxBfQrof-IeH6GzDretubE5pPM8eSU"; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            if (options.isUrl) {
+                chatHistory.push({ role: "user", parts: [{ text: `Tóm tắt hoặc giải thích nội dung từ URL này: ${prompt}` }] });
+            } else {
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            }
+
+            payload = { contents: chatHistory };
+
+            if (options.responseSchema) {
+                payload.generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: options.responseSchema
+                };
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    console.error('API call failed:', response.status, response.statusText, errorBody);
+                    throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    let parsedResult;
+                    if (options.responseSchema) {
+                        try {
+                            parsedResult = JSON.parse(text);
+                            // Ensure mediaType and thumbnailUrl are populated for demo purposes
+                            if (Array.isArray(parsedResult)) {
+                                parsedResult = parsedResult.map(item => {
+                                    if (!item.mediaType || !item.thumbnailUrl || !item.thumbnailUrl.startsWith('http')) {
+                                        const mediaTypes = ['image', 'video'];
+                                        const randomType = mediaTypes[Math.floor(Math.random() * mediaTypes.length)];
+                                        const width = 1280; // Placeholder width
+                                        const height = 720; // Placeholder height
+                                        const bgColor = ['007bff', '28a745', 'ffc107', 'dc3545'][Math.floor(Math.random() * 4)];
+                                        const textColor = 'ffffff';
+                                        const titleForPlaceholder = item.title ? item.title.substring(0, 10) : 'Placeholder';
+                                        item.mediaType = randomType;
+                                        item.thumbnailUrl = `https://placehold.co/${width}x${height}/${bgColor}/${textColor}?text=${encodeURIComponent(titleForPlaceholder)}`;
+                                    }
+                                    return item;
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Failed to parse JSON from AI response:", e);
+                            throw new Error("Phản hồi JSON không hợp lệ từ AI.");
+                        }
+                        return parsedResult;
+                    } else {
+                        return text; // Return raw text otherwise
+                    }
+                } else {
+                    console.error('Unexpected API response structure:', result);
+                    throw new Error('Không nhận được phản hồi hợp lệ từ AI. Vui lòng thử lại.');
+                }
+            } catch (error) {
+                console.error('Lỗi khi gọi API Gemini:', error);
+                throw error; // Re-throw the error to be caught by the calling event listener
+            }
+        }
+
+        /**
+         * Handles the click event for the Summarize / Explain button.
+         * Processes the input text/URL and displays the AI-generated summary/explanation.
+         */
+        summarizeButton.addEventListener('click', async () => {
+            hideMessage(); // Hide any previous messages
+            const input = summaryInput.value.trim();
+            if (!input) {
+                summaryOutput.innerHTML = '<span class="text-red-500">Vui lòng nhập văn bản hoặc URL để tóm tắt/giải thích.</span>';
+                return;
+            }
+
+            const isUrl = input.startsWith('http://') || input.startsWith('https://');
+            
+            // Get selected summary type
+            const selectedSummaryType = document.querySelector('input[name="summaryType"]:checked').value;
+            let actionText = '';
+            if (selectedSummaryType === 'summarize') {
+                actionText = 'tóm tắt nội dung chính';
+            } else if (selectedSummaryType === 'explain') {
+                actionText = 'giải thích các khái niệm phức tạp';
+            }
+
+            const prompt = `Bạn là một trợ lý thông minh. ${isUrl ? `Hãy duyệt và ${actionText} từ URL` : `Hãy ${actionText}`}: "${input}". Đảm bảo kết quả cô đọng và dễ hiểu.`;
+
+            // Display loading indicator
+            summaryOutput.innerHTML = '<span class="text-blue-600"><i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý yêu cầu của bạn...</span>';
+            summaryLoading.classList.remove('hidden');
+            summaryOutput.classList.add('flex', 'items-center', 'justify-center', 'text-center');
+
+            try {
+                const result = await callGeminiAPI(prompt, { isUrl: isUrl });
+                if (typeof result === 'string') {
+                    summaryOutput.innerHTML = result;
+                } else {
+                    summaryOutput.innerHTML = '<span class="text-red-500">Đã nhận được phản hồi không mong muốn.</span>';
+                    console.error('Received non-string result for summarization:', result);
+                }
+            } catch (error) {
+                summaryOutput.innerHTML = `<span class="text-red-500">Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại.</span>`;
+            } finally {
+                // Hide loading indicator regardless of success or failure
+                summaryLoading.classList.add('hidden');
+                summaryOutput.classList.remove('flex', 'items-center', 'justify-center', 'text-center');
+            }
+        });
+
+        /**
+         * Handles the click event for the "Read Aloud" button.
+         * Uses the Web Speech API to read the content of the summaryOutput div.
+         */
+        readAloudButton.addEventListener('click', () => {
+            hideMessage(); // Hide any previous messages
+            const textToRead = summaryOutput.innerText;
+
+            if (!textToRead || textToRead.includes("Kết quả tóm tắt/giải thích sẽ hiển thị tại đây...") || textToRead.includes("Đang xử lý yêu cầu của bạn...") || textToRead.includes("Đã xảy ra lỗi:")) {
+                showMessage("Không có văn bản để đọc hoặc nội dung đang được xử lý/có lỗi.", 'error');
+                return;
+            }
+
+            if ('speechSynthesis' in window) {
+                // Stop any ongoing speech
+                if (speechSynthesis.speaking) {
+                    speechSynthesis.cancel();
+                    readAloudButton.innerHTML = '<i class="fas fa-volume-up mr-2"></i> Đọc To'; // Reset button text
+                    readAloudButton.classList.replace('bg-red-500', 'bg-gray-200');
+                    readAloudButton.classList.replace('text-white', 'text-gray-800');
+                    readAloudButton.classList.replace('hover:bg-red-600', 'hover:bg-gray-300');
+                    return; // Exit if already speaking and user clicked to stop
+                }
+
+                const utterance = new SpeechSynthesisUtterance(textToRead);
+
+                // Get selected voice from dropdown
+                const selectedVoiceName = ttsVoiceSelect.selectedOptions[0].getAttribute('data-name');
+                const selectedVoice = availableVoices.find(voice => voice.name === selectedVoiceName);
+
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                } else {
+                    console.warn("Selected voice not found, using default.");
+                    showMessage("Giọng đọc đã chọn không khả dụng, đang sử dụng giọng mặc định.", 'error');
+                }
+
+                // Always try to set language to Vietnamese for pronunciation context
+                utterance.lang = 'vi-VN'; 
+                utterance.pitch = 1;      // Range between 0 and 2
+                utterance.rate = 1;       // Range between 0.1 and 10
+
+                utterance.onstart = () => {
+                    readAloudButton.innerHTML = '<i class="fas fa-stop-circle mr-2"></i> Dừng Đọc';
+                    readAloudButton.classList.replace('bg-gray-200', 'bg-red-500');
+                    readAloudButton.classList.replace('text-gray-800', 'text-white');
+                    readAloudButton.classList.replace('hover:bg-gray-300', 'hover:bg-red-600');
+                };
+
+                utterance.onend = () => {
+                    readAloudButton.innerHTML = '<i class="fas fa-volume-up mr-2"></i> Đọc To';
+                    readAloudButton.classList.replace('bg-red-500', 'bg-gray-200');
+                    readAloudButton.classList.replace('text-white', 'text-gray-800');
+                    readAloudButton.classList.replace('hover:bg-red-600', 'hover:bg-gray-300');
+                    hideMessage(); // Hide message after speech ends
+                };
+
+                utterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event.error);
+                    readAloudButton.innerHTML = '<i class="fas fa-volume-up mr-2"></i> Đọc To';
+                    readAloudButton.classList.replace('bg-red-500', 'bg-gray-200');
+                    readAloudButton.classList.replace('text-white', 'text-gray-800');
+                    readAloudButton.classList.replace('hover:bg-red-600', 'hover:bg-gray-300');
+                    showMessage("Không thể đọc văn bản. Đã xảy ra lỗi: " + event.error, 'error');
+                };
+
+                speechSynthesis.speak(utterance);
+            } else {
+                showMessage("Trình duyệt của bạn không hỗ trợ tính năng chuyển văn bản thành giọng nói.", 'error');
+            }
+        });
+
+        // Event listener for custom file upload button
+        uploadFileButton.addEventListener('click', () => {
+            hideMessage(); // Hide any previous messages
+            fileUploadInput.click(); // Trigger the hidden file input
+        });
+
+        // Event listener for when a file is selected
+        fileUploadInput.addEventListener('change', (event) => {
+            hideMessage(); // Hide any previous messages
+            const file = event.target.files[0];
+            if (file) {
+                // Display file name
+                fileNameDisplay.textContent = `Tệp đã chọn: ${file.name}`;
+
+                // Validate file type
+                if (file.type === 'text/plain') {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        summaryInput.value = e.target.result; // Populate textarea with file content
+                        // Optionally, auto-trigger summarization
+                        // summarizeButton.click();
+                    };
+                    reader.onerror = () => {
+                        fileNameDisplay.textContent = 'Lỗi đọc tệp.';
+                        showMessage('Không thể đọc tệp. Vui lòng thử lại.', 'error');
+                    };
+                    reader.readAsText(file);
+                } else {
+                    fileNameDisplay.textContent = 'Vui lòng chọn tệp .txt';
+                    showMessage('Chỉ hỗ trợ tệp văn bản (.txt). Vui lòng chọn định dạng khác cho .pdf hoặc .docx.', 'error');
+                    summaryInput.value = ''; // Clear textarea if unsupported file type
+                }
+            } else {
+                fileNameDisplay.textContent = 'Chưa có tệp nào được chọn.';
+                summaryInput.value = '';
+            }
+        });
+
+        // Handle download audio button click
+        downloadAudioButton.addEventListener('click', async () => {
+            hideMessage(); // Hide any previous messages
+            const textToDownload = summaryOutput.innerText;
+
+            if (!textToDownload || textToDownload.includes("Kết quả tóm tắt/giải thích sẽ hiển thị tại đây...") || textToDownload.includes("Đang xử lý yêu cầu của bạn...") || textToDownload.includes("Đã xảy ra lỗi:")) {
+                showMessage("Không có văn bản để tải xuống. Vui lòng tóm tắt/giải thích văn bản trước.", 'error');
+                return;
+            }
+
+            // --- Cảnh báo: Phần này chỉ là minh họa. Cần backend thực tế. ---
+            showMessage('Đang yêu cầu tạo file âm thanh. Tính năng này cần một dịch vụ phía máy chủ để hoạt động. Vui lòng chờ...', 'info');
+
+            try {
+                // Giả lập cuộc gọi API tới dịch vụ backend TTS của bạn
+                // Thay thế 'YOUR_BACKEND_TTS_API_ENDPOINT' bằng URL API thực tế của bạn
+                const hypotheticalBackendApiUrl = 'https://your-backend-tts-api.com/synthesize'; 
+                // Note: This is a placeholder URL and will not work without a real backend.
+
+                const response = await fetch(hypotheticalBackendApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Thêm API Key backend của bạn nếu cần
+                        // 'X-API-Key': 'YOUR_BACKEND_API_KEY' 
+                    },
+                    body: JSON.stringify({
+                        text: textToDownload,
+                        voice: ttsVoiceSelect.selectedOptions[0].getAttribute('data-name'), // Gửi tên giọng đọc đã chọn
+                        lang: ttsVoiceSelect.selectedOptions[0].getAttribute('data-lang') || 'vi-VN', // Gửi ngôn ngữ đã chọn
+                        format: 'mp3' // Yêu cầu định dạng MP3
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Backend TTS API error:', response.status, errorText);
+                    showMessage(`Lỗi khi tạo file âm thanh: ${errorText || response.statusText}. Vui lòng thử lại.`, 'error');
+                    return;
+                }
+
+                // Giả sử backend trả về một blob hoặc URL của file âm thanh
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+
+                // Tạo một liên kết tải xuống
+                const a = document.createElement('a');
+                a.href = audioUrl;
+                a.download = `voice_summary_${Date.now()}.mp3`; // Đặt tên file
+                document.body.appendChild(a); // Thêm vào DOM (tạm thời)
+                a.click(); // Kích hoạt nhấp chuột để tải xuống
+                document.body.removeChild(a); // Xóa khỏi DOM
+                URL.revokeObjectURL(audioUrl); // Giải phóng URL Object
+
+                showMessage('Tệp âm thanh đã được tải xuống thành công!', 'success');
+
+            } catch (error) {
+                console.error('Lỗi tải xuống giọng nói:', error);
+                showMessage(`Không thể tải xuống giọng nói. Vui lòng đảm bảo dịch vụ backend đã được cấu hình đúng. Lỗi: ${error.message}`, 'error');
+            }
+        });
+
+        /**
+         * Renders the search results in the resourceResults div.
+         * @param {Array<Object>} resources - An array of resource objects.
+         * @returns {void}
+         */
+        function renderResourceResults(resources) {
+            resourceResults.innerHTML = ''; // Clear previous results
+            if (resources.length === 0) {
+                resourceResults.innerHTML = '<div class="text-gray-500 text-center py-4">Không tìm thấy tài nguyên nào phù hợp.</div>';
+                return;
+            }
+
+            resources.forEach(resource => {
+                const resourceDiv = document.createElement('div');
+                resourceDiv.className = 'bg-white p-5 rounded-xl shadow-md border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4';
+                
+                let mediaHtml = '';
+                // Use a placeholder image from placehold.co if thumbnailUrl is missing or invalid
+                const thumbnailUrl = resource.thumbnailUrl && (resource.thumbnailUrl.startsWith('http') || resource.thumbnailUrl.startsWith('data:')) 
+                                    ? resource.thumbnailUrl 
+                                    : `https://placehold.co/1280x720/007bff/ffffff?text=${encodeURIComponent(resource.title ? resource.title.substring(0, 15) : 'No Image')}`;
+
+                if (resource.mediaType === 'image') {
+                    mediaHtml = `<img src="${thumbnailUrl}" onerror="this.onerror=null;this.src='https://placehold.co/1280x720/6c757d/ffffff?text=Image Error';" alt="${resource.title}" class="w-full h-full object-cover">`;
+                } else if (resource.mediaType === 'video') {
+                    mediaHtml = `
+                        <div class="relative w-full h-full flex items-center justify-center bg-black text-white">
+                            <img src="${thumbnailUrl}" onerror="this.onerror=null;this.src='https://placehold.co/1280x720/6c757d/ffffff?text=Video Error';" alt="${resource.title} video thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-70">
+                            <i class="fas fa-play-circle absolute text-5xl"></i>
+                        </div>
+                    `;
+                } else {
+                    // Default icon if no media type or URL is provided
+                    mediaHtml = `<i class="fas fa-book-reader"></i>`;
+                }
+
+                resourceDiv.innerHTML = `
+                    <div class="flex-shrink-0 w-24 h-24 sm:w-20 sm:h-20 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center text-gray-500 text-4xl" aria-hidden="true">
+                        ${mediaHtml}
+                    </div>
+                    <div class="flex-grow">
+                        <a href="${resource.url}" target="_blank" rel="noopener noreferrer" class="resource-title text-lg font-semibold text-blue-700 hover:underline transition-colors duration-200">${resource.title}</a>
+                        <p class="resource-description text-sm text-gray-600 mt-1">${resource.description}</p>
+                        <p class="resource-source text-xs text-gray-500 mt-2">Nguồn: <span class="font-medium">${resource.source}</span> | Chủ đề: <span class="font-medium">${resource.topic}</span></p>
+                    </div>
+                `;
+                resourceResults.appendChild(resourceDiv);
+            });
+        }
+
+        /**
+         * Handles the click event for the Search Resource button.
+         * Fetches and displays educational resources based on the search query and filters.
+         * @returns {Promise<void>}
+         */
+        searchResourceButton.addEventListener('click', async () => {
+            hideMessage(); // Hide any previous messages
+            const query = resourceSearchInput.value.trim();
+            const topic = resourceFilterTopic.value;
+            const source = resourceFilterSource.value;
+
+            if (!query && !topic && !source) {
+                resourceResults.innerHTML = '<span class="text-red-500 text-center py-4">Vui lòng nhập từ khóa hoặc chọn bộ lọc để tìm kiếm.</span>';
+                return;
+            }
+
+            // Display loading indicator
+            resourceResults.innerHTML = '<span class="text-blue-600 text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i> Đang tìm kiếm...</span>';
+            resourceLoading.classList.remove('hidden');
+            resourceResults.classList.add('flex', 'items-center', 'justify-content', 'text-center');
+
+
+            const responseSchema = {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        "title": { "type": "STRING" },
+                        "description": { "type": "STRING" },
+                        "url": { "type": "STRING" },
+                        "source": { "type": "STRING" },
+                        "topic": { "type": "STRING" },
+                        "thumbnailUrl": { "type": "STRING" }, // New field for image/video thumbnail
+                        "mediaType": { "type": "STRING" }   // New field to indicate 'image' or 'video'
+                    },
+                    "propertyOrdering": ["title", "description", "url", "source", "topic", "thumbnailUrl", "mediaType"]
+                }
+            };
+
+            // Enhanced prompt to encourage the LLM to provide plausible placeholder URLs and media types
+            let prompt = `Tìm kiếm tài liệu, khóa học hoặc tài nguyên giáo dục về "${query}". `;
+            if (topic) {
+                prompt += `Ưu tiên chủ đề "${topic}". `;
+            }
+            if (source) {
+                prompt += `Ưu tiên từ nguồn "${source}". `;
+            }
+            prompt += `Cung cấp ít nhất 3-5 tài nguyên liên quan nhất. Đối với mỗi tài nguyên, hãy cung cấp thêm 'thumbnailUrl' (một URL hình ảnh/video thumbnail giả định từ dịch vụ như placehold.co hoặc một URL ví dụ, đảm bảo hợp lệ) và 'mediaType' (ví dụ: 'image', 'video' hoặc 'null' nếu không có media cụ thể). Định dạng kết quả dưới dạng JSON theo schema đã cung cấp.`;
+
+
+            try {
+                const results = await callGeminiAPI(prompt, { responseSchema: responseSchema });
+                if (Array.isArray(results)) {
+                    renderResourceResults(results);
+                } else {
+                    resourceResults.innerHTML = `<span class="text-red-500 text-center py-4">Không thể tải tài nguyên. Vui lòng thử lại.</span>`;
+                    console.error("Expected array for resource results but got:", results);
+                }
+            } catch (error) {
+                resourceResults.innerHTML = `<span class="text-red-500 text-center py-4">Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại.</span>`;
+            } finally {
+                // Hide loading indicator regardless of success or failure
+                resourceLoading.classList.add('hidden');
+                resourceResults.classList.remove('flex', 'items-center', 'justify-content', 'text-center');
+            }
+        });
+    </script>
+</body>
+</html>

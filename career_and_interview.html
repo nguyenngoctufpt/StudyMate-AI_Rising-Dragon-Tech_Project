@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cố Vấn Nghề Nghiệp & Phỏng Vấn Ảo - StudyMate AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Định nghĩa biến CSS để dễ dàng quản lý màu sắc và kích thước */
+        :root {
+            --primary-blue: #3b82f6; /* Tailwind blue-500 */
+            --dark-blue: #1d4ed8; /* Tailwind blue-700 */
+            --background-light: #f0f2f5; /* Light gray background */
+            --card-background: #ffffff; /* White */
+            --text-primary: #1f2937; /* Tailwind gray-900 */
+            --text-secondary: #6b7280; /* Tailwind gray-500 */
+            --border-color: #e5e7eb; /* Tailwind gray-200 */
+            --gradient-start: #4c51bf; /* Violet */
+            --gradient-end: #6b46c1; /* Purple */
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.15);
+            --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.18);
+
+            /* Màu sắc cho biểu đồ radar */
+            --chart-color-frontend: #3b82f6; /* Blue */
+            --chart-color-backend: #8b5cf6; /* Purple */
+            --chart-color-data-analyst: #10b981; /* Green */
+            --chart-color-ux-ui-designer: #f97316; /* Orange */
+            --chart-color-devops: #14b8a6; /* Teal */
+            --chart-color-mobile: #6366f1; /* Indigo */
+            --chart-color-default: #94a3b8; /* Gray for default */
+        }
+
+        /* Đảm bảo box-sizing cho tất cả các phần tử */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Ngăn cuộn ngang */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Thêm một gradient nhẹ cho body để tạo chiều sâu */
+            background: linear-gradient(to bottom right, #f0f2f5, #e0e6ed);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 520px; /* Chiều rộng tối đa cho mobile */
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-deep); /* Đổ bóng sâu hơn */
+            border-radius: 2rem; /* Bo tròn mạnh hơn */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Full height trên mobile */
+        }
+
+        /* Responsive cho màn hình lớn hơn (tablet/desktop) */
+        @media (min-width: 768px) { /* breakpoint md */
+            .app-container {
+                max-width: 1100px; /* Tăng chiều rộng tối đa cho desktop */
+                min-height: auto; /* Cho phép chiều cao tự điều chỉnh */
+                margin: 2.5rem auto; /* Căn giữa và thêm lề */
+                display: grid; /* Sử dụng Grid cho bố cục chính */
+                grid-template-columns: 1.2fr 1fr; /* Cột khám phá nghề nghiệp rộng hơn một chút */
+                grid-template-rows: auto 1fr; /* Header và sau đó là nội dung */
+                grid-template-areas: 
+                    "header header"
+                    "career interview"; /* Định nghĩa các khu vực grid */
+                gap: 2.5rem; /* Tăng khoảng cách giữa các cột */
+                padding: 0; /* Bỏ padding tổng thể để các card tự quản lý padding */
+            }
+
+            .detail-header {
+                grid-area: header; /* Đặt header vào khu vực header */
+                border-radius: 2rem 2rem 0 0; /* Giữ bo tròn trên cùng */
+            }
+
+            .detail-main-content {
+                grid-area: career; /* Đặt phần khám phá nghề nghiệp vào cột đầu tiên */
+                padding: 2.5rem; /* Tăng padding cho nội dung */
+                display: flex;
+                flex-direction: column;
+                gap: 2.5rem; /* Tăng khoảng cách giữa các card trong cột */
+            }
+
+            .interview-practice-card {
+                grid-area: interview; /* Đặt phần phỏng vấn vào cột thứ hai */
+                padding: 2.5rem; /* Tăng padding cho nội dung */
+                display: flex;
+                flex-direction: column;
+                gap: 2rem; /* Giữ khoảng cách giữa các phần tử trong card */
+            }
+
+            .function-intro-card,
+            .competition-chart-card {
+                /* Đảm bảo các card này vẫn nằm trong detail-main-content */
+                margin-bottom: 0; /* Bỏ margin-bottom nếu đã có gap */
+            }
+
+            .competition-chart-card {
+                /* Biểu đồ có thể nằm riêng hoặc trong một cột khác nếu cần */
+                /* Hiện tại nó sẽ nằm dưới phần khám phá nghề nghiệp */
+            }
+
+            /* Điều chỉnh kích thước biểu đồ trên màn hình lớn */
+            #skillRadarChart {
+                max-width: 380px; /* Tăng kích thước biểu đồ */
+                max-height: 380px;
+            }
+        }
+
+        /* Header của ứng dụng */
+        .detail-header {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            border-top-left-radius: 2rem;
+            border-top-right-radius: 2rem;
+        }
+
+        .detail-header .back-icon {
+            position: absolute;
+            left: 1.5rem;
+            font-size: 1.6rem;
+            cursor: pointer;
+            padding: 0.6rem;
+            border-radius: 50%;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .detail-header .back-icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px); /* Hiệu ứng rõ hơn khi hover */
+        }
+
+        .detail-header .detail-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* Nội dung chính (cho mobile và khi không dùng grid) */
+        .detail-main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem; /* Khoảng cách giữa các card */
+        }
+
+        /* Tùy chỉnh thanh cuộn */
+        .detail-main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .detail-main-content::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        .detail-main-content::-webkit-scrollbar-thumb {
+            background: #9fa6b2;
+            border-radius: 10px;
+        }
+        .detail-main-content::-webkit-scrollbar-thumb:hover {
+            background: #6c737f;
+        }
+
+        /* Card chung */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 1.25rem;
+            box-shadow: var(--shadow-light);
+            padding: 1.75rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Select/Dropdown */
+        .filter-select {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.85rem;
+            background-color: white;
+            font-size: 1rem;
+            color: var(--text-primary);
+            appearance: none; /* Ẩn mũi tên mặc định */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23757575%22%20d%3D%22M287%2C197.35L146.2%2C56.6C142.3%2C52.7 136.7%2C52.7 132.8%2C56.6L-2.8%2C191.45L9.65%2C203.9c3.9%2C3.9 10.2%2C3.9 14.1%2C0L146.2%2C76.9L268.25%2C198.9c3.9%2C3.9 10.2%2C3.9 14.1%2C0L287%2C197.35z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.1rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 1.25rem;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Nút chính */
+        .primary-button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            font-weight: 700;
+            padding: 0.9rem 1.75rem;
+            border-radius: 0.85rem;
+            box-shadow: 0 5px 12px rgba(59, 130, 246, 0.35);
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.05rem;
+        }
+        .primary-button:hover {
+            background-color: var(--dark-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+        .primary-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+        .primary-button.small-button {
+            padding: 0.75rem 1.4rem;
+            font-size: 0.95rem;
+            border-radius: 0.65rem;
+        }
+        .primary-button:disabled {
+            background-color: #90CAF9; /* Màu xanh nhạt hơn cho nút bị vô hiệu hóa */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.7; /* Giảm độ mờ */
+        }
+
+        /* Hiển thị thông tin nghề nghiệp */
+        .career-info-display {
+            background-color: #e3f2fd; /* Nền xanh nhạt */
+            border-radius: 0.85rem;
+            padding: 1.5rem;
+            margin-top: 1.25rem;
+            border: 1px solid #90caf9;
+            color: #1e88e5;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: left;
+            overflow-wrap: break-word;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+        .career-info-display p {
+            margin-bottom: 0.6rem;
+        }
+        .career-info-display p:last-child {
+            margin-bottom: 0;
+        }
+        .career-info-display strong {
+            color: #1565C0;
+        }
+
+        /* Biểu đồ */
+        .competition-chart-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px; /* Đảm bảo đủ không gian cho biểu đồ */
+        }
+        .chart-caption {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Kích thước canvas biểu đồ */
+        #skillRadarChart {
+            max-width: 280px;
+            max-height: 280px;
+            margin: 0 auto;
+        }
+
+        /* Luyện phỏng vấn */
+        .interview-question-area {
+            background-color: #e8f5e9; /* Nền xanh lá nhạt */
+            border-radius: 0.85rem;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid #a5d6a7;
+            color: #388e3c;
+            line-height: 1.7;
+            font-size: 1rem;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: left;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 0.6rem;
+        }
+        .question-text:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.85rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 1.25rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .ai-feedback-output {
+            background-color: #fffde7; /* Nền vàng nhạt */
+            border-radius: 0.85rem;
+            padding: 1.5rem;
+            margin-top: 1.25rem;
+            border: 1px solid #ffcc80;
+            color: #f57f17;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: left;
+            overflow-wrap: break-word;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+        .ai-feedback-output p {
+            margin-bottom: 0.6rem;
+        }
+        .ai-feedback-output p:last-child {
+            margin-bottom: 0;
+        }
+        .ai-feedback-output strong {
+            color: #e65100;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            display: none; /* Ẩn mặc định */
+        }
+        .loading-spinner.active {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Toast/Modal for messages */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .toast-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="detail-header">
+            <!-- Nút quay lại được giữ nguyên với onclick, CSS đã có hiệu ứng hover -->
+            <i class="fas fa-arrow-left back-icon" onclick="history.back()"></i>
+            <span class="detail-title">Cố Vấn Nghề Nghiệp & Phỏng Vấn</span>
+        </header>
+
+        <!-- Main content area, now using CSS Grid for larger screens -->
+        <div class="detail-main-content">
+            <!-- Phần Khám Phá Nghề Nghiệp -->
+            <div class="card function-intro-card">
+                <h3 class="card-title">Khám Phá Nghề Nghiệp</h3>
+                <p class="card-description">AI cung cấp thông tin chi tiết về các ngành nghề, kỹ năng cần thiết và mức lương trung bình, cùng với đánh giá chuyên sâu.</p>
+
+                <label for="careerSelect" class="block text-sm font-medium text-gray-700 mb-2">Chọn ngành nghề:</label>
+                <select id="careerSelect" class="filter-select">
+                    <option value="">-- Chọn ngành nghề --</option>
+                    <option value="frontend_dev">Lập trình viên Frontend</option>
+                    <option value="backend_dev">Lập trình viên Backend</option>
+                    <option value="data_analyst">Chuyên viên Phân tích dữ liệu</option>
+                    <option value="ux_ui_designer">Thiết kế UI/UX</option>
+                    <option value="devops_engineer">Kỹ sư DevOps</option>
+                    <option value="mobile_developer">Lập trình viên Mobile</option>
+                </select>
+
+                <div id="careerInfo" class="career-info-display">
+                    Chọn một ngành nghề từ danh sách trên để xem thông tin chi tiết và đánh giá từ AI.
+                </div>
+
+                <button class="primary-button small-button mt-4" id="exploreMoreCareers">
+                    <i class="fas fa-brain mr-2"></i> Khám phá thêm nghề nghiệp với AI
+                    <span class="loading-spinner" id="exploreSpinner"></span>
+                </button>
+            </div>
+
+            <!-- Phần Đánh Giá Chuyên Sâu Ngành Nghề từ AI -->
+            <div class="card competition-chart-card">
+                <h3 class="card-title">Đánh Giá Chuyên Sâu Ngành Nghề</h3>
+                <canvas id="skillRadarChart" width="280" height="280"></canvas> <!-- Added width and height attributes -->
+                <p class="chart-caption"><i>Biểu đồ radar hiển thị đánh giá của AI về các khía cạnh quan trọng của ngành nghề, giúp bạn có cái nhìn toàn diện. (Thang điểm 0-100%)</i></p>
+            </div>
+        </div>
+        
+        <!-- Phần Luyện Phỏng Vấn Ảo - Đặt ngoài detail-main-content để có thể xếp cột riêng -->
+        <div class="card interview-practice-card">
+            <h3 class="card-title">Luyện Phỏng Vấn Ảo với AI</h3>
+            <p class="card-description">Thực hành phỏng vấn theo ngành nghề bạn chọn và nhận phản hồi tức thì, chuyên sâu từ AI để cải thiện kỹ năng phỏng vấn.</p>
+
+            <label for="interviewRoleSelect" class="block text-sm font-medium text-gray-700 mb-2">Chọn vị trí phỏng vấn:</label>
+            <select id="interviewRoleSelect" class="filter-select">
+                <option value="">-- Chọn vị trí phỏng vấn --</option>
+                <option value="fe_interview">Phỏng vấn Frontend Developer</option>
+                <option value="be_interview">Phỏng vấn Backend Developer</option>
+                <option value="da_interview">Phỏng vấn Data Analyst</option>
+                <option value="pm_interview">Phỏng vấn Project Manager</option>
+            </select>
+
+            <div id="interviewQuestion" class="interview-question-area">
+                <p class="question-text">Chào bạn, chúng ta hãy bắt đầu buổi phỏng vấn ảo. Vui lòng chọn một vị trí phỏng vấn để AI đưa ra câu hỏi đầu tiên.</p>
+            </div>
+
+            <textarea id="interviewAnswerInput" placeholder="Nhập câu trả lời của bạn tại đây để AI đánh giá..." rows="6"></textarea>
+            <button class="primary-button" id="submitAnswerButton">
+                <i class="fas fa-paper-plane mr-2"></i> Gửi Câu Trả Lời & Nhận Phản Hồi
+                <span class="loading-spinner" id="feedbackSpinner"></span>
+            </button>
+            <button class="primary-button small-button mt-3" id="resetInterviewButton" style="display: none;">
+                <i class="fas fa-redo mr-2"></i> Bắt đầu lại Phỏng Vấn
+            </button>
+
+            <div id="aiFeedback" class="ai-feedback-output">
+                Phản hồi từ AI sẽ hiển thị ở đây sau khi bạn gửi câu trả lời.
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Message -->
+    <div id="toastMessage" class="toast-message"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // CẢNH BÁO BẢO MẬT: KHÔNG NÊN ĐẶT KHÓA API TRỰC TIẾP TRONG MÃ CLIENT-SIDE TRONG MÔI TRƯỜNG THỰC TẾ!
+            // Để triển khai an toàn, hãy sử dụng một máy chủ backend để xử lý các cuộc gọi API.
+            const API_KEY = "AIzaSyBBerV6fUIqzfrcCiiKmUf86Usy-8wkOmo"; // Khóa API của bạn đã được cập nhật
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+            // Lấy các phần tử DOM
+            const careerSelect = document.getElementById('careerSelect');
+            const careerInfo = document.getElementById('careerInfo');
+            const exploreMoreCareersButton = document.getElementById('exploreMoreCareers');
+            const exploreSpinner = document.getElementById('exploreSpinner');
+            const interviewRoleSelect = document.getElementById('interviewRoleSelect');
+            const interviewQuestion = document.getElementById('interviewQuestion');
+            const interviewAnswerInput = document.getElementById('interviewAnswerInput');
+            const submitAnswerButton = document.getElementById('submitAnswerButton');
+            const resetInterviewButton = document.getElementById('resetInterviewButton');
+            const aiFeedback = document.getElementById('aiFeedback');
+            const skillRadarChartCanvas = document.getElementById('skillRadarChart');
+            const feedbackSpinner = document.getElementById('feedbackSpinner');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Lấy màu sắc từ biến CSS để sử dụng trong JS (cho biểu đồ)
+            const getCssVariable = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            const textPrimaryColor = getCssVariable('--text-primary');
+            const textSecondaryColor = getCssVariable('--text-secondary');
+            
+            // Lấy các màu sắc cụ thể cho biểu đồ từ biến CSS
+            const chartColors = {
+                frontend_dev: getCssVariable('--chart-color-frontend'),
+                backend_dev: getCssVariable('--chart-color-backend'),
+                data_analyst: getCssVariable('--chart-color-data-analyst'),
+                ux_ui_designer: getCssVariable('--chart-color-ux-ui-designer'),
+                devops_engineer: getCssVariable('--chart-color-devops'),
+                mobile_developer: getCssVariable('--chart-color-mobile'),
+                default: getCssVariable('--chart-color-default')
+            };
+
+            // Helper function to convert hex color to rgba
+            function hexToRgba(hex, alpha) {
+                // Remove # if present
+                const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
+                // Parse hex values
+                const r = parseInt(cleanHex.substring(0, 2), 16);
+                const g = parseInt(cleanHex.substring(2, 4), 16);
+                const b = parseInt(cleanHex.substring(4, 6), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+            // Dữ liệu giả lập ban đầu cho thông tin nghề nghiệp (sẽ được thay thế bởi AI)
+            const careerData = {
+                frontend_dev: { name: "Lập trình viên Frontend", colorKey: 'frontend_dev' },
+                backend_dev: { name: "Lập trình viên Backend", colorKey: 'backend_dev' },
+                data_analyst: { name: "Chuyên viên Phân tích dữ liệu", colorKey: 'data_analyst' },
+                ux_ui_designer: { name: "Thiết kế UI/UX", colorKey: 'ux_ui_designer' },
+                devops_engineer: { name: "Kỹ sư DevOps", colorKey: 'devops_engineer' },
+                mobile_developer: { name: "Lập trình viên Mobile", colorKey: 'mobile_developer' }
+            };
+
+            // Dữ liệu giả lập cho câu hỏi phỏng vấn (sẽ được AI sử dụng để tạo câu hỏi tiếp theo)
+            const interviewQuestions = {
+                fe_interview: [
+                    { q: "Hãy giới thiệu đôi nét về bản thân bạn, kinh nghiệm và những kỹ năng nổi bật bạn có trong lĩnh vực Frontend.", type: "easy" },
+                    { q: "Bạn có kinh nghiệm gì với React/Vue/Angular? Hãy mô tả một dự án cụ thể bạn đã làm, vai trò của bạn và những thách thức bạn đã vượt qua.", type: "medium" },
+                    { q: "Làm thế nào để bạn tối ưu hóa hiệu suất tải trang và trải nghiệm người dùng cho một ứng dụng Frontend quy mô lớn?", type: "hard" },
+                    { q: "Giải thích về cơ chế hoạt động của DOM và Virtual DOM. Khi nào thì nên sử dụng Virtual DOM và những lợi ích nó mang lại?", type: "hard" },
+                    { q: "Bạn sẽ làm gì nếu gặp một bug khó hiểu trong môi trường production mà không có thông báo lỗi rõ ràng?", type: "behavioral" },
+                    { q: "Hãy chia sẻ về một lần bạn phải học một công nghệ mới trong thời gian ngắn để hoàn thành dự án. Bạn đã tiếp cận việc học đó như thế nào và kết quả ra sao?", type: "behavioral" }
+                ],
+                be_interview: [
+                    { q: "Hãy giới thiệu đôi nét về bản thân bạn, kinh nghiệm và những kỹ năng nổi bật bạn có trong lĩnh vực Backend.", type: "easy" },
+                    { q: "Bạn có kinh nghiệm gì với cơ sở dữ liệu? Mô tả sự khác biệt chính giữa SQL và NoSQL, và khi nào thì bạn chọn sử dụng loại cơ sở dữ liệu nào?", type: "medium" },
+                    { q: "Giải thích về RESTful API và cách bạn thiết kế một API tốt, có tính bảo mật và dễ mở rộng.", type: "medium" },
+                    { q: "Làm thế nào để xử lý lỗi và bảo mật trong một ứng dụng backend lớn? Nêu các phương pháp và công cụ bạn thường sử dụng.", type: "hard" },
+                    { q: "Bạn sẽ thiết kế một hệ thống xử lý hàng triệu yêu cầu mỗi giây với tính khả dụng cao và độ trễ thấp như thế nào?", type: "hard" },
+                    { q: "Hãy kể về một lần bạn phải giải quyết một xung đột kỹ thuật nghiêm trọng với đồng nghiệp. Bạn đã xử lý tình huống đó như thế nào để đạt được sự đồng thuận?", type: "behavioral" }
+                ],
+                da_interview: [
+                    { q: "Hãy giới thiệu đôi nét về bản thân bạn, kinh nghiệm và những kỹ năng nổi bật bạn có trong lĩnh vực Phân tích dữ liệu.", type: "easy" },
+                    { q: "Mô tả quy trình phân tích dữ liệu từ khi thu thập dữ liệu thô đến khi đưa ra insight và đề xuất kinh doanh.", type: "medium" },
+                    { q: "Bạn đã sử dụng những công cụ trực quan hóa dữ liệu nào (ví dụ: Tableau, Power BI, Matplotlib)? Hãy nói về một biểu đồ hoặc dashboard bạn đã tạo và insight bạn đã khám phá.", type: "medium" },
+                    { q: "Làm thế nào để xử lý dữ liệu bị thiếu, không nhất quán hoặc ngoại lai (outlier) trong một tập dữ liệu lớn?", type: "hard" },
+                    { q: "Bạn sẽ tiếp cận việc phân tích một tập dữ liệu lớn và phức tạp để tìm ra các xu hướng ẩn và mô hình dự đoán như thế nào? Nêu các bước cụ thể.", type: "hard" },
+                    { q: "Hãy mô tả một tình huống mà bạn phải thuyết phục các bên liên quan không phải kỹ thuật bằng dữ liệu. Bạn đã làm điều đó như thế nào và kết quả là gì?", type: "behavioral" }
+                ],
+                pm_interview: [
+                    { q: "Hãy giới thiệu đôi nét về bản thân bạn, kinh nghiệm quản lý dự án và những thành tựu nổi bật.", type: "easy" },
+                    { q: "Bạn đã áp dụng những phương pháp quản lý dự án nào (Agile, Scrum, Waterfall)? Mô tả một dự án bạn đã quản lý bằng một phương pháp cụ thể và vai trò của bạn.", type: "medium" },
+                    { q: "Làm thế nào để bạn ưu tiên các tính năng và quản lý phạm vi (scope) của dự án khi có nhiều yêu cầu mâu thuẫn?", type: "medium" },
+                    { q: "Trong một dự án phức tạp, bạn sẽ làm gì để quản lý rủi ro và giải quyết các vấn đề phát sinh không lường trước?", type: "hard" },
+                    { q: "Hãy mô tả một tình huống mà bạn phải xử lý một thành viên trong nhóm gặp khó khăn hoặc không đạt được hiệu suất mong muốn. Bạn đã làm gì để hỗ trợ và thúc đẩy họ?", type: "behavioral" },
+                    { q: "Làm thế nào để bạn đảm bảo giao tiếp hiệu quả giữa các bên liên quan, bao gồm đội ngũ kỹ thuật, khách hàng và quản lý cấp cao?", type: "behavioral" }
+                ]
+            };
+
+            let currentInterviewRole = '';
+            let currentQuestionIndex = 0;
+            let interviewHistory = []; // Lưu trữ lịch sử phỏng vấn
+
+            // Hàm hiển thị Toast Message
+            function showToast(message, duration = 3000) {
+                toastMessage.textContent = message;
+                toastMessage.classList.add('show');
+                setTimeout(() => {
+                    toastMessage.classList.remove('show');
+                }, duration);
+            }
+
+            // Hàm gọi Gemini API
+            async function callGeminiAPI(prompt, responseSchema = null) {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                
+                const payload = { contents: chatHistory };
+
+                if (responseSchema) {
+                    payload.generationConfig = {
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema
+                    };
+                }
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        console.log("Gemini API Raw Response Text:", text); // Log raw response
+                        if (responseSchema) {
+                            try {
+                                return JSON.parse(text);
+                            } catch (e) {
+                                console.error("Error parsing JSON from Gemini API:", e, "Raw text:", text);
+                                throw new Error("AI returned malformed JSON. Please try again.");
+                            }
+                        }
+                        return text;
+                    } else {
+                        console.error("Unexpected Gemini API response structure:", result);
+                        throw new Error("AI did not return a valid response. Please try again.");
+                    }
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    throw error; // Re-throw to be caught by calling function
+                }
+            }
+
+            // --- Khám phá nghề nghiệp logic ---
+            careerSelect.addEventListener('change', async () => {
+                const selectedCareerKey = careerSelect.value;
+                if (!selectedCareerKey) {
+                    careerInfo.innerHTML = 'Chọn một ngành nghề từ danh sách trên để xem thông tin chi tiết và đánh giá từ AI.';
+                    updateSkillRadarChart('Đánh giá chung', [50, 50, 50, 50, 50, 50, 50], 'default');
+                    return;
+                }
+
+                careerInfo.innerHTML = '<p><i class="fas fa-sync-alt fa-spin mr-2"></i> AI đang phân tích ngành nghề...</p>';
+                exploreMoreCareersButton.disabled = true;
+                exploreSpinner.classList.add('active');
+
+                const careerName = careerData[selectedCareerKey].name;
+                const prompt = `Phân tích chuyên sâu về ngành nghề "${careerName}" ở Việt Nam. Vui lòng cung cấp các thông tin sau dưới dạng JSON:
+                {
+                    "description": "Mô tả chi tiết về ngành nghề",
+                    "skills": "Các kỹ năng cần thiết, liệt kê bằng dấu phẩy",
+                    "salary": "Mức lương trung bình (ví dụ: 8 - 15 triệu VND/tháng (Fresher/Junior); 18 - 30+ triệu VND/tháng (Senior))",
+                    "evaluation": {
+                        "market_competition": "Phần trăm cạnh tranh thị trường (0-100)",
+                        "competency_requirement": "Phần trăm yêu cầu năng lực (0-100)",
+                        "market_demand": "Phần trăm nhu cầu thị trường (0-100)",
+                        "potential_salary": "Phần trăm mức lương tiềm năng (0-100)",
+                        "growth_prospects": "Phần trăm triển vọng phát triển (0-100)",
+                        "self_learning_importance": "Phần trăm tầm quan trọng của khả năng tự học (0-100)",
+                        "teamwork_skills_importance": "Phần trăm tầm quan trọng của kỹ năng làm việc nhóm (0-100)"
+                    }
+                }
+                Đảm bảo các giá trị phần trăm là số nguyên từ 0 đến 100.`;
+
+                const schema = {
+                    type: "OBJECT",
+                    properties: {
+                        description: { type: "STRING" },
+                        skills: { type: "STRING" },
+                        salary: { type: "STRING" },
+                        evaluation: {
+                            type: "OBJECT",
+                            properties: {
+                                market_competition: { type: "INTEGER" },
+                                competency_requirement: { type: "INTEGER" },
+                                market_demand: { type: "INTEGER" },
+                                potential_salary: { type: "INTEGER" },
+                                growth_prospects: { type: "INTEGER" },
+                                self_learning_importance: { type: "INTEGER" },
+                                teamwork_skills_importance: { type: "INTEGER" }
+                            },
+                            propertyOrdering: [
+                                "market_competition",
+                                "competency_requirement",
+                                "market_demand",
+                                "potential_salary",
+                                "growth_prospects",
+                                "self_learning_importance",
+                                "teamwork_skills_importance"
+                            ]
+                        }
+                    },
+                    propertyOrdering: ["description", "skills", "salary", "evaluation"]
+                };
+
+                try {
+                    const aiResponse = await callGeminiAPI(prompt, schema);
+                    console.log("AI Career Analysis Response:", aiResponse);
+
+                    if (aiResponse && aiResponse.description && aiResponse.evaluation) {
+                        careerInfo.innerHTML = `
+                            <p><strong>Tên ngành nghề:</strong> ${careerName}</p>
+                            <p><strong>Mô tả:</strong> ${aiResponse.description}</p>
+                            <p><strong>Kỹ năng cần thiết:</strong> ${aiResponse.skills}</p>
+                            <p><strong>Mức lương trung bình:</strong> ${aiResponse.salary}</p>
+                        `;
+                        const evaluationData = [
+                            aiResponse.evaluation.market_competition,
+                            aiResponse.evaluation.competency_requirement,
+                            aiResponse.evaluation.market_demand,
+                            aiResponse.evaluation.potential_salary,
+                            aiResponse.evaluation.growth_prospects,
+                            aiResponse.evaluation.self_learning_importance,
+                            aiResponse.evaluation.teamwork_skills_importance
+                        ];
+                        updateSkillRadarChart(careerName, evaluationData, selectedCareerKey);
+                    } else {
+                        careerInfo.innerHTML = '<p style="color:red;">AI không thể phân tích ngành nghề này. Vui lòng thử lại hoặc chọn ngành nghề khác.</p>';
+                        updateSkillRadarChart('Đánh giá chung', [50, 50, 50, 50, 50, 50, 50], 'default');
+                    }
+                } catch (error) {
+                    showToast('Lỗi khi phân tích ngành nghề bằng AI. Vui lòng kiểm tra console.', 4000);
+                    careerInfo.innerHTML = '<p style="color:red;">Đã xảy ra lỗi khi phân tích ngành nghề. Vui lòng thử lại.</p>';
+                    updateSkillRadarChart('Đánh giá chung', [50, 50, 50, 50, 50, 50, 50], 'default');
+                } finally {
+                    exploreMoreCareersButton.disabled = false;
+                    exploreSpinner.classList.remove('active');
+                }
+            });
+
+            exploreMoreCareersButton.addEventListener('click', async () => {
+                exploreMoreCareersButton.disabled = true;
+                exploreSpinner.classList.add('active');
+                exploreMoreCareersButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> AI đang gợi ý... <span class="loading-spinner active"></span>`;
+                
+                const prompt = `Gợi ý 3-5 ngành nghề công nghệ tiềm năng khác ở Việt Nam, bao gồm một mô tả ngắn gọn và lý do tại sao chúng tiềm năng.`;
+
+                try {
+                    const aiResponse = await callGeminiAPI(prompt);
+                    careerInfo.innerHTML = `<p><strong>Gợi ý từ AI:</strong></p><p>${aiResponse}</p>`;
+                } catch (error) {
+                    showToast('Lỗi khi khám phá thêm nghề nghiệp bằng AI. Vui lòng kiểm tra console.', 4000);
+                    careerInfo.innerHTML = '<p style="color:red;">Đã xảy ra lỗi khi khám phá thêm nghề nghiệp. Vui lòng thử lại.</p>';
+                } finally {
+                    exploreMoreCareersButton.innerHTML = `<i class="fas fa-brain mr-2"></i> Khám phá thêm nghề nghiệp với AI`;
+                    exploreSpinner.classList.remove('active');
+                    exploreMoreCareersButton.disabled = false;
+                }
+            });
+
+            // --- Biểu đồ Đánh Giá Ngành Nghề AI (Radar Chart) ---
+            const aiEvaluationLabels = ['Cạnh tranh thị trường', 'Yêu cầu năng lực', 'Nhu cầu thị trường', 'Mức lương tiềm năng', 'Triển vọng phát triển', 'Khả năng tự học', 'Kỹ năng làm việc nhóm'];
+
+            const aiEvaluationChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 12,
+                                weight: 'bold',
+                                family: 'Inter, sans-serif' // Đã sửa lỗi cú pháp
+                            },
+                            color: textPrimaryColor
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: {
+                            display: true,
+                            stepSize: 25,
+                            color: textSecondaryColor,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        lineWidth: 1,
+                        lineColor: 'rgba(0, 0, 0, 0.2)'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Inter, sans-serif' // Đã sửa lỗi cú pháp
+                            },
+                            color: textPrimaryColor
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.r + '%';
+                            }
+                        }
+                    }
+                }
+            };
+
+            const skillRadarChart = new Chart(skillRadarChartCanvas, {
+                type: 'radar',
+                data: {
+                    labels: aiEvaluationLabels,
+                    datasets: []
+                },
+                options: aiEvaluationChartOptions
+            });
+
+            // Hàm cập nhật biểu đồ Radar
+            function updateSkillRadarChart(careerName, evaluationData, colorKey) {
+                console.log('Updating chart for:', careerName, 'Data:', evaluationData, 'Color Key:', colorKey);
+                const selectedColor = chartColors[colorKey]; // Lấy màu sắc từ map chartColors
+                console.log('Selected Color:', selectedColor);
+                
+                let backgroundColor = hexToRgba(selectedColor, 0.4); // Sử dụng hàm hexToRgba
+                let borderColor = selectedColor;
+                let pointBackgroundColor = selectedColor;
+                let pointBorderColor = '#fff';
+                let pointHoverBackgroundColor = '#fff';
+                let pointHoverBorderColor = selectedColor;
+                
+
+                skillRadarChart.data.datasets = [{
+                    label: careerName,
+                    data: evaluationData,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 2,
+                    pointBackgroundColor: pointBackgroundColor,
+                    pointBorderColor: pointBorderColor,
+                    pointHoverBackgroundColor: pointHoverBackgroundColor,
+                    pointHoverBorderColor: pointHoverBorderColor
+                }];
+                skillRadarChart.update();
+                console.log('Chart updated.');
+            }
+
+            // Khởi tạo biểu đồ với trạng thái mặc định khi tải trang
+            // Sử dụng setTimeout để đảm bảo DOM đã được render đầy đủ trước khi vẽ biểu đồ
+            setTimeout(() => {
+                updateSkillRadarChart('Đánh giá chung', [50, 50, 50, 50, 50, 50, 50], 'default');
+                console.log('Initial chart update called after setTimeout.');
+            }, 100); // Khoảng trễ nhỏ
+
+
+            // --- Luyện phỏng vấn ảo logic ---
+            interviewRoleSelect.addEventListener('change', () => {
+                currentInterviewRole = interviewRoleSelect.value;
+                currentQuestionIndex = 0;
+                interviewHistory = []; // Reset lịch sử phỏng vấn
+                aiFeedback.innerHTML = 'Phản hồi từ AI sẽ hiển thị ở đây sau khi bạn gửi câu trả lời.';
+                interviewAnswerInput.value = '';
+                resetInterviewButton.style.display = 'none'; // Ẩn nút reset
+                submitAnswerButton.textContent = 'Gửi Câu Trả Lời & Nhận Phản Hồi';
+                submitAnswerButton.disabled = false; // Đảm bảo nút được bật
+
+                if (currentInterviewRole && interviewQuestions[currentInterviewRole]) {
+                    interviewQuestion.innerHTML = `
+                        <p class="question-text">Chào mừng bạn đến với buổi phỏng vấn vị trí <strong>${interviewRoleSelect.options[interviewRoleSelect.selectedIndex].text}</strong>. Câu hỏi đầu tiên của bạn là:</p>
+                        <p class="question-text">"${interviewQuestions[currentInterviewRole][currentQuestionIndex].q}"</p>
+                    `;
+                } else {
+                    interviewQuestion.innerHTML = `
+                        <p class="question-text">Vui lòng chọn một vị trí phỏng vấn để bắt đầu.</p>
+                    `;
+                    submitAnswerButton.disabled = true; // Vô hiệu hóa nếu chưa chọn vai trò
+                }
+            });
+
+            // Khởi tạo trạng thái nút khi tải trang
+            if (!interviewRoleSelect.value) {
+                submitAnswerButton.disabled = true;
+            }
+
+            submitAnswerButton.addEventListener('click', async () => {
+                const userAnswer = interviewAnswerInput.value.trim();
+                if (!currentInterviewRole) {
+                    showToast('Vui lòng chọn một vị trí phỏng vấn trước khi bắt đầu.');
+                    return;
+                }
+                
+                if (!userAnswer && submitAnswerButton.textContent === 'Gửi Câu Trả Lời & Nhận Phản Hồi') {
+                    showToast('Vui lòng nhập câu trả lời của bạn.');
+                    return;
+                }
+
+                // Nếu đây là hành động "Bắt đầu Phỏng Vấn" hoặc "Bắt đầu lại Phỏng Vấn"
+                if (submitAnswerButton.textContent.includes('Bắt đầu Phỏng Vấn')) {
+                     currentQuestionIndex = 0; // Đặt lại chỉ số câu hỏi
+                     interviewHistory = []; // Reset lịch sử phỏng vấn
+                     aiFeedback.innerHTML = 'Phản hồi từ AI sẽ hiển thị ở đây sau khi bạn gửi câu trả lời.';
+                     interviewAnswerInput.value = '';
+                     resetInterviewButton.style.display = 'none'; // Ẩn nút reset lại
+                     submitAnswerButton.textContent = 'Gửi Câu Trả Lời & Nhận Phản Hồi'; // Thay đổi text nút
+                     if (currentInterviewRole && interviewQuestions[currentInterviewRole]) {
+                        interviewQuestion.innerHTML = `
+                            <p class="question-text">Chào mừng bạn đến với buổi phỏng vấn vị trí <strong>${interviewRoleSelect.options[interviewRoleSelect.selectedIndex].text}</strong>. Câu hỏi đầu tiên của bạn là:</p>
+                            <p class="question-text">"${interviewQuestions[currentInterviewRole][currentQuestionIndex].q}"</p>
+                        `;
+                    }
+                    return; // Thoát hàm
+                }
+
+                // Hiển thị trạng thái tải
+                aiFeedback.innerHTML = '<p><i class="fas fa-sync-alt fa-spin mr-2"></i> AI đang phân tích câu trả lời của bạn...</p>';
+                feedbackSpinner.classList.add('active');
+                submitAnswerButton.disabled = true;
+
+                try {
+                    const currentQ = interviewQuestions[currentInterviewRole][currentQuestionIndex].q;
+                    const roleName = interviewRoleSelect.options[interviewRoleSelect.selectedIndex].text;
+
+                    // Thêm câu hỏi và câu trả lời hiện tại vào lịch sử
+                    interviewHistory.push({ role: "user", parts: [{ text: `Câu hỏi: "${currentQ}"\nCâu trả lời của tôi: "${userAnswer}"` }] });
+
+                    const prompt = `Bạn đang phỏng vấn cho vị trí ${roleName}. Dựa trên câu hỏi sau và câu trả lời của ứng viên, hãy đưa ra phản hồi chuyên sâu, đánh giá điểm mạnh, điểm yếu và gợi ý cải thiện. Sau đó, đưa ra câu hỏi tiếp theo trong danh sách.
+                    
+                    Lịch sử phỏng vấn (các câu hỏi và trả lời trước đó):
+                    ${interviewHistory.map(entry => entry.parts[0].text).join('\n\n')}
+
+                    Câu hỏi hiện tại: "${currentQ}"
+                    Câu trả lời của ứng viên: "${userAnswer}"
+
+                    Phản hồi của bạn nên có cấu trúc:
+                    - Đánh giá: [Đánh giá tổng quan]
+                    - Điểm mạnh: [Các điểm mạnh]
+                    - Cần cải thiện: [Các điểm cần cải thiện và gợi ý cụ thể]
+                    - Câu hỏi tiếp theo: "[Câu hỏi tiếp theo]" (Nếu hết câu hỏi, ghi "Kết thúc phỏng vấn.")
+                    `;
+
+                    const aiResponseText = await callGeminiAPI(prompt);
+                    console.log("AI Interview Feedback Response:", aiResponseText);
+
+                    // Cập nhật lịch sử phỏng vấn với phản hồi của AI
+                    interviewHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+
+                    let feedbackText = aiResponseText;
+                    let nextQuestion = '';
+
+                    // Cố gắng phân tích câu hỏi tiếp theo từ phản hồi của AI
+                    const nextQuestionMatch = aiResponseText.match(/Câu hỏi tiếp theo:\s*"(.*?)"/);
+                    if (nextQuestionMatch && nextQuestionMatch[1]) {
+                        nextQuestion = nextQuestionMatch[1];
+                        feedbackText = aiResponseText.replace(nextQuestionMatch[0], ''); // Xóa phần câu hỏi tiếp theo khỏi feedback
+                    }
+
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < interviewQuestions[currentInterviewRole].length) {
+                        // Cập nhật câu hỏi tiếp theo từ danh sách cố định của chúng ta
+                        const actualNextQuestion = interviewQuestions[currentInterviewRole][currentQuestionIndex].q;
+                        interviewQuestion.innerHTML = `
+                            <p class="question-text">Phản hồi từ AI:</p>
+                            <p>${feedbackText}</p>
+                            <br><p class="question-text">Câu hỏi tiếp theo: "${actualNextQuestion}"</p>
+                        `;
+                    } else {
+                        interviewQuestion.innerHTML = `
+                            <p class="question-text">Phản hồi từ AI:</p>
+                            <p>${feedbackText}</p>
+                            <br><p class="question-text">Bạn đã hoàn thành tất cả các câu hỏi. Cảm ơn bạn đã tham gia buổi phỏng vấn ảo!</p>
+                        `;
+                        submitAnswerButton.textContent = 'Bắt đầu lại Phỏng Vấn';
+                        resetInterviewButton.style.display = 'block'; // Hiển thị nút reset
+                    }
+                    aiFeedback.innerHTML = `<p>${feedbackText}</p>`;
+                    interviewAnswerInput.value = ''; // Xóa input sau khi gửi
+
+                } catch (error) {
+                    showToast('Lỗi khi nhận phản hồi phỏng vấn từ AI. Vui lòng kiểm tra console.', 4000);
+                    aiFeedback.innerHTML = `<p style="color:red;">Đã xảy ra lỗi khi nhận phản hồi từ AI. Vui lòng thử lại.</p>`;
+                    console.error('Error getting AI feedback:', error);
+                } finally {
+                    feedbackSpinner.classList.remove('active');
+                    submitAnswerButton.disabled = false;
+                }
+            });
+
+            resetInterviewButton.addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                interviewHistory = []; // Reset lịch sử phỏng vấn
+                aiFeedback.innerHTML = 'Phản hồi từ AI sẽ hiển thị ở đây sau khi bạn gửi câu trả lời.';
+                interviewAnswerInput.value = '';
+                resetInterviewButton.style.display = 'none'; // Ẩn nút reset
+                submitAnswerButton.textContent = 'Gửi Câu Trả Lời & Nhận Phản Hồi'; // Đặt lại text nút
+                if (currentInterviewRole && interviewQuestions[currentInterviewRole]) {
+                    interviewQuestion.innerHTML = `
+                        <p class="question-text">Chào mừng bạn đến với buổi phỏng vấn vị trí <strong>${interviewRoleSelect.options[interviewRoleSelect.selectedIndex].text}</strong>. Câu hỏi đầu tiên của bạn là:</p>
+                        <p class="question-text">"${interviewQuestions[currentInterviewRole][currentQuestionIndex].q}"</p>
+                    `;
+                } else {
+                    interviewQuestion.innerHTML = `
+                        <p class="question-text">Vui lòng chọn một vị trí phỏng vấn để bắt đầu.</p>
+                    `;
+                }
+            });
+
+            // Đảm bảo biểu đồ responsive khi cửa sổ thay đổi kích thước
+            window.addEventListener('resize', () => {
+                skillRadarChart.resize();
+            });
+        });
+    </script>
+</body>
+</html>

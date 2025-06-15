@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ Lý Cập Nhật Tin Tức AI - Tin Tức Nóng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define custom colors and fonts */
+        :root {
+            --color-primary: #1e3a8a; /* Dark Blue for headlines */
+            --color-secondary: #3b82f6; /* Lighter blue for links/accents */
+            --color-text-dark: #1f2937; /* Dark gray for body text */
+            --color-text-light: #4b5563; /* Medium gray for secondary text */
+            --color-bg-light: #f9fafb; /* Off-white background */
+            --color-bg-card: #ffffff; /* White card background */
+            --color-border: #e5e7eb; /* Light gray border */
+            --color-ai-bg: #e0f2fe; /* Light blue for AI analysis */
+            --color-ai-text: #0b5394; /* Darker blue for AI text */
+            --color-error: #dc2626; /* Red for errors */
+            --color-marquee-bg: #fefcbf; /* Light yellow for marquee */
+            --color-marquee-text: #854d0c; /* Darker yellow for marquee text */
+            --color-footer-bg: #1f2937; /* Dark gray for footer */
+            --color-footer-text: #d1d5db; /* Light gray for footer text */
+
+            /* Fonts */
+            --font-heading: 'Merriweather', serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg-light);
+            display: flex;
+            flex-direction: column; /* Stack header and main content */
+            align-items: center; /* Center the main app container */
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--color-text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 1200px; /* Max width for a web-like layout */
+            background-color: var(--color-bg-card);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            border-radius: 0; /* No border-radius on main container for full-width header/footer look */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Full height on mobile */
+        }
+
+        /* Fixed Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000; /* Ensure header is above content */
+            background: linear-gradient(90deg, #1e3a8a, #3b82f6); /* Darker blue gradient */
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            font-family: var(--font-heading);
+            font-size: 1.75rem; /* Larger title */
+            font-weight: 700;
+            text-align: center;
+            flex-grow: 1; /* Allow title to take available space */
+            margin: 0;
+        }
+        header button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 9999px; /* Fully round button */
+            transition: background-color 0.2s ease;
+        }
+        header button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        header button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            background-color: var(--color-bg-card);
+            border-bottom: 1px solid var(--color-border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+            gap: 0.75rem;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 60px; /* Adjust based on header height */
+            z-index: 999;
+        }
+        .category-tabs button {
+            background-color: #f3f4f6; /* Light gray tab background */
+            color: var(--color-text-light);
+            padding: 0.6rem 1.1rem; /* Slightly more padding */
+            border-radius: 9999px; /* Pill shape */
+            font-size: 0.9rem; /* Slightly larger font */
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .category-tabs button.hover-active:hover { /* Custom hover for active-like appearance */
+            background-color: #e5e7eb;
+            color: var(--color-text-dark);
+        }
+        .category-tabs button.active {
+            background: linear-gradient(90deg, var(--color-secondary), #60a5fa);
+            color: white;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.35); /* Stronger shadow for active state */
+            border-color: var(--color-secondary);
+        }
+
+        /* News Marquee */
+        .news-marquee-container {
+            background-color: var(--color-marquee-bg);
+            color: var(--color-marquee-text);
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #fde68a; /* Light yellow border */
+            position: sticky;
+            top: 104px; /* Adjust based on header + category tabs height */
+            z-index: 998;
+        }
+        .news-marquee-content {
+            display: inline-block;
+            padding-left: 100%; /* Start off-screen */
+            animation: marquee 30s linear infinite; /* Adjust duration based on content length */
+        }
+        .news-marquee-content.paused {
+            animation-play-state: paused;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+        .news-marquee-item {
+            margin-right: 2rem; /* Space between items */
+        }
+        .news-marquee-item a {
+            color: var(--color-marquee-text);
+            text-decoration: none;
+        }
+        .news-marquee-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Image Banner Slideshow */
+        .image-banner {
+            width: 100%;
+            height: 250px; /* Fixed height for the banner */
+            background-color: #e0e0e0;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 1.5rem; /* Space below banner */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .banner-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .banner-image.active {
+            opacity: 1;
+        }
+        .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+            color: white;
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        .banner-overlay a {
+            color: white;
+            text-decoration: none;
+        }
+        .banner-overlay a:hover {
+            text-decoration: underline;
+        }
+        /* Loading spinner for banner */
+        .banner-loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            padding: 1.5rem; /* Increased padding for web layout */
+            display: grid;
+            grid-template-columns: 1fr; /* Default to single column for mobile */
+            gap: 2rem; /* Spacing between sections */
+            overflow-y: auto;
+        }
+        @media (min-width: 768px) { /* Medium screens (md) and up */
+            .main-content {
+                grid-template-columns: 1fr 2fr; /* Input card on left, news on right */
+            }
+            .input-card {
+                grid-column: 1 / 2; /* Span first column */
+            }
+            .news-section-card {
+                grid-column: 2 / 3; /* Span second column */
+            }
+        }
+        @media (min-width: 1024px) { /* Large screens (lg) and up */
+            .main-content {
+                grid-template-columns: 1fr 2fr; /* Input card on left, news on right */
+            }
+            .input-card {
+                grid-column: 1 / 2;
+            }
+            .news-section-card {
+                grid-column: 2 / 3;
+            }
+        }
+        @media (min-width: 1200px) { /* Extra large screens */
+            .main-content {
+                grid-template-columns: 1fr 3fr; /* Wider news section */
+            }
+            .input-card {
+                grid-column: 1 / 2;
+            }
+            .news-section-card {
+                grid-column: 2 / 3;
+            }
+        }
+
+        /* Card styles */
+        .card {
+            background-color: var(--color-bg-card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--color-border);
+        }
+        .card h2 {
+            font-family: var(--font-heading);
+            font-size: 1.75rem; /* Larger sub-headings */
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Input area specific styles */
+        #newsTopicInput {
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            color: var(--color-text-dark);
+            background-color: #fcfcfc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        #newsTopicInput:focus {
+            outline: none;
+            border-color: var(--color-secondary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        #getNewsButton {
+            background: linear-gradient(135deg, var(--color-secondary), #60a5fa);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* Pill button */
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        #getNewsButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        #getNewsButton:active {
+            transform: translateY(0);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+        #errorMessage {
+            color: var(--color-error);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.75rem;
+        }
+
+        /* News Articles Container - Grid layout for articles */
+        #newsArticlesContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid for articles */
+            gap: 1.5rem; /* Spacing between articles */
+        }
+        .news-article {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column; /* Stack content vertically */
+        }
+        .news-article:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        .news-article img {
+            width: 100%;
+            height: 180px; /* Fixed height for image consistency */
+            object-fit: cover;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .news-content {
+            padding: 1rem;
+            flex-grow: 1; /* Allow content to expand */
+            display: flex;
+            flex-direction: column;
+        }
+        .news-content h3 {
+            font-family: var(--font-heading);
+            font-size: 1.25rem; /* Article title size */
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .news-content p {
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+            margin-bottom: 0.75rem;
+            flex-grow: 1; /* Allow snippet to take space */
+        }
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--color-border);
+        }
+        .news-meta a {
+            color: var(--color-secondary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .news-meta a:hover {
+            color: var(--color-primary);
+            text-decoration: underline;
+        }
+
+        /* AI Analysis Card within each article */
+        .ai-analysis-card {
+            background-color: var(--color-ai-bg);
+            border: 1px solid var(--color-ai-bg); /* Use same color for subtle border */
+            color: var(--color-ai-text);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+        .ai-analysis-card .spinner {
+            width: 16px;
+            height: 16px;
+            border-left-color: var(--color-ai-text);
+        }
+        .ai-analysis-card p {
+            margin-bottom: 0; /* Remove default paragraph margin */
+        }
+
+        /* Footer styles */
+        .footer {
+            background-color: var(--color-footer-bg);
+            color: var(--color-footer-text);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+        .footer a {
+            color: var(--color-secondary);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Advertisement Card styles (now part of slideshow) */
+        .advertisement-slide {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-color: #fffacd; /* Lemon Chiffon for ad background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 1rem;
+            text-align: center;
+            color: #a0522d; /* Sienna color for ad text */
+        }
+        .advertisement-slide.active {
+            opacity: 1;
+        }
+        .advertisement-slide .ad-image {
+            width: 100%;
+            height: auto;
+            max-height: 150px; /* Max height for the ad image */
+            object-fit: contain; /* Ensure image fits without cropping */
+            margin-bottom: 0.5rem;
+        }
+        .advertisement-slide h2 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem; /* Ad title size */
+            font-weight: 700;
+            color: #a0522d; /* Sienna color for ad title */
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        .advertisement-slide .ad-text-excerpt {
+            font-size: 0.95rem; /* Smaller text for ad excerpt */
+            margin-bottom: 0.75rem;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .advertisement-slide .registration-link-slide {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem; /* Smaller font for link */
+            font-weight: 700;
+            color: var(--color-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background-color: #e0f2fe;
+            border-radius: 9999px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .advertisement-slide .registration-link-slide:hover {
+            background-color: #bfdbfe;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <header>
+            <button id="back-button" aria-label="Quay lại trang chủ" class="p-2 rounded-md hover:bg-white/10 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
+            <h1>Trợ Lý Cập Nhật Tin Tức AI</h1>
+            <!-- Empty div for alignment -->
+            <div></div>
+        </header>
+
+        <nav class="category-tabs">
+            <button class="active" data-category-name="Tin Nổi Bật" data-category-query="top">Tin Nổi Bật</button>
+            <button data-category-name="Chính trị" data-category-query="politics">Chính trị</button>
+            <button data-category-name="Môi trường" data-category-query="environment">Môi trường</button>
+            <button data-category-name="Giáo dục" data-category-query="education">Giáo dục</button>
+            <button data-category-name="Kinh tế" data-category-query="business">Kinh tế</button>
+            <button data-category-name="Khác" data-category-query="other">Khác</button>
+            <button data-category-name="Âm nhạc" data-category-query="music">Âm nhạc</button>
+        </nav>
+
+        <div class="news-marquee-container">
+            <div class="news-marquee-content" id="newsMarqueeContent">
+                <!-- News titles will be inserted here by JavaScript -->
+                <span class="news-marquee-item">Đang tải tin tức nóng hổi...</span>
+            </div>
+        </div>
+
+        <!-- New Image Banner Slideshow -->
+        <div id="imageBanner" class="image-banner">
+            <div class="banner-loading-spinner"></div>
+            <!-- Images will be dynamically loaded here -->
+        </div>
+
+        <main class="main-content">
+            <!-- Advertisement Card was here, now integrated into slideshow -->
+            <div class="card input-card">
+                <h2>Tìm Kiếm Tin Tức</h2>
+                <p class="text-gray-600 mb-4">Nhập chủ đề bạn muốn cập nhật tin tức (từ các nguồn quốc tế):</p>
+                <textarea id="newsTopicInput"
+                          class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y min-h-[100px] text-gray-700 placeholder-gray-400 mb-4"
+                          placeholder="Ví dụ: 'AI', 'Tesla', 'Công nghệ blockchain', 'SpaceX'"></textarea>
+                <button id="getNewsButton"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center">
+                    <span id="buttonText">Lấy Tin Tức</span>
+                    <div id="loadingSpinner" class="spinner ml-2 hidden"></div>
+                </button>
+                <div id="errorMessage" class="text-red-600 text-center mt-2 hidden"></div>
+            </div>
+
+            <div class="card news-section-card">
+                <h2 id="currentCategoryTitle" class="text-3xl font-bold text-color-primary mb-6">Tin Nổi Bật</h2>
+                <div id="newsArticlesContainer" class="news-grid-container">
+                    <p class="text-gray-500 text-center py-8" id="noNewsMessage">Đang tải tin tức...</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Chịu trách nhiệm nội dung Nguyễn Ngọc Tú © 2025 Báo StudyMate News. All rights reserved.</p>
+            <p>Chỉ được phát hành lại thông tin từ website này khi có sự đồng ý bằng văn bản của báo StudyMate News.</p>
+            <p>Địa chỉ: Phương Canh, Nam Từ Liêm, Hà Nội.</p>
+        </footer>
+    </div>
+
+    <script>
+        // *** KHÓA API NEWSAPI.ORG VÀ GEMINI ***
+        // NewsData.io API Key (cho tin tức thực tế)
+        const NEWS_DATA_API_KEY = "pub_a111d5923fe74caca9d811d94dd9b492"; 
+        // Gemini API Key (cho chức năng tóm tắt/phân tích AI)
+        const MY_GEMINI_API_KEY = "AIzaSyD-UeGIN-tsFCM0ZHTa_intx_aOb4ErL14"; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const newsTopicInput = document.getElementById('newsTopicInput');
+            const getNewsButton = document.getElementById('getNewsButton');
+            const newsArticlesContainer = document.getElementById('newsArticlesContainer');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const buttonText = document.getElementById('buttonText');
+            const errorMessage = document.getElementById('errorMessage');
+            const noNewsMessage = document.getElementById('noNewsMessage');
+            const backButton = document.getElementById('back-button');
+            const categoryTabs = document.querySelector('.category-tabs');
+            const currentCategoryTitle = document.getElementById('currentCategoryTitle');
+            const newsMarqueeContent = document.getElementById('newsMarqueeContent');
+            const imageBanner = document.getElementById('imageBanner'); // New banner element
+
+            // Variable to hold all fetched articles for the marquee
+            let allFetchedArticles = [];
+            let bannerImages = []; // Array to hold banner image URLs and titles
+            let currentBannerIndex = 0;
+            let slideshowInterval;
+
+            // Define the advertisement slide content
+            const advertisementSlide = {
+                // Using the uploaded image for the ad banner
+                // IMPORTANT: Facebook post links cannot be directly used as image URLs due to CORS.
+                // You need a direct image URL (e.g., ending in .jpg, .png) for this to display.
+                // For now, using the provided uploaded image file name.
+                imageUrl: "imgbanner.jpg", 
+                title: "CUỘC THI AI4LIFE 2025 - SÂN CHƠI SÁNG TẠO CHO SINH VIÊN CNTT FPT POLYTECHNIC!",
+                link: "https://www.facebook.com/AI4Life2025/posts/pfbid0rarhPV39fmd8hetxt5gw9Wpa4JsTzcHZyJP8HpVbw1cixWqUhGumX1gYoFuwR7LQl", // Link to the Facebook post
+                isAd: true, // Custom flag to identify this as an ad slide
+                excerpt: "Cuộc thi AI4Life 2025 chính thức khởi động, các bạn SV tham gia ngay để tạo ra những web/app tích hợp AI có tính đột phá! Chủ đề: Ứng dụng AI hỗ trợ đời sống và học tập của sinh viên. Đăng ký ngay!"
+            };
+
+            const showErrorMessage = (message) => {
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('hidden');
+            };
+
+            const hideErrorMessage = () => {
+                errorMessage.classList.add('hidden');
+            };
+
+            const showLoading = () => {
+                getNewsButton.disabled = true;
+                buttonText.textContent = 'Đang tải...';
+                loadingSpinner.classList.remove('hidden');
+                hideErrorMessage();
+                noNewsMessage.textContent = 'Đang tải tin tức...';
+                noNewsMessage.classList.remove('hidden');
+                newsArticlesContainer.innerHTML = ''; // Clear previous articles
+                newsMarqueeContent.innerHTML = '<span class="news-marquee-item">Đang tải tin tức nóng hổi...</span>'; // Reset marquee
+                imageBanner.innerHTML = '<div class="banner-loading-spinner"></div>'; // Show spinner in banner
+            };
+
+            const hideLoading = () => {
+                getNewsButton.disabled = false;
+                buttonText.textContent = 'Lấy Tin Tức';
+                loadingSpinner.classList.add('hidden');
+            };
+
+            // --- AI Summary/Analysis Function ---
+            const getAiAnalysis = async (articleTitle, articleSnippet) => {
+                // Check for placeholder key. Let the API call handle invalidity/quota.
+                if (!MY_GEMINI_API_KEY || MY_GEMINI_API_KEY === "YOUR_VALID_GEMINI_API_KEY_HERE") {
+                    console.error("Gemini API Key is missing or is the placeholder. Please replace 'YOUR_VALID_GEMINI_API_KEY_HERE' with your actual key.");
+                    return "Không thể phân tích AI (khóa API Gemini không hợp lệ hoặc bị thiếu). Vui lòng kiểm tra console để biết chi tiết.";
+                }
+
+                const prompt = `Tóm tắt ngắn gọn bài viết sau (tối đa 2 câu) và đưa ra 1 nhận xét về tầm quan trọng/liên quan của nó với người học/sinh viên:
+                Tiêu đề: "${articleTitle}"
+                Đoạn trích: "${articleSnippet}"
+                Trả lời bằng tiếng Việt. Bắt đầu trực tiếp với tóm tắt và nhận xét.`;
+
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: 0.3, 
+                        maxOutputTokens: 100 
+                    }
+                };
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${MY_GEMINI_API_KEY}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Gemini API Error details:", errorData);
+                        return `Lỗi AI phân tích: ${errorData.error?.message || response.statusText}`;
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        return "AI không tạo được phân tích.";
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API for analysis:", error);
+                    return `Lỗi kết nối AI: ${error.message}.`;
+                }
+            };
+
+            // --- Function to fetch News ---
+            const fetchNews = async (input, type = 'category') => { 
+                showLoading();
+                let qParam = '';
+                let categoryParam = '';
+                let currentDisplayName = '';
+
+                if (type === 'category') {
+                    const selectedButton = categoryTabs.querySelector(`[data-category-query="${input}"]`);
+                    currentDisplayName = selectedButton ? selectedButton.dataset.categoryName : 'Tin tức';
+                    currentCategoryTitle.textContent = currentDisplayName;
+                    newsTopicInput.value = ''; // Clear search input when category is selected
+
+                    // NewsData.io categories are used directly
+                    categoryParam = `&category=${input}`;
+                    if (input === 'top') {
+                        categoryParam = '&category=top'; // NewsData.io has a 'top' category
+                    } else if (input === 'music') {
+                        qParam = '&q=music'; // NewsData.io doesn't have a direct 'music' category, use query
+                        categoryParam = ''; // Clear category param if using q
+                    }
+                } else { // type === 'search'
+                    currentDisplayName = `Kết quả tìm kiếm: "${input}"`;
+                    currentCategoryTitle.textContent = currentDisplayName;
+                    qParam = `&q=${encodeURIComponent(input)}`;
+                    categoryParam = ''; // Clear category param if using q
+                }
+
+                // Check for NewsData.io API Key
+                if (!NEWS_DATA_API_KEY || NEWS_DATA_API_KEY === "YOUR_NEWS_DATA_API_KEY") {
+                    showErrorMessage('Lỗi: Vui lòng thay thế "YOUR_NEWS_DATA_API_KEY" bằng khóa API NewsData.io của bạn.');
+                    hideLoading();
+                    return;
+                }
+
+                try {
+                    // Use NewsData.io API URL
+                    const apiUrl = `https://newsdata.io/api/1/latest?apikey=${NEWS_DATA_API_KEY}${qParam}${categoryParam}&country=vi&language=vi`; 
+                    console.log("Fetching news from NewsData.io URL:", apiUrl);
+
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        const errorResponse = await response.json();
+                        console.error("NewsData.io API Error Raw:", errorResponse);
+                        throw new Error(`NewsData.io API error: ${response.status} ${response.statusText} - ${errorResponse.results?.message || errorResponse.error || 'Unknown error'}`);
+                    }
+
+                    const result = await response.json();
+                    allFetchedArticles = result.results || []; // NewsData.io uses 'results'
+                    
+                    if (allFetchedArticles.length > 0) {
+                        const relevantArticles = allFetchedArticles.filter(article => 
+                            article.image_url && 
+                            article.image_url.startsWith('http') &&
+                            (article.description || article.content) // Ensure content for AI analysis
+                        );
+                        
+                        // Changed slice from 5 to 6
+                        if (relevantArticles.length > 0) {
+                            await renderArticles(relevantArticles.slice(0, 6)); 
+                        } else {
+                            showErrorMessage('Không tìm thấy tin tức có hình ảnh và nội dung đầy đủ để phân tích AI. Hiển thị tin tức có sẵn.');
+                            await renderArticles(allFetchedArticles.slice(0, 6)); // Still limit to 6
+                        }
+                        await updateNewsMarquee(allFetchedArticles); // Update marquee with all fetched articles
+                        updateBannerImages(allFetchedArticles.slice(0, 6)); // Update banner with top 6 articles
+                    } else {
+                        showErrorMessage('Không tìm thấy tin tức nào cho chủ đề này.');
+                        noNewsMessage.textContent = 'Không tìm thấy tin tức nào.';
+                        noNewsMessage.classList.remove('hidden');
+                        updateNewsMarquee([]); // Clear marquee if no articles
+                        updateBannerImages([]); // Clear banner if no articles
+                    }
+                } catch (error) {
+                    console.error('Error fetching news:', error);
+                    showErrorMessage(`Đã xảy ra lỗi khi lấy tin tức: ${error.message}. Vui lòng kiểm tra khóa API và kết nối mạng.`);
+                    noNewsMessage.textContent = 'Đã xảy ra lỗi khi tải tin tức.';
+                    noNewsMessage.classList.remove('hidden');
+                    updateNewsMarquee([]); // Clear marquee on error
+                    updateBannerImages([]); // Clear banner on error
+                } finally {
+                    hideLoading();
+                }
+            };
+
+            // Function to render news articles into the main content area
+            const renderArticles = async (articles) => {
+                newsArticlesContainer.innerHTML = '';
+                if (articles.length === 0) {
+                    noNewsMessage.textContent = 'Không tìm thấy tin tức nào phù hợp.';
+                    noNewsMessage.classList.remove('hidden');
+                    return;
+                }
+                noNewsMessage.classList.add('hidden');
+
+                for (const article of articles) {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'news-article'; 
+                    
+                    // NewsData.io uses 'image_url'
+                    const imageUrl = article.image_url && article.image_url.startsWith('http') 
+                                   ? article.image_url 
+                                   : `https://placehold.co/180x120/cccccc/333333?text=No+Image`; 
+
+                    articleDiv.innerHTML = `
+                        <img src="${imageUrl}" alt="${article.title}" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/180x120/cccccc/333333?text=Lỗi+Ảnh';">
+                        <div class="news-content">
+                            <h3>${article.title}</h3>
+                            <p>${article.description || article.content || 'Không có đoạn trích.'}</p>
+                            <div class="ai-analysis-card">
+                                <p class="text-indigo-800 animate-pulse">AI đang phân tích... <span class="spinner w-4 h-4 ml-1 inline-block"></span></p>
+                            </div>
+                            <div class="news-meta">
+                                <span>Nguồn: ${article.source_id || 'Không rõ'}</span>
+                                <a href="${article.link}" target="_blank" rel="noopener noreferrer">Đọc thêm &rarr;</a>
+                            </div>
+                        </div>
+                    `;
+                    newsArticlesContainer.appendChild(articleDiv);
+
+                    // Fetch AI analysis for each article
+                    const aiAnalysisDiv = articleDiv.querySelector('.ai-analysis-card');
+                    const contentForAI = article.description || article.content || article.title;
+                    const analysisText = await getAiAnalysis(article.title, contentForAI);
+                    aiAnalysisDiv.innerHTML = `<p>${analysisText}</p>`;
+                }
+            };
+
+            // --- AI Trending Keywords Function ---
+            const getTrendingKeywordsFromAI = async (articles) => {
+                if (!MY_GEMINI_API_KEY || MY_GEMINI_API_KEY === "YOUR_VALID_GEMINI_API_KEY_HERE") {
+                    console.error("Gemini API Key is missing or is the placeholder for trending keywords. Please replace 'YOUR_VALID_GEMINI_API_KEY_HERE' with your actual key.");
+                    return ["Không thể lấy từ khóa trending (khóa API Gemini không hợp lệ)."];
+                }
+
+                if (!articles || articles.length === 0) {
+                    return ["Không có bài báo nào để phân tích từ khóa."];
+                }
+
+                const articleSummaries = articles.map((article, index) => 
+                    `${index + 1}. Tiêu đề: "${article.title}". Đoạn trích: "${article.description || article.content || ''}"`
+                ).join('\n');
+
+                const prompt = `Từ các tiêu đề và đoạn trích tin tức sau, hãy liệt kê 3-5 từ khóa hoặc cụm từ trending/nổi bật nhất liên quan đến chủ đề chính của các bài báo. Trả lời bằng tiếng Việt, mỗi từ khóa/cụm từ trên một dòng, bắt đầu bằng số thứ tự.
+                Ví dụ:
+                1. Từ khóa A
+                2. Cụm từ B
+                3. Từ khóa C
+                Tin tức:
+                ${articleSummaries}`;
+
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: 0.5, // Allow some creativity but keep it focused
+                        maxOutputTokens: 150 // Enough for 3-5 numbered keywords
+                    }
+                };
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${MY_GEMINI_API_KEY}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Gemini API Error for trending keywords:", errorData);
+                        return [`Lỗi AI lấy từ khóa: ${errorData.error?.message || response.statusText}`];
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        const rawText = result.candidates[0].content.parts[0].text;
+                        return rawText.split('\n').filter(line => line.trim() !== '');
+                    } else {
+                        return ["AI không tạo được từ khóa trending."];
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API for trending keywords:", error);
+                    return [`Lỗi kết nối AI lấy từ khóa: ${error.message}.`];
+                }
+            };
+
+
+            // --- News Marquee Function ---
+            const updateNewsMarquee = async (articles = allFetchedArticles) => { // Use allFetchedArticles by default
+                newsMarqueeContent.innerHTML = '<span class="news-marquee-item">AI đang tìm kiếm từ khóa trending... <span class="spinner w-4 h-4 ml-1 inline-block"></span></span>';
+                newsMarqueeContent.classList.remove('paused'); // Ensure animation is running for loading spinner
+
+                if (articles.length === 0) {
+                    newsMarqueeContent.innerHTML = '<span class="news-marquee-item">Không có tin tức nào để hiển thị từ khóa.</span>';
+                    newsMarqueeContent.classList.add('paused'); 
+                    return;
+                }
+                
+                const trendingKeywords = await getTrendingKeywordsFromAI(articles);
+
+                if (trendingKeywords.length === 0 || (trendingKeywords.length === 1 && trendingKeywords[0].includes("Lỗi AI"))) {
+                    newsMarqueeContent.innerHTML = `<span class="news-marquee-item">Không thể lấy từ khóa trending: ${trendingKeywords[0] || 'Chưa có từ khóa.'}</span>`;
+                    newsMarqueeContent.classList.add('paused'); 
+                    return;
+                }
+
+                // Map keywords to add # prefix and number
+                const formattedKeywords = trendingKeywords.map((keyword, index) => {
+                    // Remove leading numbers if AI already added them (e.g., "1. Keyword")
+                    const cleanKeyword = keyword.replace(/^\d+\.\s*/, '').trim();
+                    return `#${index + 1} ${cleanKeyword}`;
+                });
+
+                const marqueeItems = formattedKeywords.map(keyword => {
+                    return `<span class="news-marquee-item">${keyword}</span>`; 
+                }).join('');
+                
+                // Duplicate content to create a seamless loop
+                newsMarqueeContent.innerHTML = marqueeItems + marqueeItems; 
+                
+                // Adjust animation duration based on content length to maintain speed
+                const contentWidth = newsMarqueeContent.scrollWidth / 2; // Get width of one set of duplicated content
+                const containerWidth = newsMarqueeContent.offsetWidth;
+                const speed = 50; // pixels per second
+                const duration = contentWidth / speed; // seconds
+                newsMarqueeContent.style.animationDuration = `${duration}s`;
+            };
+
+            // --- Image Banner Slideshow Functions ---
+            const updateBannerImages = (articles) => {
+                // Filter articles for valid images and map them
+                const newsSlides = articles.filter(article => article.image_url && article.image_url.startsWith('http')) // Changed to image_url for NewsData.io
+                               .map(article => ({ url: article.image_url, title: article.title, link: article.link, isAd: false })); // Changed to link for NewsData.io
+                
+                // Combine advertisement slide with news slides
+                // Place ad slide at the beginning for visibility
+                bannerImages = [advertisementSlide, ...newsSlides];
+
+                if (bannerImages.length === 0) {
+                    imageBanner.innerHTML = '<div class="banner-overlay">Không có ảnh nào để hiển thị.</div>';
+                    clearInterval(slideshowInterval);
+                    return;
+                }
+
+                imageBanner.innerHTML = ''; // Clear loading spinner
+                bannerImages.forEach((img, index) => {
+                    if (img.isAd) {
+                        const adSlideDiv = document.createElement('div');
+                        adSlideDiv.className = 'advertisement-slide';
+                        if (index === 0) adSlideDiv.classList.add('active');
+                        // Use img.imageUrl for the ad image
+                        adSlideDiv.innerHTML = `
+                            <img src="${img.imageUrl}" alt="${img.title}" class="ad-image">
+                            <h2>${img.title}</h2>
+                            <p class="ad-text-excerpt">${img.excerpt}</p>
+                            <a href="${img.link}" target="_blank" rel="noopener noreferrer" class="registration-link-slide">Đăng ký ngay!</a>
+                        `;
+                        imageBanner.appendChild(adSlideDiv);
+                    } else {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = img.url;
+                        imgElement.alt = img.title;
+                        imgElement.className = 'banner-image';
+                        if (index === 0) imgElement.classList.add('active'); // Activate first image
+                        imgElement.onerror = () => {
+                            imgElement.src = `https://placehold.co/1200x250/cccccc/333333?text=Lỗi+Ảnh`;
+                        };
+                        imageBanner.appendChild(imgElement);
+                    }
+                });
+
+                const overlayDiv = document.createElement('div');
+                overlayDiv.className = 'banner-overlay';
+                // Initial overlay content based on the first slide (which is now the ad)
+                if (bannerImages[0].isAd) {
+                    overlayDiv.innerHTML = `<a href="${bannerImages[0].link}" target="_blank" rel="noopener noreferrer">${bannerImages[0].title}</a>`;
+                } else {
+                    overlayDiv.innerHTML = `<a href="${bannerImages[0].link}" target="_blank" rel="noopener noreferrer">${bannerImages[0].title}</a>`;
+                }
+                imageBanner.appendChild(overlayDiv);
+
+                startSlideshow();
+            };
+
+            const startSlideshow = () => {
+                clearInterval(slideshowInterval); // Clear any existing interval
+                if (bannerImages.length <= 1) { // No need for slideshow if 0 or 1 image
+                    const overlay = imageBanner.querySelector('.banner-overlay');
+                    if (overlay && bannerImages.length === 1) {
+                        if (bannerImages[0].isAd) {
+                             overlay.innerHTML = `<a href="${bannerImages[0].link}" target="_blank" rel="noopener noreferrer">${bannerImages[0].title}</a>`;
+                        } else {
+                             overlay.innerHTML = `<a href="${bannerImages[0].link}" target="_blank" rel="noopener noreferrer">${bannerImages[0].title}</a>`;
+                        }
+                    } else if (overlay) {
+                        overlay.innerHTML = `Không có ảnh nào để hiển thị.`;
+                    }
+                    return;
+                }
+
+                slideshowInterval = setInterval(() => {
+                    const currentSlide = imageBanner.querySelector('.banner-image.active') || imageBanner.querySelector('.advertisement-slide.active');
+                    if (currentSlide) currentSlide.classList.remove('active');
+
+                    currentBannerIndex = (currentBannerIndex + 1) % bannerImages.length;
+                    const nextSlide = imageBanner.children[currentBannerIndex]; // Get the next child element
+                    if (nextSlide) nextSlide.classList.add('active');
+
+                    const overlay = imageBanner.querySelector('.banner-overlay');
+                    if (overlay) {
+                        if (bannerImages[currentBannerIndex].isAd) {
+                            overlay.innerHTML = `<a href="${bannerImages[currentBannerIndex].link}" target="_blank" rel="noopener noreferrer">${bannerImages[currentBannerIndex].title}</a>`;
+                        } else {
+                            overlay.innerHTML = `<a href="${bannerImages[currentBannerIndex].link}" target="_blank" rel="noopener noreferrer">${bannerImages[currentBannerIndex].title}</a>`;
+                        }
+                    }
+                }, 5000); // Change image every 5 seconds
+            };
+
+
+            // --- Event Listeners ---
+            getNewsButton.addEventListener('click', () => {
+                const query = newsTopicInput.value.trim();
+                if (query) {
+                    // Remove active class from category tabs when searching
+                    categoryTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    fetchNews(query, 'search');
+                } else {
+                    showErrorMessage('Vui lòng nhập chủ đề tìm kiếm.');
+                }
+            });
+
+            newsTopicInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    getNewsButton.click(); // Trigger button click
+                }
+            });
+
+            backButton.addEventListener('click', () => {
+                // Navigate back to index.html
+                window.location.href = 'index.html'; 
+            });
+
+            // Category tab click events
+            categoryTabs.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.tagName === 'BUTTON') {
+                    // Remove active class from all buttons
+                    categoryTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    target.classList.add('active');
+
+                    const categoryQuery = target.dataset.categoryQuery;
+                    fetchNews(categoryQuery, 'category'); 
+                }
+            });
+
+            // --- Initial load ---
+            // Set default query in input and fetch top news when the page loads
+            newsTopicInput.value = ''; // Clear search input on initial load
+            fetchNews('top', 'category'); // Default query for NewsData.io
+        });
+    </script>
+</body>
+</html>

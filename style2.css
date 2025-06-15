@@ -1,0 +1,161 @@
+/* --- style.css (Thêm vào cuối file) --- */
+
+/* Styles cho Điều khiển Lịch */
+.schedule-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.schedule-controls .secondary-button {
+    background-color: var(--background-light);
+    color: var(--primary-dark-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.schedule-controls .secondary-button:hover {
+    background-color: var(--primary_light_color);
+    color: var(--primary_color);
+}
+
+.schedule-controls .current-day-display {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+/* Styles cho Bảng Lịch Học */
+.table-responsive {
+    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+    margin-top: 15px;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse; /* Gộp các đường viền của bảng */
+    font-size: 13px; /* Kích thước chữ nhỏ hơn cho bảng */
+    font-family: 'Inter', sans-serif;
+}
+
+.schedule-table thead tr {
+    background-color: var(--primary-light_color);
+    color: var(--primary_dark_color);
+    text-align: left;
+}
+
+.schedule-table th, .schedule-table td {
+    padding: 10px;
+    border: 1px solid #ddd; /* Đường viền nhẹ cho các ô */
+    white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
+}
+
+.schedule-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Màu nền xen kẽ cho các hàng */
+}
+
+.schedule-table tbody tr:hover {
+    background-color: #f0f2f5; /* Hiệu ứng hover */
+}
+
+.schedule-table .reminder-icon {
+    font-size: 18px;
+    color: var(--accent-color); /* Màu nhấn cho icon nhắc nhở */
+    cursor: pointer;
+}
+
+.table-caption {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Styles cho Cài đặt Nhắc nhở */
+.reminder-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.reminder-option label {
+    font-size: 15px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.reminder-option .filter-select {
+    flex-grow: 0; /* Không cho select box chiếm hết không gian */
+    width: auto; /* Chiều rộng tự động */
+}
+
+.add-schedule-button {
+    margin-top: 20px;
+    margin-bottom: 20px; /* Đảm bảo nút không bị cắt */
+}
+
+/* --- Responsive adjustments (Điều chỉnh cho màn hình nhỏ hơn) --- */
+
+@media (max-width: 400px) {
+    /* ... (Giữ nguyên các điều chỉnh media query hiện có từ các trang khác) ... */
+
+    /* Điều chỉnh font size cho bảng lịch */
+    .schedule-table {
+        font-size: 12px;
+    }
+    .schedule-table th, .schedule-table td {
+        padding: 8px 6px; /* Giảm padding cho ô bảng */
+    }
+    .schedule-table .reminder-icon {
+        font-size: 16px;
+    }
+    .current-day-display {
+        font-size: 14px;
+    }
+    .schedule-controls .secondary-button {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    /* Điều chỉnh cài đặt nhắc nhở */
+    .reminder-option label {
+        font-size: 14px;
+    }
+    .reminder-option .filter-select {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+}
+
+/* Khi chiều rộng nhỏ hơn 320px (cho các thiết bị rất nhỏ) */
+@media (max-width: 320px) {
+    .schedule-table {
+        font-size: 11px; /* Font size nhỏ hơn nữa cho bảng */
+    }
+    .schedule-table th, .schedule-table td {
+        padding: 6px 4px;
+    }
+    .current-day-display {
+        font-size: 13px;
+    }
+    .schedule-controls .secondary-button {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+    .reminder-option label {
+        font-size: 13px;
+    }
+    .reminder-option .filter-select {
+        font-size: 12px;
+    }
+}
