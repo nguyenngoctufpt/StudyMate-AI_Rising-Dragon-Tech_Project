@@ -1,191 +1,441 @@
+<!-- HEADER DỰ ÁN -->
+<br />
 <div align="center">
+  <img src="img10.png" alt="StudyMate AI Logo" width="280" style="filter: drop-shadow(0 0 20px rgba(0,118,255,0.45));">
+
+  <h1 align="center" style="font-size: 3em; margin-top: 0.5em; font-weight: 700;">StudyMate AI</h1>
+  <p align="center">
+    <span style="font-size: 1.3em; letter-spacing: 1px;">✨ <strong>Đổi Mới Giáo Dục Với Trí Tuệ Nhân Tạo</strong> ✨</span>
+  </p>
   
-![StudyMate AI Banner]((image10))
-
-# ✨ StudyMate AI - Nền Tảng Học Tập Thông Minh ✨
-
-[![Last Updated](https://img.shields.io/badge/Last%20Updated-2025--06--15-blue.svg)](https://github.com/nguyenngoctufpt/StudyMate-AI_Rising-Dragon-Tech_Project)
-[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com/nguyenngoctufpt)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
+  <img src="im5.png" alt="StudyMate AI Banner" width="100%" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,118,255,0.3); margin-top: 1em;">
 </div>
 
-<p align="center">
-  <a href="#🌟-tính-năng">Tính Năng</a> •
-  <a href="#🚀-bắt-đầu">Bắt Đầu</a> •
-  <a href="#📖-hướng-dẫn">Hướng Dẫn</a> •
-  <a href="#👥-đội-ngũ">Đội Ngũ</a> •
-  <a href="#📞-liên-hệ">Liên Hệ</a>
+<!-- BADGES -->
+<p align="center" style="margin-top: 2em;">
+  <img src="https://img.shields.io/badge/TRẠNG_THÁI-ĐANG_HOẠT_ĐỘNG-success?style=for-the-badge" alt="Trạng thái">
+  <img src="https://img.shields.io/badge/PHIÊN_BẢN-3.2.1-informational?style=for-the-badge" alt="Phiên bản">
+  <img src="https://img.shields.io/badge/CẬP_NHẬT-2025--06--15-blue?style=for-the-badge" alt="Cập nhật">
+  <img src="https://img.shields.io/badge/PHÁT_TRIỂN_BỞI-nguyenngoctufpt-red?style=for-the-badge" alt="Người phát triển">
+  <img src="https://img.shields.io/badge/GIẤY_PHÉP-MIT-brightgreen?style=for-the-badge" alt="Giấy phép">
 </p>
 
-<div align="center">
+<!-- ĐIỀU HƯỚNG NHANH -->
+<p align="center" style="margin: 2em 0;">
+  <a href="#-tầm-nhìn"><img width="110" src="https://img.shields.io/badge/%F0%9F%94%AD-TẦM_NHÌN-383C6E?style=for-the-badge" /></a>
+  <a href="#-tính-năng"><img width="110" src="https://img.shields.io/badge/%E2%9C%A8-TÍNH_NĂNG-5DA3FA?style=for-the-badge" /></a>
+  <a href="#-demo"><img width="85" src="https://img.shields.io/badge/%F0%9F%8E%AC-DEMO-FF6B6B?style=for-the-badge" /></a>
+  <a href="#-cài-đặt"><img width="100" src="https://img.shields.io/badge/%F0%9F%94%A7-CÀI_ĐẶT-AC58FA?style=for-the-badge" /></a>
+  <a href="#-lộ-trình"><img width="100" src="https://img.shields.io/badge/%F0%9F%9B%A3-LỘ_TRÌNH-FFC75F?style=for-the-badge" /></a>
+</p>
 
-![Rising Dragon Tech Logo]((image5))
+<br />
 
+<!-- MÔ TẢ DỰ ÁN -->
+## 🔭 TẦM NHÌN
+
+<p align="center"><strong>StudyMate AI</strong> không chỉ là một nền tảng học tập thông thường — mà là người bạn đồng hành thông minh trong hành trình giáo dục của bạn, đổi mới cách học sinh tương tác với tài liệu học tập trong kỷ nguyên số.</p>
+
+<div align="center" style="margin: 1.5em 0;">
+  <table style="border: none; background: linear-gradient(135deg, #f5f7fa, #c3cfe2); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <tr>
+      <td width="50%" style="padding: 1.5em; border: none;">
+        <p style="font-size: 1.05em; line-height: 1.6;">Nền tảng của chúng tôi ứng dụng những tiến bộ mới nhất trong lĩnh vực trí tuệ nhân tạo để cung cấp trải nghiệm học tập cá nhân hóa, thích ứng theo thời gian thực với nhu cầu, sở thích và tiến độ độc đáo của từng học viên.</p>
+      </td>
+      <td width="50%" style="padding: 1.5em; border: none;">
+        <p style="font-size: 1.05em; line-height: 1.6;">Được phát triển bởi Rising Dragon Tech, chúng tôi cam kết phá bỏ rào cản trong giáo dục bằng cách kết hợp công nghệ tiên tiến với các nguyên tắc sư phạm đã được công nhận, giúp giáo dục chất lượng tiếp cận với tất cả mọi người.</p>
+      </td>
+    </tr>
+  </table>
 </div>
 
-## 🎯 Tầm Nhìn
+<br />
 
-> *"Đổi mới giáo dục Việt Nam thông qua công nghệ AI - Mang đến trải nghiệm học tập cá nhân hóa cho mọi sinh viên"*
-
-## 🌟 Tính Năng
-
-<div align="center">
-
-| 🤖 AI Assistant | 📚 Học Tập | 🎯 Mục Tiêu | 🌟 Cộng Đồng |
-|:--------------:|:----------:|:-----------:|:------------:|
-| Trợ lý AI 24/7 | Quiz thông minh | Lộ trình cá nhân | Kết nối học tập |
-| Gợi ý cá nhân hóa | Video bài giảng | Theo dõi tiến độ | Chia sẻ kiến thức |
-| Hỗ trợ đa ngôn ngữ | Tài liệu đa dạng | Báo cáo chi tiết | Thảo luận nhóm |
-
-</div>
-
-## 🎨 Giao Diện
+<!-- PHẦN TÍNH NĂNG -->
+## ✨ TÍNH NĂNG
 
 <div align="center">
-
-```mermaid
-graph TD
-    A[Trang Chủ] --> B[Học Tập]
-    A --> C[Cộng Đồng]
-    A --> D[Hồ Sơ]
-    B --> E[Khóa Học]
-    B --> F[Quiz]
-    B --> G[Tài Liệu]
-    C --> H[Diễn Đàn]
-    C --> I[Nhóm Học Tập]
-    D --> J[Tiến Độ]
-    D --> K[Thống Kê]
-```
-
+  <table style="border: none; margin-top: 1em;">
+    <tr>
+      <td align="center" width="33%" style="padding: 2em 1em; border: none;">
+        <div style="background: linear-gradient(135deg, #C2E9FB, #A1C4FD); border-radius: 25px; padding: 1.5em; box-shadow: 0 10px 20px rgba(0,118,255,0.1); transition: transform 0.3s;">
+          <img width="70" src="https://img.icons8.com/fluency/96/000000/artificial-intelligence.png"/>
+          <h3 style="margin: 0.8em 0; color: #1E3A8A;">Học Tập Với AI</h3>
+          <p>Thuật toán tiên tiến tạo ra kế hoạch học tập cá nhân hóa phù hợp với phong cách học, mục tiêu và tiến độ của bạn.</p>
+        </div>
+      </td>
+      <td align="center" width="33%" style="padding: 2em 1em; border: none;">
+        <div style="background: linear-gradient(135deg, #FFEDBC, #ED4264); border-radius: 25px; padding: 1.5em; box-shadow: 0 10px 20px rgba(237,66,100,0.1); transition: transform 0.3s;">
+          <img width="70" src="https://img.icons8.com/fluency/96/000000/positive-dynamic.png"/>
+          <h3 style="margin: 0.8em 0; color: #9B1C31;">Phân Tích Thông Minh</h3>
+          <p>Phân tích chi tiết về mô hình học tập, điểm mạnh và các lĩnh vực cần cải thiện với bảng điều khiển trực quan.</p>
+        </div>
+      </td>
+      <td align="center" width="33%" style="padding: 2em 1em; border: none;">
+        <div style="background: linear-gradient(135deg, #A8EDEA, #FED6E3); border-radius: 25px; padding: 1.5em; box-shadow: 0 10px 20px rgba(168,237,234,0.1); transition: transform 0.3s;">
+          <img width="70" src="https://img.icons8.com/fluency/96/000000/target.png"/>
+          <h3 style="margin: 0.8em 0; color: #1E755C;">Học Tập Thích Ứng</h3>
+          <p>Độ khó của nội dung tự động điều chỉnh theo thời gian thực dựa trên hiệu suất, đảm bảo tiến trình học tập tối ưu.</p>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" width="33%" style="padding: 2em 1em; border: none;">
+        <div style="background: linear-gradient(135deg, #90F7EC, #32CCBC); border-radius: 25px; padding: 1.5em; box-shadow: 0 10px 20px rgba(50,204,188,0.1); transition: transform 0.3s;">
+          <img width="70" src="https://img.icons8.com/fluency/96/000000/conference-call.png"/>
+          <h3 style="margin: 0.8em 0; color: #0F5259;">Học Tập Cộng Tác</h3>
+          <p>Kết nối với bạn học để tham gia các buổi học nhóm, chia sẻ tài nguyên và hợp tác theo thời gian thực.</p>
+        </div>
+      </td>
+      <td align="center" width="33%" style="padding: 2em 1em; border: none;">
+        <div style="background: linear-gradient(135deg, #FCCF31, #F55555); border-radius: 25px; padding: 1.5em; box-shadow: 0 10px 20px rgba(252,207,49,0.1); transition: transform 0.3s;">
+          <img width="70" src="https://img.icons8.com/fluency/96/000000/calendar.png"/>
+          <h3 style="margin: 0.8em 0; color: #9B4722;">Lịch Trình Thông Minh</h3>
+          <p>Lịch học được AI tối ưu hóa phù hợp với lịch của bạn và thời điểm học tập hiệu quả nhất để đạt hiệu suất tối đa.</p>
+        </div>
+      </td>
+      <td align="center" width="33%" style="padding: 2em 1em; border: none;">
+        <div style="background: linear-gradient(135deg, #F6D365, #FDA085); border-radius: 25px; padding: 1.5em; box-shadow: 0 10px 20px rgba(246,211,101,0.1); transition: transform 0.3s;">
+          <img width="70" src="https://img.icons8.com/fluency/96/000000/smartphone-tablet.png"/>
+          <h3 style="margin: 0.8em 0; color: #8B4513;">Đa Nền Tảng</h3>
+          <p>Trải nghiệm liền mạch trên máy tính để bàn, máy tính bảng và thiết bị di động với đồng bộ hóa theo thời gian thực.</p>
+        </div>
+      </td>
+    </tr>
+  </table>
 </div>
 
-## 🚀 Bắt Đầu
+<br />
+
+<!-- PHẦN DEMO -->
+## 🎬 DEMO
+
+<div align="center">
+  <div style="background: linear-gradient(135deg, #E3FDF5, #FFE6FA); border-radius: 15px; padding: 2em; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 1em;">
+    <table style="border: none; width: 100%;">
+      <tr>
+        <td width="50%" align="center" style="border: none; padding: 1.5em;">
+          <div style="background: white; border-radius: 15px; padding: 2em; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <h3 style="margin-top: 0;">✨ Hướng Dẫn Tương Tác ✨</h3>
+            <p>Xem StudyMate AI trong hoạt động:</p>
+            <a href="https://studymate.ai/demo" target="_blank">
+              <img src="https://img.shields.io/badge/XEM%20DEMO-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Xem Demo">
+            </a>
+          </div>
+        </td>
+        <td width="50%" align="center" style="border: none; padding: 1.5em;">
+          <div style="background: white; border-radius: 15px; padding: 2em; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <h3 style="margin-top: 0;">🚀 Dùng Thử ✨</h3>
+            <p>Trải nghiệm nền tảng của chúng tôi ngay:</p>
+            <a href="https://studymate.ai/trial" target="_blank">
+              <img src="https://img.shields.io/badge/DÙNG%20THỬ%20MIỄN%20PHÍ-FF6B6B?style=for-the-badge&logo=bookstack&logoColor=white" alt="Dùng Thử Miễn Phí">
+            </a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<br />
+
+<!-- CÔNG NGHỆ -->
+## 🛠 CÔNG NGHỆ
+
+<div align="center">
+  <div style="background: linear-gradient(135deg, #E0EAFC, #CFDEF3); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+    <table style="width: 100%; border: none;">
+      <tr>
+        <th style="background: rgba(255,255,255,0.5); border-radius: 10px; padding: 0.8em; font-size: 1.1em; width: 20%;">Phần</th>
+        <th style="background: rgba(255,255,255,0.5); border-radius: 10px; padding: 0.8em; font-size: 1.1em; width: 80%;">Công Nghệ</th>
+      </tr>
+      <tr>
+        <td style="padding: 1em; border: none;"><strong>Giao Diện</strong></td>
+        <td style="padding: 1em; border: none;">
+          <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
+          <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white">
+          <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 1em; border: none;"><strong>Hệ Thống</strong></td>
+        <td style="padding: 1em; border: none;">
+          <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white">
+          <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white">
+          <img src="https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white">
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 1em; border: none;"><strong>Cơ Sở Dữ Liệu</strong></td>
+        <td style="padding: 1em; border: none;">
+          <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white">
+          <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 1em; border: none;"><strong>Trí Tuệ Nhân Tạo</strong></td>
+        <td style="padding: 1em; border: none;">
+          <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white">
+          <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
+          <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white">
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 1em; border: none;"><strong>DevOps</strong></td>
+        <td style="padding: 1em; border: none;">
+          <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+          <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white">
+          <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<br />
+
+<!-- CÀI ĐẶT -->
+## 🔧 CÀI ĐẶT
+
+<div align="center">
+  <div style="background: linear-gradient(135deg, #F0F2F0, #D4D3DD); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+
+  ### 💻 Yêu Cầu Hệ Thống
+
+  <table style="border: none; width: 80%; margin: 0 auto;">
+    <tr>
+      <td align="center" style="border: none; padding: 1em;">
+        <div style="background: white; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <img width="45" src="https://img.icons8.com/color/96/000000/nodejs.png"/>
+        </div>
+        <p>Node.js ≥ 16</p>
+      </td>
+      <td align="center" style="border: none; padding: 1em;">
+        <div style="background: white; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <img width="45" src="https://img.icons8.com/color/96/000000/mongodb.png"/>
+        </div>
+        <p>MongoDB ≥ 5.0</p>
+      </td>
+      <td align="center" style="border: none; padding: 1em;">
+        <div style="background: white; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <img width="45" src="https://img.icons8.com/color/96/000000/python.png"/>
+        </div>
+        <p>Python ≥ 3.9</p>
+      </td>
+      <td align="center" style="border: none; padding: 1em;">
+        <div style="background: white; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <img width="45" src="https://img.icons8.com/color/96/000000/docker.png"/>
+        </div>
+        <p>Docker</p>
+      </td>
+    </tr>
+  </table>
+  </div>
+</div>
+
+<div style="background-color: #2d333b; color: #e6edf3; padding: 20px; border-radius: 10px; margin: 20px 0; font-family: 'Fira Code', monospace;">
 
 ```bash
-# 1. Clone dự án
+# Sao chép kho dự án
 git clone https://github.com/nguyenngoctufpt/StudyMate-AI_Rising-Dragon-Tech_Project.git
 
-# 2. Cài đặt dependencies
+# Di chuyển vào thư mục dự án
 cd StudyMate-AI_Rising-Dragon-Tech_Project
+
+# Cài đặt các gói phụ thuộc
 npm install
 
-# 3. Khởi chạy
-npm start
-```
+# Thiết lập biến môi trường
+cp .env.example .env
+# Chỉnh sửa tệp .env với cấu hình của bạn
 
-## 📊 Thống Kê Ấn Tượng
+# Khởi động máy chủ phát triển
+npm run dev
 
-<div align="center">
-
-| 📈 Chỉ Số | 🎯 Mục Tiêu 2025 | ✨ Đạt Được |
-|:---------:|:---------------:|:-----------:|
-| Người Dùng | 50,000+ | 12,000+ |
-| Khóa Học | 1,000+ | 500+ |
-| Đánh Giá | 4.9/5 ⭐ | 4.8/5 ⭐ |
-| Cộng Đồng | 100+ nhóm | 50+ nhóm |
-
-</div>
-
-## 💫 Công Nghệ Sử Dụng
-
-<div align="center">
-
-```mermaid
-mindmap
-  root((StudyMate AI))
-    Frontend
-      React.js
-      TailwindCSS
-      Next.js
-    Backend
-      Node.js
-      Firebase
-      MongoDB
-    AI/ML
-      TensorFlow
-      PyTorch
-      NLP Models
-    DevOps
-      Docker
-      CI/CD
-      AWS
+# Cho môi trường sản xuất
+npm run build
+npm run start
 ```
 
 </div>
 
-## 👥 Đội Ngũ Phát Triển
+<div align="center" style="margin-top: 30px;">
+  <div style="background: linear-gradient(135deg, #ECE9E6, #FFFFFF); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+    <h3 style="margin-top: 0;">🐳 Cài Đặt Docker</h3>
+    
+    <div style="background-color: #2d333b; color: #e6edf3; padding: 20px; border-radius: 10px; margin: 20px auto; font-family: 'Fira Code', monospace; max-width: 80%; text-align: left;">
+
+    ```bash
+    # Sử dụng Docker Compose
+    docker-compose up -d
+
+    # Truy cập ứng dụng tại http://localhost:3000
+    ```
+
+    </div>
+  </div>
+</div>
+
+<br />
+
+<!-- LỘ TRÌNH -->
+## 🛣 LỘ TRÌNH
 
 <div align="center">
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/nguyenngoctufpt">
-        <img src="https://github.com/nguyenngoctufpt.png" width="100px;" alt="Nguyễn Ngọc Tú"/>
-        <br />
-        <sub><b>Nguyễn Ngọc Tú</b></sub>
+  <div style="background: linear-gradient(135deg, #E7F0FD, #ACCBEE); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+    <div style="display: flex; justify-content: center; margin-bottom: 2em;">
+      <div style="background: #FFF; height: 5px; width: 80%; position: relative; border-radius: 5px;">
+        <div style="position: absolute; top: -10px; width: 100%; display: flex; justify-content: space-between;">
+          <div style="width: 25px; height: 25px; border-radius: 50%; background: linear-gradient(135deg, #5DA3FA, #4361EE); box-shadow: 0 4px 10px rgba(0,118,255,0.3);"></div>
+          <div style="width: 25px; height: 25px; border-radius: 50%; background: linear-gradient(135deg, #5DA3FA, #4361EE); box-shadow: 0 4px 10px rgba(0,118,255,0.3);"></div>
+          <div style="width: 25px; height: 25px; border-radius: 50%; background: linear-gradient(135deg, #5DA3FA, #4361EE); box-shadow: 0 4px 10px rgba(0,118,255,0.3);"></div>
+          <div style="width: 25px; height: 25px; border-radius: 50%; background: linear-gradient(135deg, #5DA3FA, #4361EE); box-shadow: 0 4px 10px rgba(0,118,255,0.3);"></div>
+          <div style="width: 25px; height: 25px; border-radius: 50%; background: linear-gradient(135deg, #5DA3FA, #4361EE); box-shadow: 0 4px 10px rgba(0,118,255,0.3);"></div>
+          <div style="width: 25px; height: 25px; border-radius: 50%; background: linear-gradient(135deg, #5DA3FA, #4361EE); box-shadow: 0 4px 10px rgba(0,118,255,0.3);"></div>
+        </div>
+      </div>
+    </div>
+  
+    <table style="border: none; width: 100%;">
+      <tr>
+        <td align="center" style="border: none; padding: 1em;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img src="https://img.shields.io/badge/Quý%203%202025-5DA3FA?style=for-the-badge"/>
+            <h4 style="margin: 1em 0;">Ra Mắt Ứng Dụng Di Động</h4>
+            <p>Ứng dụng native cho iOS & Android</p>
+          </div>
+        </td>
+        <td align="center" style="border: none; padding: 1em;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img src="https://img.shields.io/badge/Quý%204%202025-5DA3FA?style=for-the-badge"/>
+            <h4 style="margin: 1em 0;">Phân Tích Nâng Cao</h4>
+            <p>Nhận diện mẫu học tập thông minh</p>
+          </div>
+        </td>
+        <td align="center" style="border: none; padding: 1em;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img src="https://img.shields.io/badge/Quý%201%202026-5DA3FA?style=for-the-badge"/>
+            <h4 style="margin: 1em 0;">Tích Hợp AR/VR</h4>
+            <p>Trải nghiệm học tập đắm chìm</p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="border: none; padding: 1em;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img src="https://img.shields.io/badge/Quý%202%202026-5DA3FA?style=for-the-badge"/>
+            <h4 style="margin: 1em 0;">Giải Pháp Doanh Nghiệp</h4>
+            <p>Nền tảng học tập doanh nghiệp</p>
+          </div>
+        </td>
+        <td align="center" style="border: none; padding: 1em;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img src="https://img.shields.io/badge/Quý%203%202026-5DA3FA?style=for-the-badge"/>
+            <h4 style="margin: 1em 0;">Mở Rộng Toàn Cầu</h4>
+            <p>Hỗ trợ đa ngôn ngữ</p>
+          </div>
+        </td>
+        <td align="center" style="border: none; padding: 1em;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img src="https://img.shields.io/badge/Quý%204%202026-5DA3FA?style=for-the-badge"/>
+            <h4 style="margin: 1em 0;">AI Gia Sư 2.0</h4>
+            <p>Cá nhân hóa thế hệ tiếp theo</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<br />
+
+<!-- ĐÓNG GÓP -->
+## 🤝 ĐÓNG GÓP
+
+<div align="center">
+  <div style="background: linear-gradient(135deg, #FFF6B7, #F6416C); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+    <p style="font-size: 1.1em;">Chúng tôi hoan nghênh những đóng góp từ cộng đồng! Xem <a href="CONTRIBUTING.md">Hướng Dẫn Đóng Góp</a> của chúng tôi để bắt đầu.</p>
+    
+    <div style="margin: 2em 0;">
+      <a href="https://github.com/nguyenngoctufpt/StudyMate-AI_Rising-Dragon-Tech_Project/fork" style="margin: 0 10px; text-decoration: none;">
+        <img src="https://img.shields.io/badge/FORK%20DỰ%20ÁN-FF6B6B?style=for-the-badge&logo=github&logoColor=white" alt="Fork Dự Án">
       </a>
-      <br />
-      <small>Founder & Lead Developer</small>
-    </td>
-    <!-- Thêm thành viên khác tại đây -->
-  </tr>
-</table>
+      <a href="https://github.com/nguyenngoctufpt/StudyMate-AI_Rising-Dragon-Tech_Project/issues/new" style="margin: 0 10px; text-decoration: none;">
+        <img src="https://img.shields.io/badge/BÁO%20LỖI-5DA3FA?style=for-the-badge&logo=github&logoColor=white" alt="Báo Lỗi">
+      </a>
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.8); border-radius: 10px; padding: 1.5em; max-width: 80%; margin: 0 auto;">
+      <h4 style="margin-top: 0;">Quy Trình Đóng Góp</h4>
+      <ol style="text-align: left; padding-left: 20px;">
+        <li>Fork dự án</li>
+        <li>Tạo nhánh tính năng của bạn: <code>git checkout -b feature/TinhNangMoi</code></li>
+        <li>Commit thay đổi: <code>git commit -m 'Thêm một tính năng mới'</code></li>
+        <li>Push lên nhánh: <code>git push origin feature/TinhNangMoi</code></li>
+        <li>Mở một Pull Request</li>
+      </ol>
+    </div>
+  </div>
 </div>
 
-## 🌟 Điểm Nổi Bật
+<br />
 
-- 🤖 **AI Thông Minh**
-  - Gợi ý học tập cá nhân hóa
-  - Hỗ trợ 24/7 với chatbot AI
-  - Phân tích dữ liệu học tập
-
-- 📚 **Nội Dung Phong Phú**
-  - 500+ khóa học chất lượng cao
-  - Video bài giảng HD
-  - Tài liệu đa dạng
-
-- 🎯 **Theo Dõi Tiến Độ**
-  - Dashboard trực quan
-  - Báo cáo chi tiết
-  - Đề xuất cải thiện
-
-## 📞 Liên Hệ & Hỗ Trợ
+<!-- LIÊN HỆ & HỖ TRỢ -->
+## 📞 LIÊN HỆ & HỖ TRỢ
 
 <div align="center">
-
-| 📧 Email | 🌐 Website | 💬 Discord |
-|:--------:|:---------:|:----------:|
-| support@studymate-ai.vn | studymate-ai.vn | StudyMate Community |
-
+  <div style="background: linear-gradient(135deg, #E0C3FC, #8EC5FC); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+    <table style="border: none; width: 100%;">
+      <tr>
+        <td align="center" width="33%" style="border: none;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img width="50" src="https://img.icons8.com/fluency/96/000000/github.png"/>
+            <h3 style="margin: 0.8em 0;">GitHub</h3>
+            <a href="https://github.com/nguyenngoctufpt" style="text-decoration: none; color: #0366d6; font-weight: 500;">@nguyenngoctufpt</a>
+          </div>
+        </td>
+        <td align="center" width="33%" style="border: none;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img width="50" src="https://img.icons8.com/fluency/96/000000/discord-logo.png"/>
+            <h3 style="margin: 0.8em 0;">Cộng Đồng</h3>
+            <a href="https://discord.gg/studymate" style="text-decoration: none; color: #5865F2; font-weight: 500;">Discord StudyMate</a>
+          </div>
+        </td>
+        <td align="center" width="33%" style="border: none;">
+          <div style="background: white; border-radius: 12px; padding: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.05); height: 100%;">
+            <img width="50" src="https://img.icons8.com/fluency/96/000000/email-open.png"/>
+            <h3 style="margin: 0.8em 0;">Email</h3>
+            <a href="mailto:support@studymate.ai" style="text-decoration: none; color: #EA4335; font-weight: 500;">support@studymate.ai</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
 
-## 📅 Lộ Trình Phát Triển
+<br />
 
-```mermaid
-gantt
-    title Lộ Trình 2024-2025
-    dateFormat  YYYY-MM-DD
-    section Phase 1
-    MVP Release           :2024-01-01, 90d
-    section Phase 2
-    AI Integration       :2024-04-01, 120d
-    section Phase 3
-    Mobile App          :2024-08-01, 150d
-    section Phase 4
-    Global Expansion    :2025-01-01, 180d
-```
-
-## 📄 Giấy Phép
-
-Copyright © 2024-2025 Rising Dragon Tech. All rights reserved.
-
----
+<!-- GIẤY PHÉP -->
+## 📜 GIẤY PHÉP
 
 <div align="center">
+  <div style="background: linear-gradient(135deg, #F7F8F8, #ACBB78); border-radius: 15px; padding: 2em; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+    <p style="font-size: 1.1em;">Dự án này được cấp phép theo Giấy phép MIT - xem tệp <a href="LICENSE">LICENSE</a> để biết chi tiết.</p>
+    <img src="https://img.shields.io/badge/GIẤY%20PHÉP-MIT-brightgreen?style=for-the-badge" alt="Giấy phép MIT">
+  </div>
+</div>
 
-*Made with ❤️ by Rising Dragon Tech*
+<br />
 
-**[⬆ Về đầu trang](#studymate-ai---nền-tảng-học-tập-thông-minh)**
-
+<!-- FOOTER -->
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" width="100%">
+  
+  <p>
+    <img src="https://img.shields.io/badge/Được%20tạo%20với-%E2%9D%A4%EF%B8%8F-red?style=for-the-badge"/>
+    bởi <strong>Rising Dragon Tech</strong>
+  </p>
+  
+  <p>© 2025 StudyMate AI. Bảo lưu mọi quyền.</p>
+  <p><i>Cập nhật lần cuối: 2025-06-15 09:51:25 UTC bởi nguyenngoctufpt</i></p>
 </div>
